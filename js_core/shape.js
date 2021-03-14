@@ -1,5 +1,5 @@
 let vertices = [-0.5, 0.5, -0.5, -0.5, 0.0, -0.5,];
-let x = 0;
+let x = 0.0;
 
 class Shape {
     constructor(shadersUtil, gl) {
@@ -20,7 +20,7 @@ class Shape {
         gl.bindBuffer(gl.ARRAY_BUFFER, this.vertex_buffer);
         gl.useProgram(this.shaderProgram);
         gl.enableVertexAttribArray(this.coordAttrib);
-        gl.uniform4fv(this.colorUniform, [x / 100.0, 0, 0, 1]);
+        gl.uniform4fv(this.colorUniform, [x, 0, 0, 1]);
     }
 
     restoreContext(gl) {
@@ -28,10 +28,10 @@ class Shape {
         gl.bindBuffer(gl.ARRAY_BUFFER, null);
     }
 
-    update() {
-        x++;
-        if (x > 100) {
-            x = 0;
+    update(delta) {
+        x += delta;
+        if (x > 1.0) {
+            x = 0.0;
         }
     }
 }
