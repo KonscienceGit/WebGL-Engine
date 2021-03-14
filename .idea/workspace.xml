@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e42c036c-847f-4df0-81e2-794eebaddee7" name="Default Changelist" comment="refactor into classes, several files, basic animation">
+    <list default="true" id="e42c036c-847f-4df0-81e2-794eebaddee7" name="Default Changelist" comment="proper frame animation, based on time spend on each frame">
+      <change afterPath="$PROJECT_DIR$/js_core/utils.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/js_core/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/js_core/main.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js_core/renderer.js" beforeDir="false" afterPath="$PROJECT_DIR$/js_core/renderer.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js_core/shadersUtil.js" beforeDir="false" afterPath="$PROJECT_DIR$/js_core/shadersUtil.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/js_core/shape.js" beforeDir="false" afterPath="$PROJECT_DIR$/js_core/shape.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -22,6 +24,11 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GitSEFilterConfiguration">
@@ -138,7 +145,7 @@
       <workItem from="1615626531571" duration="891000" />
       <workItem from="1615631201389" duration="58000" />
       <workItem from="1615631271310" duration="15427000" />
-      <workItem from="1615715732516" duration="4435000" />
+      <workItem from="1615715732516" duration="24553000" />
     </task>
     <task id="LOCAL-00001" summary="refactor into classes, several files, basic animation">
       <created>1615717435082</created>
@@ -147,7 +154,14 @@
       <option name="project" value="LOCAL" />
       <updated>1615717435082</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="proper frame animation, based on time spend on each frame">
+      <created>1615720241459</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1615720241459</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
@@ -193,7 +207,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="refactor into classes, several files, basic animation" />
-    <option name="LAST_COMMIT_MESSAGE" value="refactor into classes, several files, basic animation" />
+    <MESSAGE value="proper frame animation, based on time spend on each frame" />
+    <option name="LAST_COMMIT_MESSAGE" value="proper frame animation, based on time spend on each frame" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
