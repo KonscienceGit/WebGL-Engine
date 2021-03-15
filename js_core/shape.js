@@ -2,11 +2,13 @@ let vertices = new Float32Array([-1, -1, 0.0, 1.0, +1, -1, 1.0, 1.0, -1, +1, 0.0
 let x = 0.0;
 
 class Shape {
-    constructor(shadersUtil, gl, canvas) {
+    constructor(shadersUtil, gl, canvas, imageLoc) {
+        this.imgLoc = imageLoc;
         this.texture = gl.createTexture();
         this.loadTexture(gl, this, this.texture);
         this.canvasDim = new Vec2(canvas.width, canvas.height);
         this.position = new Vec2(0.0, 0.0);
+        this.movingDir = 0;
         this.scale = new Vec2(1.0, 1.0);
         this.imgDim = new Vec2(100.0, 100.0);
         this.vertex_buffer = gl.createBuffer();
@@ -51,12 +53,19 @@ class Shape {
     }
 
     update(delta) {
-        x += delta;
+        this.position.y = -1 + this.scale.y;
+        if (this.movingDir === 0) {
+            return;
+        }
+        x += delta * this.movingDir;
         if (x > 2.0) {
             x = -2.0;
         }
         this.position.x = -x;
-        this.position.y = -1 + this.scale.y;
+    }
+
+    move(direction) {
+        this.movingDir = direction;
     }
 
     loadTexture(gl, obj, tex) {
@@ -69,7 +78,7 @@ class Shape {
 
 //Asynchronously load an image
         let image = new Image();
-        image.src = "resources/ggg.png";
+        image.src = this.imgLoc;
         image.addEventListener('load', function () {
             // Now that the image has loaded make copy it to the texture.
             obj.imgDim = new Vec2(image.width, image.height);

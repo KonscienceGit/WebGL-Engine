@@ -13,16 +13,15 @@ class Renderer {
         this.glContext.viewport(0, 0, this.canvas.width, this.canvas.height);
     }
 
-    createShape() {
-        this.shape = new Shape(this.shadersUtil, this.glContext, this.canvas);
+    createShape(url) {
+        this.shape = new Shape(this.shadersUtil, this.glContext, this.canvas, url);
+        //return new Shape(this.shadersUtil, this.glContext, this.canvas, url);
         return this.shape;
     }
 
-    draw() {
+    draw(nodeArray) {
         let gl = this.glContext;
-
         gl.clear(gl.COLOR_BUFFER_BIT);
-
-        this.shape.draw(gl);
+        nodeArray.forEach(node => node.draw(gl));
     }
 }
