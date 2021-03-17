@@ -3,11 +3,11 @@
 function main() {
     let canvas = document.querySelector("#render_canvas");
     let renderer = new Renderer(canvas);
-    let actor = renderer.createShape("resources/actor.png");
+    let actor = new ActorSprite(renderer._gl, canvas, "resources/actor.png");
     let shapeArray = [];
-    shapeArray.push(renderer.createShape("resources/background.png"));
+    shapeArray.push(new Sprite(renderer._gl, canvas, "resources/background.png"));
     shapeArray.push(actor);
-    shapeArray.push(renderer.createShape("resources/foreground.png"));
+    shapeArray.push(new Sprite(renderer._gl, canvas, "resources/foreground.png"));
     let previous = 0;
     let firstDraw = true;
 

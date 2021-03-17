@@ -2,12 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e42c036c-847f-4df0-81e2-794eebaddee7" name="Default Changelist" comment="Proper sprite display, auto sprite scaling, forking branches into 2D mode">
-      <change afterPath="$PROJECT_DIR$/js_core/keyListener.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/js_core/actorSprite.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/js_core/sprite.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js_core/keyListener.js" beforeDir="false" afterPath="$PROJECT_DIR$/js_core/keyListener.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/js_core/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/js_core/main.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/js_core/renderer.js" beforeDir="false" afterPath="$PROJECT_DIR$/js_core/renderer.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/js_core/shape.js" beforeDir="false" afterPath="$PROJECT_DIR$/js_core/shape.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js_core/shadersUtil.js" beforeDir="false" afterPath="$PROJECT_DIR$/js_core/shadersUtil.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js_core/shape.js" beforeDir="false" afterPath="$PROJECT_DIR$/js_core/animatedSprite.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -90,7 +93,7 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/.." />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/js_core" />
     <property name="list.type.of.created.stylesheet" value="CSS" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.standard" value="true" />
@@ -100,21 +103,26 @@
     <property name="node.js.selected.package.standard" value="" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
-    <property name="settings.editor.selected.configurable" value="Errors" />
+    <property name="settings.editor.selected.configurable" value="preferences.keymap" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Nico_Workstation\Documents\projects\WebGL_renderer\js_core" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\wamp64\www\WebGL-Renderer\js_core" />
     </key>
   </component>
   <component name="RunManager">
-    <configuration default="true" type="ArquillianJUnit" factoryName="" nameIsGenerated="true">
+    <configuration default="true" type="ArquillianTestNG" factoryName="" nameIsGenerated="true">
       <option name="arquillianRunConfiguration">
         <value>
           <option name="containerStateName" value="" />
         </value>
       </option>
-      <option name="TEST_OBJECT" value="class" />
+      <option name="TEST_OBJECT" value="CLASS" />
+      <properties />
+      <listeners />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -124,6 +132,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="JavaScript Debug.index.html" />
         <item itemvalue="JavaScript Debug.index.html" />
       </list>
     </recent_temporary>
@@ -146,6 +155,7 @@
       <workItem from="1615631271310" duration="15427000" />
       <workItem from="1615715732516" duration="25167000" />
       <workItem from="1615835331454" duration="8202000" />
+      <workItem from="1616006346507" duration="10336000" />
     </task>
     <task id="LOCAL-00001" summary="refactor into classes, several files, basic animation">
       <created>1615717435082</created>

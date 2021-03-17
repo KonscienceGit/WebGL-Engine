@@ -1,5 +1,5 @@
-let forward = -1;
-let backward = 1;
+let forward = 1;
+let backward = -1;
 let stop = 0;
 
 function key_handler(e, actor, keyDown) {
