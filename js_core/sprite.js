@@ -78,12 +78,11 @@ class Sprite {
     }
 
     getVertexShaderCode() {
-        return '#ifdef GL_ES \n precision mediump float; \n #endif \n' +
-
+        return SHADER_HEADER +
             'uniform vec4 scaleAndPos;' +
-            'attribute vec2 coordinates;' +
-            'attribute vec2 textCoordinates;' +
-            'varying vec2 textCoord;' +
+            'in vec2 coordinates;' +
+            'in vec2 textCoordinates;' +
+            'out vec2 textCoord;' +
 
             'void main(void) {' +
             ' textCoord = textCoordinates;' +
@@ -93,15 +92,17 @@ class Sprite {
     }
 
     getFragmentShaderCode() {
-        return '#ifdef GL_ES \n precision mediump float; \n #endif \n' +
-            'varying vec2 textCoord;' +
+        return SHADER_HEADER +
+            'precision mediump float;' +
             'uniform sampler2D textureSample;' +
+            'in vec2 textCoord;' +
+            'out vec4 outColor;' +
 
             'void main(void) {' +
-            ' vec4 frcolor = texture2D(textureSample, textCoord);' +
+            ' vec4 frcolor = texture(textureSample, textCoord);' +
             ' if (frcolor.a == 0.)' +
             '  discard;' +
-            ' gl_FragColor = frcolor;' +
+            ' outColor = frcolor;' +
             '}';
     }
 

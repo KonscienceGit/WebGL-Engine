@@ -1,6 +1,6 @@
 class Renderer {
     constructor(canvas) {
-        this._gl = canvas.getContext('webgl', {
+        this._gl = canvas.getContext('webgl2', {
             antialias: false,
             depth: false,
             alpha: false,
@@ -12,7 +12,6 @@ class Renderer {
     }
 
     draw(nodeArray) {
-        // this.clear();
         nodeArray.forEach(node => node.draw(this._gl));
     }
 

@@ -41,16 +41,17 @@ class AnimatedSprite extends Sprite {
     }
 
     getFragmentShaderCode() {
-        return '#ifdef GL_ES \n precision mediump float; \n #endif \n' +
-            'varying vec2 textCoord;' +
+        return SHADER_HEADER +
             'uniform int textureLayer;' +
             'uniform sampler2D textureSample;' +
+            'in vec2 textCoord;' +
+            'out vec4 outColor;' +
 
             'void main(void) {' +
-            ' vec4 frcolor = texture2D(textureSample, textCoord);' +
+            ' vec4 frcolor = texture(textureSample, textCoord);' +
             ' if (frcolor.a == 0.)' +
             '  discard;' +
-            ' gl_FragColor = frcolor;' +
+            ' outColor = frcolor;' +
             '}';
     }
 }
