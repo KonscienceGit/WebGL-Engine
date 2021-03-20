@@ -3,4 +3,8 @@ class Vec2 {
         this.x = x;
         this.y = y;
     }
+
+    clone() {
+        return new Vec2(this.x, this.y);
+    }
 }

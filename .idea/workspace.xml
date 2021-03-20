@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e42c036c-847f-4df0-81e2-794eebaddee7" name="Default Changelist" comment="Refactor, separation of actor from sprites (inheritance)&#10;Also actorSprite can flip when changing direction.">
+    <list default="true" id="e42c036c-847f-4df0-81e2-794eebaddee7" name="Default Changelist" comment="Moved context from webgl to webgl2, shaders from glsl 110 (no #version) to glsl 300">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js_core/actorSprite.js" beforeDir="false" afterPath="$PROJECT_DIR$/js_core/actorSprite.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/js_core/animatedSprite.js" beforeDir="false" afterPath="$PROJECT_DIR$/js_core/animatedSprite.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/js_core/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/js_core/main.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/js_core/renderer.js" beforeDir="false" afterPath="$PROJECT_DIR$/js_core/renderer.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/js_core/shadersUtil.js" beforeDir="false" afterPath="$PROJECT_DIR$/js_core/shadersUtil.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/js_core/sprite.js" beforeDir="false" afterPath="$PROJECT_DIR$/js_core/sprite.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js_core/utils.js" beforeDir="false" afterPath="$PROJECT_DIR$/js_core/utils.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -100,7 +100,7 @@
     <property name="node.js.selected.package.standard" value="" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
-    <property name="settings.editor.selected.configurable" value="preferences.keymap" />
+    <property name="settings.editor.selected.configurable" value="preferences.sourceCode.JavaScript" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -140,7 +140,7 @@
       <workItem from="1615715732516" duration="25167000" />
       <workItem from="1615835331454" duration="8202000" />
       <workItem from="1616006346507" duration="10955000" />
-      <workItem from="1616254938616" duration="5903000" />
+      <workItem from="1616254938616" duration="14620000" />
     </task>
     <task id="LOCAL-00001" summary="refactor into classes, several files, basic animation">
       <created>1615717435082</created>
@@ -170,7 +170,14 @@
       <option name="project" value="LOCAL" />
       <updated>1616017827031</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Moved context from webgl to webgl2, shaders from glsl 110 (no #version) to glsl 300">
+      <created>1616263425393</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1616263425393</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
@@ -219,7 +226,8 @@
     <MESSAGE value="proper frame animation, based on time spend on each frame" />
     <MESSAGE value="Proper sprite display, auto sprite scaling, forking branches into 2D mode" />
     <MESSAGE value="Refactor, separation of actor from sprites (inheritance)&#10;Also actorSprite can flip when changing direction." />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactor, separation of actor from sprites (inheritance)&#10;Also actorSprite can flip when changing direction." />
+    <MESSAGE value="Moved context from webgl to webgl2, shaders from glsl 110 (no #version) to glsl 300" />
+    <option name="LAST_COMMIT_MESSAGE" value="Moved context from webgl to webgl2, shaders from glsl 110 (no #version) to glsl 300" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

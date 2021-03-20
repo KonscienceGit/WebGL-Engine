@@ -1,8 +1,8 @@
 class Sprite {
     constructor(gl, canvas, imageLoc) {
         this.imgLoc = imageLoc;
-        this.texture = gl.createTexture();
-        this.loadTexture(gl, this, this.texture);
+        this._texture = gl.createTexture();
+        this.loadTexture(gl, this, this._texture);
         this.canvasDim = new Vec2(canvas.width, canvas.height);
         this.position = new Vec2(0.0, 0.0);
         this.movingDir = 0;
@@ -40,7 +40,7 @@ class Sprite {
     setupContext(gl) {
         gl.bindBuffer(gl.ARRAY_BUFFER, this.vertex_buffer);
         gl.useProgram(this.shaderProgram);
-        gl.bindTexture(gl.TEXTURE_2D, this.texture);
+        gl.bindTexture(gl.TEXTURE_2D, this._texture);
         gl.enableVertexAttribArray(this.coordAttrib);
         gl.enableVertexAttribArray(this.textCoordAttrib);
         gl.uniform4fv(this.scaleAndPosUniform, [this.scale.x, this.scale.y, this.position.x, this.position.y]);
@@ -69,7 +69,7 @@ class Sprite {
             obj.scale = new Vec2(scaleX, scaleY);
             obj.referenceScale = new Vec2(scaleX, scaleY);
             gl.bindTexture(gl.TEXTURE_2D, tex);
-            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, gl.RGBA, gl.UNSIGNED_BYTE, image);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
