@@ -86,10 +86,9 @@ class AnimatedSprite extends Sprite {
             'out vec4 outColor;' +
 
             'void main(void) {' +
-            ' vec4 frcolor = texture(textureSample, vec3(textCoord, textureLayer));' +
-            ' if (frcolor.a == 0.)' +
+            'outColor = texture(textureSample, vec3(textCoord, textureLayer));' +
+            ' if (outColor.a == 0.)' +
             '  discard;' +
-            ' outColor = frcolor;' +
             '}';
     }
 }

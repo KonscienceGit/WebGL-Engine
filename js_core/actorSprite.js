@@ -2,8 +2,10 @@ class ActorSprite extends AnimatedSprite {
     constructor(gl, canvas, imagePath, fileExtension, imageCount) {
         super(gl, canvas, imagePath, fileExtension, imageCount);
         this.lastDirection = 1;
-        this.speed = 1.5;
         this.animationPos = 0.0;
+
+        //Actor default settings
+        this.speed = 1.5;
         this.animationSpeed = 8;
     }
 

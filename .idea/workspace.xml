@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e42c036c-847f-4df0-81e2-794eebaddee7" name="Default Changelist" comment="Moved context from webgl to webgl2, shaders from glsl 110 (no #version) to glsl 300">
+    <list default="true" id="e42c036c-847f-4df0-81e2-794eebaddee7" name="Default Changelist" comment="AnimatedSprite: use 2D texture array to store multiple images">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/js_core/actorSprite.js" beforeDir="false" afterPath="$PROJECT_DIR$/js_core/actorSprite.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/js_core/animatedSprite.js" beforeDir="false" afterPath="$PROJECT_DIR$/js_core/animatedSprite.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/js_core/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/js_core/main.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/js_core/sprite.js" beforeDir="false" afterPath="$PROJECT_DIR$/js_core/sprite.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/js_core/utils.js" beforeDir="false" afterPath="$PROJECT_DIR$/js_core/utils.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -111,6 +109,17 @@
     </key>
   </component>
   <component name="RunManager">
+    <configuration default="true" type="ArquillianJUnit" factoryName="" nameIsGenerated="true">
+      <option name="arquillianRunConfiguration">
+        <value>
+          <option name="containerStateName" value="" />
+        </value>
+      </option>
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="index.html" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/WebGL-Renderer/index.html" useBuiltInWebServerPort="true">
       <method v="2" />
     </configuration>
@@ -140,7 +149,7 @@
       <workItem from="1615715732516" duration="25167000" />
       <workItem from="1615835331454" duration="8202000" />
       <workItem from="1616006346507" duration="10955000" />
-      <workItem from="1616254938616" duration="14620000" />
+      <workItem from="1616254938616" duration="17948000" />
     </task>
     <task id="LOCAL-00001" summary="refactor into classes, several files, basic animation">
       <created>1615717435082</created>
@@ -177,7 +186,14 @@
       <option name="project" value="LOCAL" />
       <updated>1616263425393</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="AnimatedSprite: use 2D texture array to store multiple images">
+      <created>1616275469914</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1616275469914</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
@@ -227,7 +243,8 @@
     <MESSAGE value="Proper sprite display, auto sprite scaling, forking branches into 2D mode" />
     <MESSAGE value="Refactor, separation of actor from sprites (inheritance)&#10;Also actorSprite can flip when changing direction." />
     <MESSAGE value="Moved context from webgl to webgl2, shaders from glsl 110 (no #version) to glsl 300" />
-    <option name="LAST_COMMIT_MESSAGE" value="Moved context from webgl to webgl2, shaders from glsl 110 (no #version) to glsl 300" />
+    <MESSAGE value="AnimatedSprite: use 2D texture array to store multiple images" />
+    <option name="LAST_COMMIT_MESSAGE" value="AnimatedSprite: use 2D texture array to store multiple images" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

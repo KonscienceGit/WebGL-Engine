@@ -99,10 +99,9 @@ class Sprite {
             'out vec4 outColor;' +
 
             'void main(void) {' +
-            ' vec4 frcolor = texture(textureSample, textCoord);' +
-            ' if (frcolor.a == 0.)' +
+            ' outColor = texture(textureSample, textCoord);' +
+            ' if (outColor.a == 0.)' +
             '  discard;' +
-            ' outColor = frcolor;' +
             '}';
     }
 
