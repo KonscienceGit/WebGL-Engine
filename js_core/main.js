@@ -10,30 +10,31 @@ function main() {
     shapeArray.push(new Sprite(renderer._gl, canvas, "resources/foreground.png"));
     let previous = 0;
     let firstDraw = true;
+    let inputManagement = new InputManagement();
 
-    document.addEventListener("keydown", function (e) {
-        key_handler(e, actor, true);
-    }, true);
-    document.addEventListener("keyup", function (e) {
-        key_handler(e, actor, false);
-    }, true);
 
     requestAnimationFrame(frame);
 
     function frame(timeStamp) {
 
-        timeStamp *= 0.001;
-        if (firstDraw) {
-            firstDraw = false;
-            previous = timeStamp;
-            requestAnimationFrame(frame);
-        }
-        let deltaTime = timeStamp - previous;
-        previous = timeStamp;
+        inputManagement.handleInputs(actor);
+        let deltaTime = computeDelta(timeStamp);
 
         actor.update(deltaTime);
         renderer.draw(shapeArray);
 
         requestAnimationFrame(frame);
+    }
+
+    function computeDelta(timeStamp) {
+        timeStamp *= 0.001;
+        let deltaTime = 0.0;
+        if (firstDraw) {
+            firstDraw = false;
+        } else {
+            deltaTime = timeStamp - previous;
+        }
+        previous = timeStamp;
+        return deltaTime;
     }
 }
