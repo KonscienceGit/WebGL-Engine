@@ -2,9 +2,7 @@ class InputManagement {
     constructor() {
         this._keyLeft = false;
         this._keyRight = false;
-    }
 
-    handleInputs(actor) {
         let thisObject = this;
         window.onkeydown = function (keyEvent) {
             switch (keyEvent.key) {
@@ -31,7 +29,9 @@ class InputManagement {
                 default:
             }
         };
+    }
 
+    handleInputs(actor) {
         if (this._keyLeft && !this._keyRight) {
             actor.move(-1);
         } else if (this._keyRight && !this._keyLeft) {
