@@ -3,7 +3,7 @@ class Sprite {
         this.imgLoc = imageLoc;
         this._texture = gl.createTexture();
         this.loadTexture(gl, this, this._texture);
-        this._canvasDim = new Vec2(1100, 800);
+        this.canvasDim = new Vec2(canvas.width, canvas.height);
         this.position = new Vec2(0.0, 0.0);
         this.movingDir = 0;
         this.scale = new Vec2(1.0, 1.0);
