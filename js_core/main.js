@@ -2,7 +2,7 @@
 
 function main() {
     let canvas = document.querySelector("#render_canvas");
-    let renderer = new Renderer(canvas);
+    let renderer = new Renderer(canvas, new Vec2(1100,800));
     let actor = new ActorSprite(renderer._gl, canvas, "resources/actor/", ".png", 3);
     let shapeArray = [];
     shapeArray.push(new Sprite(renderer._gl, canvas, "resources/background.png"));
