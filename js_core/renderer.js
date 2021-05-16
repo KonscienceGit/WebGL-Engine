@@ -1,7 +1,16 @@
 class Renderer {
     constructor(canvas) {
-        let height = screen.availHeight;
-        let width = screen.availWidth;
+        this._canvas = canvas;
+        this._viewPortPixelSize = viewPortPixelSize;
+        let clWidth = canvas.parentNode.clientWidth;
+        let clHeight = canvas.parentNode.clientHeight;
+        let scWidth = screen.availWidth;
+        let scHeight = screen.availHeight;
+        let height = Math.min(clHeight, scHeight);
+        let width = Math.min(clWidth, scWidth);
+        console.log(width);
+        console.log(height);
+
         let scaleh = 1.;
         if(height < canvas.height){
             scaleh = height / canvas.height;
@@ -11,15 +20,24 @@ class Renderer {
             scalew = width / canvas.width;
         }
         let scale = Math.min(scalew, scaleh);
-        
+
+        console.log(scale);
         this._gl = canvas.getContext('webgl2', {
             antialias: false,
             depth: false,
-            alpha: false,
+            premultipliedAlpha: false,
             stencil: false
         });
-        this._gl.clearColor(0.5, 0.9, 0.5, 0.9);
-        this._gl.viewport(0, 0, canvas.width * scale, canvas.height * scale);
+
+        //enable blending
+        this._gl.enable(this._gl.BLEND);
+        this._gl.blendFunc(this._gl.SRC_ALPHA, this._gl.ONE_MINUS_SRC_ALPHA);
+        this._gl.clearColor(1, 1, 1, 1);
+        canvas.width *= scale;
+        canvas.height *= scale;
+        this._gl.viewport(0, 0, canvas.width, canvas.height);
+        // this._gl.viewport(0, 0, canvas.width/scale, canvas.height/scale);
+        //this._gl.viewport(0, 0, canvas.width * scale, canvas.height * scale);
         this.clear();
     }
 
