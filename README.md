@@ -1,2 +1,26 @@
-# WebGL-Renderer
-WebGL based renderer for simple scenes
+# WebGL-Engine
+
+A simple WebGL based game engine.
+
+[Test it here on GitHub pages!](https://konsciencegit.github.io/WebGL-Engine/index.html)
+
+## Current features
+
+* Basic 2D rendering framework with sprites
+  * Pixel perfect sprite scaling
+  * Texture arrays
+  * Transparency  
+* Input management
+  * Xinput gamepad
+  * Keyboard
+  * Mouse / Touch input
+* Rudimentary physics framework
+  
+
+## Future features
+
+* Particle effects
+* Scrolling textures
+* Basic 3D scene (billboards then maybe polygons)
+* More robust input management (binding profiles)
+* Basic sound and music support
