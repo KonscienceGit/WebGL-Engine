@@ -4,6 +4,8 @@ A simple WebGL based game engine.
 
 [Test it here on GitHub pages!](https://konsciencegit.github.io/WebGL-Engine/index.html)
 
+Or take a look at a more polished implementation here on the [Dinoboi Appel Garden game!](https://www.dinoboi.space/game)
+
 ## Current features
 
 * Basic 2D rendering framework with sprites
