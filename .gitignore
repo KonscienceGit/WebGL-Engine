@@ -1,6 +1,7 @@
 # Editors trash #
 #################
 nbproject
+workspace.xml
 .~lock.*
 .buildpath
 .idea
