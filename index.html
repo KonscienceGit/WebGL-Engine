@@ -2,23 +2,49 @@
 <html lang="en" style="margin:0;padding:0">
 <meta charset="utf-8">
 <head>
-    <meta content="Poinsignon Nicolas" name="author">
+    <meta content="https://github.com/KonscienceGit" name="author">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>WebGL Renderer</title>
-    <link href="favicon.ico" rel="icon" type="image/png">
+    <title>WebGL Engine Demo</title>
 
-    <script src="js_core/utils.js"></script>
-    <script src="js_core/inputManagement.js"></script>
-    <script src="js_core/sprite.js"></script>
-    <script src="js_core/animatedSprite.js"></script>
-    <script src="js_core/actorSprite.js"></script>
-    <script src="js_core/shadersUtil.js"></script>
-    <script src="js_core/renderer.js"></script>
-    <script src="js_core/main.js"></script>
+    <!-- UTILS -->
+    <script src="js_core/utils/vectors.js"></script>
+    <script src="js_core/utils/loadingManager.js"></script>
+    <script src="js_core/graphics/shadersUtil.js"></script>
+    <script src="js_core/inputs/inputActions.js"></script>
+
+    <!-- MISC -->
+    <script src="js_core/utils/entityProperties.js"></script>
+    <script src="js_core/demo/collisionManager.js"></script>
+    <script src="js_core/demo/gameObjectsManager.js"></script>
+    <script src="js_core/graphics/renderer.js"></script>
+
+    <!-- GAME STATES -->
+    <script src="js_core/gameStates/abstractState.js"></script>
+    <script src="js_core/demo/gameStates/startMenuState.js"></script>
+    <script src="js_core/demo/gameStates/gameState.js"></script>
+    <script src="js_core/demo/gameStates/replayMenuState.js"></script>
+    <script src="js_core/demo/gameStates/stateManager.js"></script>
+
+    <!-- INPUTS -->
+    <script src="js_core/inputs/abstractInputManager.js"></script>
+    <script src="js_core/inputs/gamepadInputManager.js"></script>
+    <script src="js_core/inputs/keyboardInputManager.js"></script>
+    <script src="js_core/inputs/mouseInputManager.js"></script>
+
+    <!-- SPRITES -->
+    <script src="js_core/graphics/sprites/sprite.js"></script>
+    <script src="js_core/demo/sprites/lifeCounter.js"></script>
+    <script src="js_core/graphics/sprites/multiSprite.js"></script>
+    <script src="js_core/graphics/sprites/translucentOverlay.js"></script>
+    <script src="js_core/demo/sprites/scoreCounter.js"></script>
+    <script src="js_core/demo/sprites/spaceCraft.js"></script>
+
 </head>
-<body style="margin:0;padding:0">
-<canvas height="800" id="render_canvas" width="1100"></canvas>
-<script>
+<body style="margin:0;padding:0;background:white">
+<canvas height="800" id="game_canvas" width="1100"></canvas>
+<script type="module">
+    import {main} from './js_core/demo/main.js';
+
     window.onload = main();
 </script>
 </body>
