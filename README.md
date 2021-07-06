@@ -1,6 +1,6 @@
 # WebGL-Engine
 
-A simple WebGL based game engine.
+A simple ES6/WebGL2 based game engine, using no external libraries.
 
 [Test it here on GitHub pages!](https://konsciencegit.github.io/WebGL-Engine/index.html)
 
