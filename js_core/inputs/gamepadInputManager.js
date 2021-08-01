@@ -59,27 +59,26 @@ class GamepadInputManager extends AbstractInputManager {
         const states = this._controllerKeyStatuses[this._activePadIndex];
 
         if (states.leftButtonClicked) {
-            stateManager.fireInputAction(InputActions.LEFT);
+            stateManager.fireInputAction(GameInputActions.LEFT);
             states.leftButtonClicked = false;
         }
         if (states.rightButtonClicked) {
-            stateManager.fireInputAction(InputActions.RIGHT);
+            stateManager.fireInputAction(GameInputActions.RIGHT);
             states.rightButtonClicked = false;
         }
         if (states.actionButtonClicked) {
-            stateManager.fireInputAction(InputActions.ACTION);
+            stateManager.fireInputAction(GameInputActions.ACTION);
             states.actionButtonClicked = false;
         }
         const left = states.leftButtonDown || states.leftAxisPushed;
         const right = states.rightButtonDown || states.rightAxisPushed;
-        if (left && !right) stateManager.fireInputAction(InputActions.LEFT_HOLD);
-        if (right && !left) stateManager.fireInputAction(InputActions.RIGHT_HOLD);
-        if(states.actionButtonDown) stateManager.fireInputAction(InputActions.ACTION_HOLD);
+        if (left && !right) stateManager.fireInputAction(GameInputActions.LEFT_HOLD);
+        if (right && !left) stateManager.fireInputAction(GameInputActions.RIGHT_HOLD);
+        if(states.actionButtonDown) stateManager.fireInputAction(GameInputActions.ACTION_HOLD);
     }
 
     scangamepads() {
-        // noinspection JSUnresolvedVariable
-        let gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads() : []);
+        const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
         for (let i = 0; i < gamepads.length; i++) {
             if (gamepads[i] && (gamepads[i].index in this._controllers)) {
                 this._controllers[gamepads[i].index] = gamepads[i];
@@ -149,7 +148,7 @@ class GamepadInputManager extends AbstractInputManager {
             if ('touched' in button && button.touched) {
                 val = button.value;
             } else if ('pressed' in button) {
-                val = button.pressed ? 1. : 0.;
+                val = button.pressed ? 1 : 0;
             }
         } else {
             val = button;
@@ -161,17 +160,15 @@ class GamepadInputManager extends AbstractInputManager {
      * @param {GamepadEvent} gamepadEvent
      */
     connecthandler(gamepadEvent) {
-        let gamepad = gamepadEvent.gamepad;
-        this._controllers[gamepad.index] = gamepad;
-        this.parseInputs(gamepad);
+        this._controllers[gamepadEvent.gamepad.index] = gamepadEvent.gamepad;
+        this.parseInputs();
     }
 
     /**
      * @param {GamepadEvent} gamepadEvent
      */
     disconnecthandler(gamepadEvent) {
-        let gamepad = gamepadEvent.gamepad;
-        delete this._controllers[gamepad.index];
+        delete this._controllers[gamepadEvent.gamepad.index];
     }
 
     /**

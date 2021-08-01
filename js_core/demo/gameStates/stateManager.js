@@ -5,8 +5,8 @@ class StateManager {
      * @param {HTMLCanvasElement} canvas
      */
     constructor(gameObjectManager, renderer, canvas) {
-        this._keyboardManager = new KeyboardInputManager(this);
-        this._gamepadManager = new GamepadInputManager(this);
+        this._keyboardManager = new KeyboardInputManager();
+        this._gamepadManager = new GamepadInputManager();
         this._mouseManager = new MouseInputManager(canvas, renderer);
         this._objectManager = gameObjectManager;
         /** @type {AbstractState} */
@@ -27,7 +27,7 @@ class StateManager {
         this._activeState.updateState(delta);
 
         if (this._activeState.goToNextState()) {
-            let nextState = this._activeState.getNextState();
+            const nextState = this._activeState.getNextState();
             this._activeState.finish();
 
             switch (nextState) {
@@ -48,7 +48,7 @@ class StateManager {
     }
 
     /**
-     * @param action, see InputActions
+     * @param action, see GameInputActions
      * @param {*} [options]
      */
     fireInputAction(action, options) {
@@ -56,14 +56,14 @@ class StateManager {
     }
 
     createGameState() {
-        return new GameState(this._objectManager, this);
+        return new GameState(this._objectManager);
     }
 
     createStartMenuGameState() {
-        return new StartMenuState(this._objectManager, this);
+        return new StartMenuState(this._objectManager);
     }
 
     createReplayMenuGameState() {
-        return new ReplayMenuState(this._objectManager, this);
+        return new ReplayMenuState(this._objectManager);
     }
 }

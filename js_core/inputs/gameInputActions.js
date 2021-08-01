@@ -1,4 +1,4 @@
-const InputActions = Object.freeze({
+const GameInputActions = Object.freeze({
     RETURN: Symbol("return"),
     ACTION:   Symbol("action"),
     ACTION_HOLD:   Symbol("actionhold"),

@@ -17,29 +17,29 @@ class KeyboardInputManager extends AbstractInputManager {
         super();
         this._hasNewInput = false;
         this._states = new KeyboardStatus();
-        const _self = this;//closure context
+        const self = this;//closure context
 
         window.onkeydown = function (keyEvent) {
             switch (keyEvent.key) {
                 case "ArrowLeft":
-                    _self._states.leftButtonClicked = !_self._states.leftButtonDown;
-                    _self._states.leftButtonDown = true;
-                    _self._hasNewInput = true;
+                    self._states.leftButtonClicked = !self._states.leftButtonDown;
+                    self._states.leftButtonDown = true;
+                    self._hasNewInput = true;
                     break;
                 case "ArrowRight":
-                    _self._states.rightButtonClicked = !_self._states.rightButtonDown;
-                    _self._states.rightButtonDown = true;
-                    _self._hasNewInput = true;
+                    self._states.rightButtonClicked = !self._states.rightButtonDown;
+                    self._states.rightButtonDown = true;
+                    self._hasNewInput = true;
                     break;
                 case "Enter":
-                    _self._states.actionButtonClicked = !_self._states.actionButtonDown;
-                    _self._states.actionButtonDown = true;
-                    _self._hasNewInput = true;
+                    self._states.actionButtonClicked = !self._states.actionButtonDown;
+                    self._states.actionButtonDown = true;
+                    self._hasNewInput = true;
                     break;
                 case "Escape":
-                    _self._states.returnButtonClicked = !_self._states.returnButtonDown;
-                    _self._states.returnButtonDown = true;
-                    _self._hasNewInput = true;
+                    self._states.returnButtonClicked = !self._states.returnButtonDown;
+                    self._states.returnButtonDown = true;
+                    self._hasNewInput = true;
                     break;
                 default:
             }
@@ -48,20 +48,20 @@ class KeyboardInputManager extends AbstractInputManager {
         window.onkeyup = function (keyEvent) {
             switch (keyEvent.key) {
                 case "ArrowLeft":
-                    _self._states.leftButtonDown = false;
-                    _self._hasNewInput = true;
+                    self._states.leftButtonDown = false;
+                    self._hasNewInput = true;
                     break;
                 case "ArrowRight":
-                    _self._states.rightButtonDown = false;
-                    _self._hasNewInput = true;
+                    self._states.rightButtonDown = false;
+                    self._hasNewInput = true;
                     break;
                 case "Enter":
-                    _self._states.actionButtonDown = false;
-                    _self._hasNewInput = true;
+                    self._states.actionButtonDown = false;
+                    self._hasNewInput = true;
                     break;
                 case "Escape":
-                    _self._states.returnButtonDown = false;
-                    _self._hasNewInput = true;
+                    self._states.returnButtonDown = false;
+                    self._hasNewInput = true;
                     break;
                 default:
             }
@@ -74,24 +74,24 @@ class KeyboardInputManager extends AbstractInputManager {
      */
     updateStates(stateManager) {
         if (this._states.leftButtonClicked) {
-            stateManager.fireInputAction(InputActions.LEFT);
+            stateManager.fireInputAction(GameInputActions.LEFT);
             this._states.leftButtonClicked = false;
         }
         if (this._states.rightButtonClicked) {
-            stateManager.fireInputAction(InputActions.RIGHT);
+            stateManager.fireInputAction(GameInputActions.RIGHT);
             this._states.rightButtonClicked = false;
         }
         if (this._states.actionButtonClicked) {
-            stateManager.fireInputAction(InputActions.ACTION);
+            stateManager.fireInputAction(GameInputActions.ACTION);
             this._states.actionButtonClicked = false;
         }
         if (this._states.returnButtonClicked) {
-            stateManager.fireInputAction(InputActions.RETURN);
+            stateManager.fireInputAction(GameInputActions.RETURN);
             this._states.returnButtonClicked = false;
         }
-        if (this._states.leftButtonDown && !this._states.rightButtonDown) stateManager.fireInputAction(InputActions.LEFT_HOLD);
-        if (this._states.rightButtonDown && !this._states.leftButtonDown) stateManager.fireInputAction(InputActions.RIGHT_HOLD);
-        if(this._states.actionButtonDown) stateManager.fireInputAction(InputActions.ACTION_HOLD);
+        if (this._states.leftButtonDown && !this._states.rightButtonDown) stateManager.fireInputAction(GameInputActions.LEFT_HOLD);
+        if (this._states.rightButtonDown && !this._states.leftButtonDown) stateManager.fireInputAction(GameInputActions.RIGHT_HOLD);
+        if(this._states.actionButtonDown) stateManager.fireInputAction(GameInputActions.ACTION_HOLD);
     }
 
     /**

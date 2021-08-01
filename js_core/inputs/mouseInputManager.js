@@ -5,7 +5,7 @@ class MouseInputManager extends AbstractInputManager {
      */
     constructor(canvas, renderer) {
         super();
-        const _self = this;
+        const self = this;
         this.mouseMoved = this.mouseMoved.bind(this);
         this.mouseDown = this.mouseDown.bind(this);
         this.mouseUp = this.mouseUp.bind(this);
@@ -20,13 +20,13 @@ class MouseInputManager extends AbstractInputManager {
         this._mouseButtonDown = false;
         this._mouseButtonClicked = false;
 
-        canvas.addEventListener("mousemove", _self.mouseMoved);
-        canvas.addEventListener("mousedown", _self.mouseDown);
-        canvas.addEventListener("mouseup", _self.mouseUp);
+        canvas.addEventListener("mousemove", self.mouseMoved);
+        canvas.addEventListener("mousedown", self.mouseDown);
+        canvas.addEventListener("mouseup", self.mouseUp);
 
-        canvas.addEventListener("touchmove", _self.touchMoved);
-        canvas.addEventListener("touchstart", _self.touchStart);
-        canvas.addEventListener("touchend", _self.mouseUp);
+        canvas.addEventListener("touchmove", self.touchMoved, {'passive': false});
+        canvas.addEventListener("touchstart", self.touchStart, {'passive': false});
+        canvas.addEventListener("touchend", self.mouseUp);
     }
 
     updateStates(stateManager) {
@@ -36,10 +36,10 @@ class MouseInputManager extends AbstractInputManager {
         let y = this._mousePos.y / this._canvas.height;
         y = -(y * 2 - 1);
         y = Math.round(y * this._renderer.getVirtualViewPortSize().y / 2);
-        stateManager.fireInputAction(InputActions.CURSOR_AT, [x, y]);
+        stateManager.fireInputAction(GameInputActions.CURSOR_AT, [x, y]);
 
         if (this._mouseButtonClicked) {
-            stateManager.fireInputAction(InputActions.CLICK_AT, [x, y]);
+            stateManager.fireInputAction(GameInputActions.CLICK_AT, [x, y]);
             this._mouseButtonClicked = false;
         }
     }

@@ -1,13 +1,14 @@
 class ReplayMenuState extends AbstractState {
-    constructor(objectManager, gameStateManager) {
-        super(gameStateManager);
+    constructor(objectManager) {
+        super();
 
         this._slideIn = true;
         this._slideInState = 0;
         this._slideOut = false;
         this._slideOutState = 1.0;
+        this._goToNextState = false;
 
-        this._menuSpriteAnimationState = 0.;
+        this._menuSpriteAnimationState = 0;
         this._canvasDim = objectManager.getSpaceCraft()._canvasDim.clone();
 
         this._replaySprite = objectManager.getReplayMenuSprite();
@@ -28,7 +29,7 @@ class ReplayMenuState extends AbstractState {
     }
 
     fireInputAction(action, options) {
-        if (!this._slideIn && (action === InputActions.ACTION || action === InputActions.CLICK_AT)){
+        if (!this._slideIn && (action === GameInputActions.ACTION || action === GameInputActions.CLICK_AT)){
             this._slideOut = true;
         }
     }
@@ -55,7 +56,7 @@ class ReplayMenuState extends AbstractState {
             this._slideIn = false;
             this._slideInState = 1;
         }
-        let slideIn = this._canvasDim.y * slideFactor;
+        const slideIn = this._canvasDim.y * slideFactor;
         this._translucentOverlay.setOpacity(this._slideInState);
         this._replaySprite.getRenderPosition().moveUp(slideIn);
     }
@@ -64,12 +65,12 @@ class ReplayMenuState extends AbstractState {
     slideOut(delta) {
         this._slideOutState -= delta;
         let slideOutFactor = delta;
-        if (this._slideOutState <= 0.) {
+        if (this._slideOutState <= 0) {
             slideOutFactor += this._slideOutState;
             this._slideOut = false;
             this._goToNextState = true;
         }
-        let slideOut = this._canvasDim.y * slideOutFactor;
+        const slideOut = this._canvasDim.y * slideOutFactor;
         this._replaySprite.getRenderPosition().moveDown(slideOut);
         this._scoreCounter.getReferencePosition().moveLeft(slideOut);
     }
@@ -84,15 +85,19 @@ class ReplayMenuState extends AbstractState {
 
     animateMenuSprite(delta) {
         this._menuSpriteAnimationState += delta;
-        if (this._menuSpriteAnimationState >= 2.) {
+        if (this._menuSpriteAnimationState >= 2) {
             this._menuSpriteAnimationState = 0;
         }
-        let animFrame = Math.floor(this._menuSpriteAnimationState);
+        const animFrame = Math.floor(this._menuSpriteAnimationState);
         this._replaySprite.setTextureLayer(animFrame);
     }
 
     finish() {
         this._replaySprite.setVisible(false);
         this._translucentOverlay.setVisible(false);
+    }
+
+    goToNextState() {
+        return this._goToNextState;
     }
 }

@@ -1,10 +1,11 @@
 class GameState extends AbstractState {
-    constructor(objectManager, gameStateManager) {
-        super(gameStateManager);
+    constructor(objectManager) {
+        super();
         this._physicStuffManager = new CollisionManager(objectManager, this);
         this._canvasDim = objectManager.getSpaceCraft()._canvasDim.clone();
         this._slideIn = true;
         this._slideInState = 0;
+        this._goToNextState = false;
 
         this._aliensSprites = objectManager.getAliens();
         this._aliensSprites.setVisible(true);
@@ -49,29 +50,31 @@ class GameState extends AbstractState {
 
     fireInputAction(action, options) {
         switch (action) {
-            case InputActions.LEFT_HOLD:
+            case GameInputActions.LEFT_HOLD:
                 this._moveLeft = true;
                 this._moveRight = false;
                 this._moveToCursor = false;
                 break;
-            case InputActions.RIGHT_HOLD:
+            case GameInputActions.RIGHT_HOLD:
                 this._moveRight = true;
                 this._moveLeft = false;
                 this._moveToCursor = false;
                 break;
-            case InputActions.CURSOR_AT:
+            case GameInputActions.CURSOR_AT:
                 this.moveTo(options);
                 break;
-            case InputActions.CLICK_AT:
+            case GameInputActions.CLICK_AT:
                 this.moveTo(options);
                 this.firePlayerMissile();
                 break;
-            case InputActions.ACTION:
-            case InputActions.ACTION_HOLD:
+            case GameInputActions.ACTION:
+            case GameInputActions.ACTION_HOLD:
                 this.firePlayerMissile();
                 break;
-            case InputActions.RETURN:
+            case GameInputActions.RETURN:
                 this._goToNextState = true;
+                break;
+            default:
                 break;
         }
     }
@@ -135,7 +138,7 @@ class GameState extends AbstractState {
             this._slideIn = false;
             this._slideInState = 1;
         }
-        let slideIn = this._guiShift * slideFactor;
+        const slideIn = this._guiShift * slideFactor;
         this._scoreCounter.getReferencePosition().moveRight(slideIn);
         this._lifeCounter.getReferencePosition().moveLeft(slideIn);
     }
@@ -149,11 +152,11 @@ class GameState extends AbstractState {
     }
 
     spawnAliens() {
-        let relativeThreat = this._aliensSprites.getInstances().length;
+        const relativeThreat = this._aliensSprites.getInstances().length;
         if (relativeThreat < this._difficulty) {
             let alienType = Math.floor(Math.random() * this._aliensSprites.getImageCount());
             if(alienType === this._aliensSprites.getImageCount()) alienType--;
-            let alien = this._aliensSprites.createNewInstance();
+            const alien = this._aliensSprites.createNewInstance();
             this._aliensSprites.addInstance(alien);
             this.setRandomSpawnPosition(alien);
             alien.translationSpeed.y = -100;
@@ -163,11 +166,11 @@ class GameState extends AbstractState {
     }
 
     spawnMissiles() {
-        let relativeThreat = this._aliensMissilesSprites.getInstances().length;
+        const relativeThreat = this._aliensMissilesSprites.getInstances().length;
         if (relativeThreat < this._difficulty &&  this._aliensSprites.getInstances().length > 0) {
-            let alien = this.getRandomAlien();
+            const alien = this.getRandomAlien();
 
-            let missile = this._aliensMissilesSprites.createNewInstance();
+            const missile = this._aliensMissilesSprites.createNewInstance();
             this._aliensMissilesSprites.addInstance(missile);
             missile.position = alien.position.clone();
             missile.radius = 0; //smaller hit chance
@@ -176,8 +179,8 @@ class GameState extends AbstractState {
     }
 
     getRandomAlien(){
-        let nbAlien = this._aliensSprites.getInstances().length;
-        let i = Math.round(Math.random() * (nbAlien - 1));
+        const nbAlien = this._aliensSprites.getInstances().length;
+        const i = Math.round(Math.random() * (nbAlien - 1));
         return this._aliensSprites.getInstances()[i];
     }
 
@@ -194,7 +197,7 @@ class GameState extends AbstractState {
     moveCraft(delta) {
         const distance = this._moveToOrigin - this._moveToDestination;
         if (this._moveToCursor) {
-            let direction = distance > 0;
+            const direction = distance > 0;
             this._moveLeft = direction;
             this._moveRight = !direction;
         }
@@ -215,11 +218,15 @@ class GameState extends AbstractState {
 
     firePlayerMissile() {
         if (this._timeSinceLastPlayerMissile < this._deltaBetweenPlayerCanFire) return;
-        let missile = this._playerMissilesSprites.createNewInstance();
+        const missile = this._playerMissilesSprites.createNewInstance();
         this._playerMissilesSprites.addInstance(missile);
         missile.position = this._spaceCraft.getEntityProperties().position.clone();
         missile.radius = 0; //smaller hit chance
         missile.translationSpeed.y = 500;
         this._timeSinceLastPlayerMissile = 0;
+    }
+
+    goToNextState() {
+        return this._goToNextState;
     }
 }

@@ -1,7 +1,7 @@
 class StartMenuState extends AbstractState {
-    constructor(objectManager, gameStateManager) {
-        super(gameStateManager);
-
+    constructor(objectManager) {
+        super();
+        this._goToNextState = false;
         this._slideIn = true;
         this._slideInState = 0;
 
@@ -38,14 +38,14 @@ class StartMenuState extends AbstractState {
 
     fireInputAction(action, options) {
         switch (action) {
-            case InputActions.CURSOR_AT:
+            case GameInputActions.CURSOR_AT:
                 this.selectMenuWithCursor(options);
                 break;
-            case InputActions.CLICK_AT:
+            case GameInputActions.CLICK_AT:
                 this.selectMenuWithCursor(options);
-                this.fireInputAction(InputActions.ACTION);
+                this.fireInputAction(GameInputActions.ACTION);
                 break;
-            case InputActions.ACTION:
+            case GameInputActions.ACTION:
                 if (this._selectedMenu !== this._selectedNone) {
                     this._startSlideOut = true;
                 }
@@ -73,11 +73,11 @@ class StartMenuState extends AbstractState {
 
     updateMenuAnimation(delta) {
         this._growingAnimationState += 2 * delta;
-        if (this._growingAnimationState >= 3.14) {
+        if (this._growingAnimationState >= Math.PI) {
             this._growingAnimationState = 0.0;
         }
-        let grow = 1.0 + 0.1 * Math.sin(this._growingAnimationState);
-        let selectedMenu = this.getSelectedMenuSprite();
+        const grow = 1.0 + 0.1 * Math.sin(this._growingAnimationState);
+        const selectedMenu = this.getSelectedMenuSprite();
         if(selectedMenu != null) selectedMenu.setScale(grow, grow);
     }
 
@@ -106,7 +106,7 @@ class StartMenuState extends AbstractState {
             this._slideIn = false;
             this._slideInState = 1;
         }
-        let slideIn = this._canvasDim.y * slideFactor;
+        const slideIn = this._canvasDim.y * slideFactor;
         this._pressToPlayButton.getRenderPosition().moveRight(slideIn);
         this._logoTitleSprite.getRenderPosition().moveDown(slideIn);
     }
@@ -118,7 +118,7 @@ class StartMenuState extends AbstractState {
             slideOutFactor += this._slideOutState;
             this._goToNextState = true;
         }
-        let slideOut = this._canvasDim.y * slideOutFactor;
+        const slideOut = this._canvasDim.y * slideOutFactor;
         this._translucentOverlay.setOpacity(this._slideOutState);
         this._pressToPlayButton.getRenderPosition().moveLeft(slideOut);
         this._logoTitleSprite.getRenderPosition().moveUp(slideOut);
@@ -139,5 +139,9 @@ class StartMenuState extends AbstractState {
         } else {
             this.setSelectedMenu(this._selectedNone);
         }
+    }
+
+    goToNextState() {
+        return this._goToNextState;
     }
 }
