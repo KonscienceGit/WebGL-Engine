@@ -95,6 +95,7 @@ class KeyboardInputManager extends AbstractInputManager {
     }
 
     /**
+     * @deprecated
      * @returns {boolean} true if a new input has been detected while parsing.
      */
     parseInputs() {

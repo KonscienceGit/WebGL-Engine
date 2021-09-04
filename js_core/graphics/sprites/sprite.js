@@ -7,7 +7,7 @@ class Sprite {
     /**
      * @param {Renderer} renderer
      * @param {String} imageFolder
-     * @param {String[]} imagesNames the array of images names to load in the sprites. Can contain only 1 image name.
+     * @param {String[]} imagesNames the array of images names to load in the sprites. Can contain only 1 image _name.
      */
     constructor(renderer, imageFolder, imagesNames) {
         let gl = renderer.getGL();

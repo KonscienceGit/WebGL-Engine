@@ -44,6 +44,10 @@ class MouseInputManager extends AbstractInputManager {
         }
     }
 
+    /**
+     * @deprecated
+     * @return {boolean}
+     */
     parseInputs() {
         //keyboard input parsing is done on the events.
         const hasNewInput = this._hasNewInput;

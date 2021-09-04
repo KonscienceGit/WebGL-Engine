@@ -16,16 +16,17 @@ class GamePadKeyStatus {
 class GamepadInputManager extends AbstractInputManager {
     constructor() {
         super();
-        this._axisDeadZone = 0.4;
-        const haveEvents = 'GamepadEvent' in window;
-        const haveWebkitEvents = 'WebKitGamepadEvent' in window;
-
-        this.connecthandler = this.connecthandler.bind(this);
-        this.disconnecthandler = this.disconnecthandler.bind(this);
-
-        this._controllers = [];
+        // TODO deprecateds
         this._controllerKeyStatuses = [];
         this._activePadIndex = 0;
+        this._axisDeadZone = 0.4;
+
+
+        const haveEvents = 'GamepadEvent' in window;
+        const haveWebkitEvents = 'WebKitGamepadEvent' in window;
+        this.connecthandler = this.connecthandler.bind(this);
+        this.disconnecthandler = this.disconnecthandler.bind(this);
+        this._controllers = [];
 
         if (haveEvents) {
             window.addEventListener("gamepadconnected", this.connecthandler);
@@ -36,6 +37,50 @@ class GamepadInputManager extends AbstractInputManager {
         }
     }
 
+    /**
+     * @param {GamepadInputIdentifier} controllerIdentifer
+     * @return {AbstractInput}
+     */
+    createControllerInput(controllerIdentifer){
+        if(controllerIdentifer.getInputType() === GAMEPAD_BUTTON){
+            return new GamepadButton(this, controllerIdentifer.getType(), controllerIdentifer.getInputNumber());
+        } else {
+            // TODO make GamepadAxis
+            return null;
+        }
+    }
+
+    /**
+     * @param {String} controllerType
+     * @return {null|Gamepad}
+     */
+    getControllerByType(controllerType){
+        this.scangamepads();
+        for (let i = 0; i < this._controllers.length; i++){
+            if (this._controllers[i].id.toLowerCase().includes(controllerType.toLowerCase())){
+                return this._controllers[i];
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @return {null|Gamepad}
+     */
+    getController(){
+        this.scangamepads();
+        for (let i = 0; i < this._controllers.length; i++){
+            if (this._controllers[i]){
+                return this._controllers[i];
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @deprecated
+     * @return {boolean}
+     */
     parseInputs() {
         super.parseInputs();
         this.scangamepads();
@@ -51,6 +96,10 @@ class GamepadInputManager extends AbstractInputManager {
         return hasNewInput;
     }
 
+    /**
+     * @deprecated
+     * @param stateManager
+     */
     updateStates(stateManager) {
         super.updateStates(stateManager);
 
@@ -78,6 +127,20 @@ class GamepadInputManager extends AbstractInputManager {
     }
 
     scangamepads() {
+        const time = performance.now();
+        let skipScan = true;
+        if (this._timeLastScan) {
+            const timeSinceLastScan = time - this._timeLastScan;
+            // TODO put back to 1000 ms
+            if(timeSinceLastScan > 10) {
+                skipScan = false;
+                this._timeLastScan = time;
+            }
+        } else {
+            this._timeLastScan = time;
+        }
+        if(skipScan) return;
+
         const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
         for (let i = 0; i < gamepads.length; i++) {
             if (gamepads[i] && (gamepads[i].index in this._controllers)) {
@@ -87,6 +150,7 @@ class GamepadInputManager extends AbstractInputManager {
     }
 
     /**
+     * @deprecated
      * @param {Gamepad} gamepad
      * @returns {boolean}
      */

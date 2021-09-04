@@ -1,54 +1,82 @@
 class GameState extends AbstractState {
     constructor(objectManager) {
         super();
+        this._gameOverState = null;
+        this._escapeState = null;
         this._physicStuffManager = new CollisionManager(objectManager, this);
-        this._canvasDim = objectManager.getSpaceCraft()._canvasDim.clone();
-        this._slideIn = true;
-        this._slideInState = 0;
-        this._goToNextState = false;
 
         this._aliensSprites = objectManager.getAliens();
-        this._aliensSprites.setVisible(true);
         this._aliensMissilesSprites = objectManager.getAliensMissiles();
-        this._aliensMissilesSprites.setVisible(true);
         this._playerMissilesSprites = objectManager.getPlayerMissiles();
-        this._playerMissilesSprites.setVisible(true);
-
-        this._XSpawnMargin = 100 + this._aliensSprites.getEntityProperties().renderSizeXY.x / 2;
-        this._XSpawnRange = this._canvasDim.x - 2 * this._XSpawnMargin;
-
         this._spaceCraft = objectManager.getSpaceCraft();
-        this._spaceCraft.setVisible(true);
-        this._spaceCraft.setLifeCount(3);
-        this._spaceCraft.resetPosition();
+        this._scoreCounter = objectManager.getScoreCounter();
+        this._lifeCounter = objectManager.getLifeCounter();
 
+        this._canvasDimRef = objectManager.getSpaceCraft()._canvasDim;
+
+        this._deltaBetweenPlayerCanFire = 0.16;
+        this._baseDifficulty = 0.7;
+
+        // Set animations duration
+        this.setAnimateInLength(1.0);
+        this.setAnimateOutLength(0.0);// No animation
+    }
+
+    start(){
         this._moveLeft = false;
         this._moveRight = false;
         this._moveToCursor = false;
         this._moveToOrigin = 0;
         this._moveToDestination = 0;
 
-        this._deltaBetweenPlayerCanFire = 0.16;
+        this._gameOver = false;
+        this._XSpawnMargin = 100 + this._aliensSprites.getEntityProperties().renderSizeXY.x / 2;
+        this._XSpawnRange = this._canvasDimRef.x - 2 * this._XSpawnMargin;
+
+        this._spaceCraft.setLifeCount(3);
+        this._spaceCraft.resetPosition();
+
         this._timeSinceLastPlayerMissile = 0;
-        this._guiShift = this._canvasDim.x / 2;
-        this._scoreCounter = objectManager.getScoreCounter();
+        this._guiShift = this._canvasDimRef.x / 2;
+
+        this._difficulty = this._baseDifficulty;
         this._scoreCounter.setScore(0);
         this._scoreCounter.resetPosition();
         this._scoreCounter.getReferencePosition().moveLeft(this._guiShift);
-        this._scoreCounter.setVisible(true);
-
-        this._lifeCounter = objectManager.getLifeCounter();
-
-        this._baseDifficulty = 0.7;
-        this._difficulty = this._baseDifficulty;
 
         this._lifeCounter.resetPosition();
         this._lifeCounter.setLifeCount(this._spaceCraft.getLifeCount());
         this._lifeCounter.getReferencePosition().moveRight(this._guiShift);
+
+        this._aliensSprites.setVisible(true);
+        this._aliensMissilesSprites.setVisible(true);
+        this._playerMissilesSprites.setVisible(true);
+        this._spaceCraft.setVisible(true);
+        this._scoreCounter.setVisible(true);
         this._lifeCounter.setVisible(true);
     }
 
-    fireInputAction(action, options) {
+    finish() {
+        this._physicStuffManager.release();
+        this._aliensSprites.setVisible(false);
+        this._aliensMissilesSprites.setVisible(false);
+        this._playerMissilesSprites.setVisible(false);
+        this._spaceCraft.setVisible(false);
+        this._scoreCounter.setVisible(this._gameOver);
+        this._lifeCounter.setVisible(false);
+
+        this._scoreCounter.releaseFeedbackInstances();
+    }
+
+    setEscapeState(escapeState){
+        this._escapeState = escapeState;
+    }
+
+    setGameOverState(gameOverState){
+        this._gameOverState = gameOverState;
+    }
+
+    fireInputAction(action, options) {// TODO remove, deprecated
         switch (action) {
             case GameInputActions.LEFT_HOLD:
                 this._moveLeft = true;
@@ -72,7 +100,7 @@ class GameState extends AbstractState {
                 this.firePlayerMissile();
                 break;
             case GameInputActions.RETURN:
-                this._goToNextState = true;
+                this.setReadyForNextState();
                 break;
             default:
                 break;
@@ -80,16 +108,14 @@ class GameState extends AbstractState {
     }
 
     getNextState() {
-        return "ReplayMenuState";
+        if(this._gameOver){
+            return this._gameOverState;
+        } else {
+            return this._escapeState;
+        }
     }
 
-    updateState(delta) {
-        super.updateState(delta);
-        if (this._slideIn) {
-            this.slideIn(delta);
-            return;
-        }
-
+    mainLoop(delta) {
         this._timeSinceLastPlayerMissile += delta;
         this.spawnAliens();
         this.spawnMissiles();
@@ -97,7 +123,8 @@ class GameState extends AbstractState {
         this._physicStuffManager.update(delta);
         this._lifeCounter.setLifeCount(this._spaceCraft.getLifeCount());
         if (this._spaceCraft.getLifeCount() <= 0) {
-            this._goToNextState = true;
+            this._gameOver = true;
+            this.setReadyForNextState();
         }
         this.moveCraft(delta);
         this.consumeMovementEvents();
@@ -123,33 +150,18 @@ class GameState extends AbstractState {
     }
 
     //Animate craft and score counter to slide into the game screen
-    // noinspection DuplicatedCode
-    slideIn(delta) {
+    animateIn(delta, animationState) {
         if (this._spaceCraft.getRenderPosition().x > 0) {
             this._spaceCraft.moveAndAnimate(delta, -1);
         } else {
             this._spaceCraft.moveAndAnimate(0, 0);
         }
-
-        this._slideInState += delta;
-        let slideFactor = delta;
-        if (this._slideInState >= 1) {
-            slideFactor -= this._slideInState - 1;
-            this._slideIn = false;
-            this._slideInState = 1;
-        }
-        const slideIn = this._guiShift * slideFactor;
+        const slideIn = this._guiShift * delta;
         this._scoreCounter.getReferencePosition().moveRight(slideIn);
         this._lifeCounter.getReferencePosition().moveLeft(slideIn);
     }
 
-    finish() {
-        super.finish();
-        this._physicStuffManager.release();
-        this._lifeCounter.setVisible(false);
-        this._spaceCraft.setVisible(false);
-        this._scoreCounter.releaseFeedbackInstances();
-    }
+    animateOut(delta, animationState) {/* Nothing to animate */}
 
     spawnAliens() {
         const relativeThreat = this._aliensSprites.getInstances().length;
@@ -186,7 +198,7 @@ class GameState extends AbstractState {
 
     setRandomSpawnPosition(entity) {
         entity.position.x = Math.random() * this._XSpawnRange - this._XSpawnRange / 2;
-        entity.position.y = (this._canvasDim.y + entity.renderSizeXY.y) / 2;
+        entity.position.y = (this._canvasDimRef.y + entity.renderSizeXY.y) / 2;
     }
 
     consumeMovementEvents() {
@@ -224,9 +236,5 @@ class GameState extends AbstractState {
         missile.radius = 0; //smaller hit chance
         missile.translationSpeed.y = 500;
         this._timeSinceLastPlayerMissile = 0;
-    }
-
-    goToNextState() {
-        return this._goToNextState;
     }
 }
