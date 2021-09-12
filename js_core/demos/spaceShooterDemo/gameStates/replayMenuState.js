@@ -1,5 +1,5 @@
 class ReplayMenuState extends AbstractState {
-    constructor(objectManager) {
+    constructor(objectManager, gameBindings) {
         super();
         this._nextState = null;
         this._canvasDimRef = objectManager.getSpaceCraft()._canvasDim;
@@ -12,6 +12,10 @@ class ReplayMenuState extends AbstractState {
         // Set animations duration
         this.setAnimateInLength(1.0);
         this.setAnimateOutLength(1.0);
+
+        // Bind closure context
+        this.selectMenuActionCallback = this.selectMenuActionCallback.bind(this);
+        this.registerBindings(gameBindings);
     }
 
     start(){
@@ -33,12 +37,6 @@ class ReplayMenuState extends AbstractState {
 
     getNextState() {
         return this._nextState;
-    }
-
-    fireInputAction(action, options) {// TODO remove, deprecated
-        if (this.isInMainLoop() && (action === GameInputActions.ACTION || action === GameInputActions.CLICK_AT)){
-            this.setReadyForNextState();
-        }
     }
 
     mainLoop(delta) {
@@ -73,5 +71,17 @@ class ReplayMenuState extends AbstractState {
         }
         const animFrame = Math.floor(this._menuSpriteAnimationState);
         this._replaySprite.setTextureLayer(animFrame);
+    }
+
+    selectMenuActionCallback(){
+        if(this.isInMainLoop()){
+            this.setReadyForNextState();
+        }
+    }
+
+    registerBindings(gameBindings){
+        const self = this;
+        const validateMenuAction = gameBindings.getActionByName(GameInputActions.MENU_VALID_SELECTION);
+        validateMenuAction.addActionCallback(self.selectMenuActionCallback);
     }
 }

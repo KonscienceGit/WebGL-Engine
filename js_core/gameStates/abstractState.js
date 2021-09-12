@@ -167,16 +167,6 @@ class AbstractState {
     }
 
     /**
-     * @deprecated
-     * @abstract
-     * @param action, see GameInputActions
-     * @param {*} options
-     */
-    fireInputAction(action, options){
-        ConsoleUtils.nonImplementedError();
-    }
-
-    /**
      * @abstract
      * Return the next state following this state. One game state can lead to several different states, depending on the context, you can get creative.
      * @returns {AbstractState}

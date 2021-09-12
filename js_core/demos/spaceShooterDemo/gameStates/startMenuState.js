@@ -9,25 +9,18 @@ class StartMenuState extends AbstractState {
         this._pressToPlayButton = objectManager.getPlayButton();
         this._logoTitleSprite = objectManager.getLogoTitle();
         this._translucentOverlay = objectManager.getTranslucentOverlay();
-
         this._canvasDimRef = objectManager.getSpaceCraft()._canvasDim;
-
-        // TODO register new inputs system
-        this._gameBindings = gameBindings;
-
 
         // Bind the closure context
         this.selectMenuActionCallback = this.selectMenuActionCallback.bind(this);
 
-        this.registerBindings();
+        // TODO register new inputs system
+        this.registerBindings(gameBindings);
 
         // Set animations duration
         this.setAnimateInLength(1.0);
         this.setAnimateOutLength(1.0);
     }
-
-    // TODO remove, deprecated
-    fireInputAction(action, options) {}
 
     start(){
         this._growingAnimationState = 0.0;
@@ -59,12 +52,6 @@ class StartMenuState extends AbstractState {
         return this._nextState;
     }
 
-    selectMenuActionCallback(){
-        if(!this.goToNextState()){
-            this.setReadyForNextState();
-        }
-    }
-
     mainLoop(delta) {
         this._growingAnimationState += 2 * delta;
         if (this._growingAnimationState >= Math.PI) {
@@ -87,11 +74,15 @@ class StartMenuState extends AbstractState {
         this._logoTitleSprite.getRenderPosition().moveUp(slideOut);
     }
 
-    registerBindings(){
-        const self = this;
-        const validateMenuAction = this._gameBindings.getActionByName(GameInputActions.MENU_VALID_SELECTION);
-        validateMenuAction.addActionCallback(self.selectMenuActionCallback);
+    selectMenuActionCallback(){
+        if(this.isInMainLoop()){
+            this.setReadyForNextState();
+        }
+    }
 
-        //TODO do all other bindings
+    registerBindings(gameBindings){
+        const self = this;
+        const validateMenuAction = gameBindings.getActionByName(GameInputActions.MENU_VALID_SELECTION);
+        validateMenuAction.addActionCallback(self.selectMenuActionCallback);
     }
 }

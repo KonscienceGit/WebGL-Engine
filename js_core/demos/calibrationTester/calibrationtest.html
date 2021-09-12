@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<!--suppress CssUnusedSymbol -->
+<html lang="en">
+<!-- based on https://luser.github.io/gamepadtest/ -->
+<head>
+    <meta charset="utf-8">
+    <script type="text/javascript" src="calibrationTest.js"></script>
+    <style>
+        .axes {
+            padding-top: 1em;
+        }
+
+        .axisValue {
+            white-space: pre;
+            position: absolute;
+            margin-left: 1em;
+            padding-bottom: 1em;
+        }
+
+        .buttons {
+            margin-left: 1em;
+        }
+
+        .axis {
+            min-width: 200px;
+            margin: 1em;
+            text-align: center;
+        }
+
+        .button {
+            display: inline-block;
+            width: 1em;
+            text-align: center;
+            padding: 1em;
+            border-radius: 20px;
+            border: 1px solid black;
+            background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAAXNSR0IArs4c6QAAAAxJREFUCNdjYPjPAAACAgEAqiqeJwAAAABJRU5ErkJggg==);
+            background-size: 0 0;
+            background-position: 50% 50%;
+            background-repeat: no-repeat;
+        }
+
+        .pressed {
+            border: 1px solid red;
+        }
+
+        .touched::after {
+            content: "touch";
+            display: block;
+            position: absolute;
+            margin-top: -0.2em;
+            margin-left: -0.5em;
+            font-size: 0.8em;
+            opacity: 0.7;
+        }
+    </style>
+    <title></title>
+</head>
+<body>
+<h2 id="start">Press a button on your controller to start</h2>
+</body>
+</html>

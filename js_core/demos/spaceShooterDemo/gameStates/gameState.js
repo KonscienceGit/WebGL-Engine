@@ -1,5 +1,5 @@
 class GameState extends AbstractState {
-    constructor(objectManager) {
+    constructor(objectManager, gameBindings) {
         super();
         this._gameOverState = null;
         this._escapeState = null;
@@ -20,6 +20,15 @@ class GameState extends AbstractState {
         // Set animations duration
         this.setAnimateInLength(1.0);
         this.setAnimateOutLength(0.0);// No animation
+
+        // Bind closure context
+        this.fireShipCallback = this.fireShipCallback.bind(this);
+        this.moveShipLeftCallback = this.moveShipLeftCallback.bind(this);
+        this.moveShipRightCallback = this.moveShipRightCallback.bind(this);
+        this.moveShipToCursorCallback = this.moveShipToCursorCallback.bind(this);
+        this.returnToMainMenuCallback = this.returnToMainMenuCallback.bind(this);
+
+        this.registerBindings(gameBindings);
     }
 
     start(){
@@ -76,36 +85,36 @@ class GameState extends AbstractState {
         this._gameOverState = gameOverState;
     }
 
-    fireInputAction(action, options) {// TODO remove, deprecated
-        switch (action) {
-            case GameInputActions.LEFT_HOLD:
-                this._moveLeft = true;
-                this._moveRight = false;
-                this._moveToCursor = false;
-                break;
-            case GameInputActions.RIGHT_HOLD:
-                this._moveRight = true;
-                this._moveLeft = false;
-                this._moveToCursor = false;
-                break;
-            case GameInputActions.CURSOR_AT:
-                this.moveTo(options);
-                break;
-            case GameInputActions.CLICK_AT:
-                this.moveTo(options);
-                this.firePlayerMissile();
-                break;
-            case GameInputActions.ACTION:
-            case GameInputActions.ACTION_HOLD:
-                this.firePlayerMissile();
-                break;
-            case GameInputActions.RETURN:
-                this.setReadyForNextState();
-                break;
-            default:
-                break;
-        }
-    }
+    // fireInputAction(action, options) {// TODO remove, deprecated
+    //     switch (action) {
+    //         case GameInputActions.LEFT_HOLD:
+    //             this._moveLeft = true;
+    //             this._moveRight = false;
+    //             this._moveToCursor = false;
+    //             break;
+    //         case GameInputActions.RIGHT_HOLD:
+    //             this._moveRight = true;
+    //             this._moveLeft = false;
+    //             this._moveToCursor = false;
+    //             break;
+    //         case GameInputActions.CURSOR_AT:
+    //             this.moveTo(options);
+    //             break;
+    //         case GameInputActions.CLICK_AT:
+    //             this.moveTo(options);
+    //             this.firePlayerMissile();
+    //             break;
+    //         case GameInputActions.ACTION:
+    //         case GameInputActions.ACTION_HOLD:
+    //             this.firePlayerMissile();
+    //             break;
+    //         case GameInputActions.RETURN:
+    //             this.setReadyForNextState();
+    //             break;
+    //         default:
+    //             break;
+    //     }
+    // }
 
     getNextState() {
         if(this._gameOver){
@@ -236,5 +245,60 @@ class GameState extends AbstractState {
         missile.radius = 0; //smaller hit chance
         missile.translationSpeed.y = 500;
         this._timeSinceLastPlayerMissile = 0;
+    }
+
+    fireShipCallback(){
+        if(this.isInMainLoop()){
+            this.firePlayerMissile();
+        }
+    }
+
+    moveShipLeftCallback(){
+        if(this.isInMainLoop()){
+            this._moveLeft = true;
+            this._moveRight = false;
+            this._moveToCursor = false;
+        }
+    }
+
+    moveShipRightCallback(){
+        if(this.isInMainLoop()){
+            this._moveLeft = false;
+            this._moveRight = true;
+            this._moveToCursor = false;
+        }
+    }
+
+    moveShipToCursorCallback(){
+        if(this.isInMainLoop()){
+            // TODO implement mouse cursor binding input
+            this.moveTo(options);
+        }
+    }
+
+    returnToMainMenuCallback(){
+        if(this.isInMainLoop()){
+            this.setReadyForNextState();
+        }
+    }
+
+    registerBindings(gameBindings){
+        const self = this;
+        const fireShip = gameBindings.getActionByName(GameInputActions.SHIP_FIRE);
+        fireShip.addActionCallback(self.fireShipCallback);
+
+        const moveLeft = gameBindings.getActionByName(GameInputActions.SHIP_LEFT);
+        moveLeft.addActionCallback(self.moveShipLeftCallback);
+
+        const moveRight = gameBindings.getActionByName(GameInputActions.SHIP_RIGHT);
+        moveRight.addActionCallback(self.moveShipRightCallback);
+
+        const moveToCursor = gameBindings.getActionByName(GameInputActions.SHIP_TO_CURSOR);
+        moveToCursor.addActionCallback(self.moveShipToCursorCallback);
+
+        const returnToMainMenu = gameBindings.getActionByName(GameInputActions.MENU_RETURN_TO_MAIN);
+        returnToMainMenu.addActionCallback(self.returnToMainMenuCallback);
+
+        //TODO do all other bindings
     }
 }
