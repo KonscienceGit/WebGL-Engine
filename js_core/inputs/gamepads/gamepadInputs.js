@@ -7,19 +7,16 @@ class AbstractGamepadInput extends AbstractInput{
         this._gamepadType = gamepadType;
         this._gamepadManager = gamepadManager;
         this._gamepad = this._gamepadManager.getControllerByType(this._gamepadType);
-        this._haveCorrectGamepad = (this._gamepad != null);
     }
 
     getController(){
-        if(this._gamepad && this._gamepad.connected){
-            return this._gamepad;
+        if(this._gamepad){
+            this._gamepad = this._gamepadManager.getControllerByIndex(this._gamepad.index);
         }
-        this._gamepad = this._gamepadManager.getControllerByType(this._gamepadType);
-
-        if (this._gamepad) {
-            this._haveCorrectGamepad = true;
-        } else {
-            this._haveCorrectGamepad = false;
+        if(!this._gamepad) {
+            this._gamepad = this._gamepadManager.getControllerByType(this._gamepadType);
+        }
+        if(!this._gamepad) {
             this._gamepad = this._gamepadManager.getController();
         }
         return this._gamepad;
@@ -74,7 +71,7 @@ class GamepadAxisInput extends AbstractGamepadInput{
     constructor(gamepadManager, gamepadType, axisNumber) {
         super(gamepadManager, gamepadType);
         this._axisNumber = axisNumber;
-        this._deadZoneRanges = [-1.0, -0.2, 0.2, 1.0];
+        this._customDeadZone = undefined;
     }
 
     getInputValue() {
@@ -86,6 +83,29 @@ class GamepadAxisInput extends AbstractGamepadInput{
             val = axis;
         }
         return val;
+    }
+
+    /**
+     * Compute the calibrated axis value from the given raw value, using the configured deadzone.
+     * @param rawValue the raw axis value, usually from 0 to 1, but can often go outside bounds.
+     * @return {number} the post processed axis value, range from 0.0 to 1.0.
+     */
+    computeCalibratedValue(rawValue){
+        const range = this.getDeadZone();
+        return Math.min(1, Math.max(0, rawValue - range[0]) / (range[1] - range[0]));
+    }
+
+    /** @return {number[]} the deadzones values for this input.
+     * No deadZones is [0.0, 1.0], default is around [0.2, 1.0] */
+    getDeadZone() {
+        return this._customDeadZone? this._customDeadZone: this._gamepadManager.getDefaultDeadZone();
+    }
+
+    /**@param {number} start the value above which input is recognized as different from 0.
+     * @param {number} end the value below which the input is recognized as different from 1. */
+    setCustomDeadZone(start, end){
+        this._customDeadZone[0] = start;
+        this._customDeadZone[1] = end;
     }
 
     isInputPressed() {

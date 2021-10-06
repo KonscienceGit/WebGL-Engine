@@ -8,6 +8,8 @@ class GamepadInputManager extends AbstractInputManager {
         this.connecthandler = this.connecthandler.bind(this);
         this.disconnecthandler = this.disconnecthandler.bind(this);
         this._controllers = [];
+        this._globalDeadZone = [0.2, 1.0];
+        this._lastTime = performance.now();
 
         if (haveEvents) {
             window.addEventListener("gamepadconnected", this.connecthandler);
@@ -20,15 +22,24 @@ class GamepadInputManager extends AbstractInputManager {
 
     /**
      * @param {GamepadInputIdentifier} controllerIdentifer
+     * @param {ActionType} actionType
      * @return {AbstractInput}
      */
-    createControllerInput(controllerIdentifer){
+    createControllerInput(controllerIdentifer, actionType){
+        // Unruly combinations
+        if(controllerIdentifer.getInputType() === GAMEPAD_BUTTON && (
+            actionType === ActionType.POSITION ||
+            actionType === ActionType.THROTTLE
+        )){
+            throw new Error('Error: cannot bind a Button to a ' + actionType + ' action!');
+        }
+
         if(controllerIdentifer.getInputType() === GAMEPAD_BUTTON){
             return new GamepadButtonInput(this, controllerIdentifer.getType(), controllerIdentifer.getInputNumber());
-        } else {
-            // TODO make GamepadAxisInput
-            return null;
+        } else if (controllerIdentifer.getInputType() === GAMEPAD_AXIS) {
+            return new GamepadAxisInput(this, controllerIdentifer.getType(), controllerIdentifer.getInputNumber());
         }
+        throw new Error('Unknown controller identifier!');
     }
 
     /**
@@ -49,49 +60,47 @@ class GamepadInputManager extends AbstractInputManager {
     /**
      * @return {null|Gamepad}
      */
+    getControllerByIndex(index){
+        this.scangamepads();
+        if (this._controllers[index] && this._controllers[index].connected){
+            return this._controllers[index];
+        }
+        return null;
+    }
+
+    /**
+     * @return {null|Gamepad}
+     */
     getController(){
         this.scangamepads();
         for (let i = 0; i < this._controllers.length; i++){
-            if (this._controllers[i]){
+            if (this._controllers[i] && this._controllers[i].connected){
                 return this._controllers[i];
             }
         }
         return null;
     }
 
-    /**
-     * @deprecated
-     * @return {boolean}
-     */
-    parseInputs() {
-        super.parseInputs();
-        return false;
+    /**@param {number} start the value above which input is recognized as different from 0.
+     * @param {number} end the value below which the input is recognized as different from 1. */
+    setDefaultDeadZone(start, end){
+        this._globalDeadZone[0] = start;
+        this._globalDeadZone[1] = end;
     }
 
-    /**
-     * @deprecated
-     * @param stateManager
-     */
-    updateStates(stateManager) {
-        super.updateStates(stateManager);
+    getDefaultDeadZone(){
+        return this._globalDeadZone;
     }
 
     scangamepads() {
-        console.log('scan');
-        const time = performance.now();
-        let skipScan = true;
-        if (this._timeLastScan) {
-            const timeSinceLastScan = time - this._timeLastScan;
-            if(timeSinceLastScan > 1000) {
-                skipScan = false;
-                this._timeLastScan = time;
-            }
-        } else {
-            this._timeLastScan = time;
+        const now = performance.now();
+        const sinceLastTime = now - this._lastTime;
+        if (sinceLastTime > 15){
+            this._lastTime = now;
+            return;
         }
-        if(skipScan) return;
 
-        const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
+        const gamepads = navigator.getGamepads();
         for (let i = 0; i < gamepads.length; i++) {
             if (gamepads[i] && (gamepads[i].index in this._controllers)) {
                 this._controllers[gamepads[i].index] = gamepads[i];
@@ -100,20 +109,10 @@ class GamepadInputManager extends AbstractInputManager {
     }
 
     /**
-     * @deprecated
-     * @param {Gamepad} gamepad
-     * @returns {boolean}
-     */
-    parseGamepadInputs(gamepad) {
-        return false;
-    }
-
-    /**
      * @param {GamepadEvent} gamepadEvent
      */
     connecthandler(gamepadEvent) {
         this._controllers[gamepadEvent.gamepad.index] = gamepadEvent.gamepad;
-        this.parseInputs();
     }
 
     /**

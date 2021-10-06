@@ -34,6 +34,7 @@ class GameState extends AbstractState {
     start(){
         this._moveLeft = false;
         this._moveRight = false;
+        this._userMoveSpeed = 1.0;
         this._moveToCursor = false;
         this._moveToOrigin = 0;
         this._moveToDestination = 0;
@@ -269,10 +270,10 @@ class GameState extends AbstractState {
         }
     }
 
-    moveShipToCursorCallback(){
+    moveShipToCursorCallback(delta, position){
         if(this.isInMainLoop()){
             // TODO implement mouse cursor binding input
-            this.moveTo(options);
+            this.moveTo(position);
         }
     }
 

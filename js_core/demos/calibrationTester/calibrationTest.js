@@ -106,14 +106,12 @@ function updateStatus() {
             const axisValue = axesValues[i];
             const positiveSpace = controller.axes[i] > 0 ? " " : "";
             axisValue.innerHTML = "Axis " + i + ":         " + positiveSpace + controller.axes[i].toFixed(2);
-
         }
     }
     rAF(updateStatus);
 }
 
 function scangamepads() {
-    console.log('scan');
     const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
     for (let i = 0; i < gamepads.length; i++) {
         if (gamepads[i] && (gamepads[i].index in controllers)) {

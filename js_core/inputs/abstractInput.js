@@ -5,8 +5,8 @@ const InputType = Object.freeze({
 
     // Button Analog is an Xinput specificity, goes from 0 to 1 similar to axis
     // Can have in-between values between 0 and 1
-    // Can have deadzones
-    // Can have a touched and pressed state
+    // Can have deadzones.
+    // Can have a touched and pressed state.
     BUTTON_ANALOG: "Button Analog",
 
     // Axis go from 0 to 1 (output is always positive)
@@ -37,8 +37,7 @@ const InputType = Object.freeze({
 });
 
 class AbstractInput {
-    constructor() {
-    }
+    constructor() {}
 
     /**
      * @abstract

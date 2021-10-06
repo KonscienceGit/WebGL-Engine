@@ -3,8 +3,12 @@ const ActionType = Object.freeze({
     BUTTON: "Button",
 
     // Axis action goes from 0 to 1
-    // Can have an inactive/default position (stick) or not (throttle)
-    Axis: "Axis",
+    // Have an inactive/default position (stick)
+    AXIS: "Axis",
+
+    // Throttle action goes from 0 to 1
+    // Have no inactive/default position
+    THROTTLE: "Throttle",
 
     // Position is a screen relative [x,y] coordinates
     // Can have several status (dragged, click, release etc...)
@@ -22,10 +26,16 @@ class AbstractInputAction{
         this._name = name;
         this._bindedInputs = [];
         this._actionCallbacks = [];
+        this._type = "";
     }
 
     getName(){
         return this._name;
+    }
+
+    /** @return {ActionType} */
+    getType(){
+        return this._type;
     }
 
     /** @param {AbstractInput} input */
@@ -66,6 +76,7 @@ class ButtonInputAction extends AbstractInputAction{
         super(name);
         this._wasPressed = false;
         this._onClick = actionOnClick ? actionOnClick : false;
+        this._type = ActionType.BUTTON;
     }
 
     parseInputs(delta) {
@@ -77,9 +88,54 @@ class ButtonInputAction extends AbstractInputAction{
                 break;
             }
         }
-        if(isPressed && (!this._onClick || !this._wasPressed)){
+        if(isPressed && !(this._onClick && this._wasPressed)){
             this.getActionCallbacks().forEach(buttonCallback => buttonCallback(delta));
         }
         this._wasPressed = isPressed;
     }
 }
+
+class AxisInputAction extends AbstractInputAction{
+    /**
+     * @param {string} name the input action name.
+     */
+    constructor(name) {
+        super(name);
+        this._type = ActionType.AXIS;
+    }
+
+    parseInputs(delta) {
+        let val = 0;
+        const inputs = this.getBindedInputs();
+        for (let i = 0; i < inputs.length; i++) {
+            const tmp = inputs[i].getInputValue();
+            if(tmp > val) val = tmp;
+        }
+        if(val > 0){
+            this.getActionCallbacks().forEach(axisCallback => axisCallback(delta, val));
+        }
+    }
+}
+
+// TODO
+// class PositionInputAction extends AbstractInputAction{
+//     constructor(name, actionOnClick) {
+//         super(name);
+//         this._type = ActionType.AXIS;
+//     }
+//
+//     /**
+//      * @param delta
+//      */
+//     parseInputs(delta) {
+//         let val = 0;
+//         const inputs = this.getBindedInputs();
+//         for (let i = 0; i < inputs.length; i++) {
+//             const tmp = inputs[i].getInputValue();
+//             if(tmp > val) val = tmp;
+//         }
+//         if(val > 0){
+//             this.getActionCallbacks().forEach(axisCallback => axisCallback(delta, val));
+//         }
+//     }
+// }
