@@ -22,13 +22,41 @@ function main() {
         renderGameFrame(0);
     }
 
+    // Profiling stuff
+    const benchmarkCodeSection = false;
+    let timestart = 0;
+    let timeTotal = 0;
+    let frame = 0;
+    let sumOver120Frames = 0;
+
     /**
      * @param {number} timeStamp
      */
     function renderGameFrame(timeStamp) {
         const deltaTime = computeDelta(timeStamp);
 
+        if (benchmarkCodeSection){
+            timestart = performance.now();
+        }
+
         gameBindings.parseBindings(deltaTime);
+
+        if (benchmarkCodeSection){
+            const timeSpend = performance.now() - timestart;
+            frame++;
+            sumOver120Frames += timeSpend;
+            timeTotal += timeSpend;
+
+            if (frame >= 120){
+                frame = 0;
+                const average = sumOver120Frames / 120;
+                sumOver120Frames = 0;
+                console.log('average time per frame on inputs: ' + average + ' ms');
+                console.log('total time on inputs: ' + timeTotal + ' ms');
+            }
+        }
+
+
         gameStateManager.updateCurrentState(deltaTime);
         updateSprites(spriteArray, deltaTime);
         renderer.draw(spriteArray);

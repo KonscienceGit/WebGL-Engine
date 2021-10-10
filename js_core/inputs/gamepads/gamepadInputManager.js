@@ -37,7 +37,7 @@ class GamepadInputManager extends AbstractInputManager {
         if(controllerIdentifer.getInputType() === GAMEPAD_BUTTON){
             return new GamepadButtonInput(this, controllerIdentifer.getType(), controllerIdentifer.getInputNumber());
         } else if (controllerIdentifer.getInputType() === GAMEPAD_AXIS) {
-            return new GamepadAxisInput(this, controllerIdentifer.getType(), controllerIdentifer.getInputNumber());
+            return new GamepadAxisInput(this, controllerIdentifer.getType(), controllerIdentifer.getInputNumber(), controllerIdentifer.getAxisDirection());
         }
         throw new Error('Unknown controller identifier!');
     }

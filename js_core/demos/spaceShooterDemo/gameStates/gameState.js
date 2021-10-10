@@ -32,9 +32,8 @@ class GameState extends AbstractState {
     }
 
     start(){
-        this._moveLeft = false;
-        this._moveRight = false;
-        this._userMoveSpeed = 1.0;
+        this._moveLeft = 0.;
+        this._moveRight = 0.;
         this._moveToCursor = false;
         this._moveToOrigin = 0;
         this._moveToDestination = 0;
@@ -142,10 +141,10 @@ class GameState extends AbstractState {
     }
 
     craftDirection() {
-        if (this._moveLeft) {
-            return -1;
-        } else if (this._moveRight) {
-            return 1;
+        if (this._moveLeft > this._moveRight) {
+            return -this._moveLeft;
+        } else if (this._moveLeft < this._moveRight) {
+            return this._moveRight;
         } else {
             return 0;
         }
@@ -212,16 +211,20 @@ class GameState extends AbstractState {
     }
 
     consumeMovementEvents() {
-        this._moveRight = false;
-        this._moveLeft = false;
+        this._moveRight = 0.;
+        this._moveLeft = 0.;
     }
 
     moveCraft(delta) {
         const distance = this._moveToOrigin - this._moveToDestination;
         if (this._moveToCursor) {
-            const direction = distance > 0;
-            this._moveLeft = direction;
-            this._moveRight = !direction;
+            this._moveLeft = 0.;
+            this._moveRight = 0.;
+            if (distance >= 1.){
+                this._moveLeft = 1.;
+            } else if (distance <= -1.) {
+                this._moveRight = 1.;
+            }
         }
 
         this._spaceCraft.updateSpaceCraft(delta, this.craftDirection());
@@ -231,8 +234,8 @@ class GameState extends AbstractState {
             const newDistance = this._moveToOrigin - this._moveToDestination;
             if (Math.abs(newDistance) < 1 || (distance * newDistance) < 0) {
                 this._spaceCraft.getEntityProperties().position.x = this._moveToDestination;
-                this._moveLeft = false;
-                this._moveRight = false;
+                this._moveLeft = 0.;
+                this._moveRight = 0.;
                 this._moveToCursor = false;
             }
         }
@@ -248,37 +251,35 @@ class GameState extends AbstractState {
         this._timeSinceLastPlayerMissile = 0;
     }
 
-    fireShipCallback(){
-        if(this.isInMainLoop()){
+    fireShipCallback(value){
+        if(this.isInMainLoop() && value > 0){
             this.firePlayerMissile();
         }
     }
 
-    moveShipLeftCallback(){
+    moveShipLeftCallback(value){
         if(this.isInMainLoop()){
-            this._moveLeft = true;
-            this._moveRight = false;
-            this._moveToCursor = false;
+            this._moveLeft = value;
         }
+        this._moveToCursor = false;
     }
 
-    moveShipRightCallback(){
+    moveShipRightCallback(value){
         if(this.isInMainLoop()){
-            this._moveLeft = false;
-            this._moveRight = true;
-            this._moveToCursor = false;
+            this._moveRight = value;
         }
+        this._moveToCursor = false;
     }
 
-    moveShipToCursorCallback(delta, position){
+    moveShipToCursorCallback(position){
         if(this.isInMainLoop()){
             // TODO implement mouse cursor binding input
             this.moveTo(position);
         }
     }
 
-    returnToMainMenuCallback(){
-        if(this.isInMainLoop()){
+    returnToMainMenuCallback(value){
+        if(this.isInMainLoop() && value > 0){
             this.setReadyForNextState();
         }
     }

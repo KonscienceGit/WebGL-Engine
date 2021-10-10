@@ -1,25 +1,25 @@
 const GAMEPAD_BUTTON = "BUTTON";
 const GAMEPAD_AXIS = "AXIS";
 const XBOX_GAMEPAD = "Xbox";
-const AXIS_POSITIVE_RANGE = 1;
-const AXIS_NEGATIVE_RANGE = -1;
 
 class GamepadInputIdentifier{
     /**
      * @param gamepadType
      * @param inputType
      * @param inputNumber
-     * @param {boolean} [axisDirection] true if
+     * @param {number} [axisDirection] 1 if positive part of axis, -1 if negative part.
      */
     constructor(gamepadType, inputType, inputNumber, axisDirection) {
         this.gamepadType = gamepadType;
         this.inputType = inputType;
         this.inputNumber = inputNumber;
+        this.axisDirection = axisDirection ? axisDirection : 1;
     }
 
     getType(){return this.gamepadType;}
     getInputType(){return this.inputType;}
     getInputNumber(){return this.inputNumber;}
+    getAxisDirection(){return this.axisDirection;}
 }
 
 const XboxGamePadInputs = Object.freeze({
@@ -46,7 +46,15 @@ const XboxGamePadInputs = Object.freeze({
 
     BUTTON_CENTER: new GamepadInputIdentifier(XBOX_GAMEPAD, GAMEPAD_BUTTON, 16),
 
-    // TODO axes
+    AXIS_LEFTAXIS_LEFT: new GamepadInputIdentifier(XBOX_GAMEPAD, GAMEPAD_AXIS, 0, -1),
+    AXIS_LEFTAXIS_RIGHT: new GamepadInputIdentifier(XBOX_GAMEPAD, GAMEPAD_AXIS, 0, 1),
+    AXIS_LEFTAXIS_UP: new GamepadInputIdentifier(XBOX_GAMEPAD, GAMEPAD_AXIS, 1, -1),
+    AXIS_LEFTAXIS_DOWN: new GamepadInputIdentifier(XBOX_GAMEPAD, GAMEPAD_AXIS, 1, 1),
+
+    AXIS_RIGHTAXIS_LEFT: new GamepadInputIdentifier(XBOX_GAMEPAD, GAMEPAD_AXIS, 2, -1),
+    AXIS_RIGHTAXIS_RIGHT: new GamepadInputIdentifier(XBOX_GAMEPAD, GAMEPAD_AXIS, 2, 1),
+    AXIS_RIGHTAXIS_UP: new GamepadInputIdentifier(XBOX_GAMEPAD, GAMEPAD_AXIS, 3, -1),
+    AXIS_RIGHTAXIS_DOWN: new GamepadInputIdentifier(XBOX_GAMEPAD, GAMEPAD_AXIS, 3, 1),
 });
 
 const T16000M_STICK = "T.16000M";

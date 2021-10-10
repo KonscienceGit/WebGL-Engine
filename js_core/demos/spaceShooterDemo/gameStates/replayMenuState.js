@@ -73,8 +73,8 @@ class ReplayMenuState extends AbstractState {
         this._replaySprite.setTextureLayer(animFrame);
     }
 
-    selectMenuActionCallback(){
-        if(this.isInMainLoop()){
+    selectMenuActionCallback(value){
+        if(this.isInMainLoop() && value > 0){
             this.setReadyForNextState();
         }
     }

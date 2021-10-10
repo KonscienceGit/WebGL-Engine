@@ -54,21 +54,26 @@ class AbstractInputAction{
     }
 
     /** @callback callback A callback function.
-     * @param {number} delta the delta since last input actuation, in seconds. */
+     * @param {number} value the value of the input.*/
     /** @return {callback[]} */
     getActionCallbacks(){ return this._actionCallbacks; }
 
     /** @abstract
      * Fire the callback based on input bindings values.
-     * @param {number} delta the time in seconds since the last update
      */
-    parseInputs(delta){
+    parseInputs(){
         ConsoleUtils.nonImplementedError();
     }
 }
 
 class ButtonInputAction extends AbstractInputAction{
     /**
+     * Fire the given callbacks when the input is clicked, hold or released.
+     * The callback will receive the argument: value, the value of the input, 1 is pressed/clicked, 0 is released.
+     * If the button is released, a single callback is fired upon release.
+     * If the button is pressed, it depend on the constructor argument given:
+     *     If actionOnClick is true, only a fresh press will fire a callback.
+     *     If actionOnClick is false, callbacks will be fired as long as the button is hold pressed.
      * @param {string} name the input action name.
      * @param {boolean} [actionOnClick=false] Optional, if this input action is only activable on click (letting the input pressed don't trigger it on repetition, only fresh press take effect.
      */
@@ -79,7 +84,7 @@ class ButtonInputAction extends AbstractInputAction{
         this._type = ActionType.BUTTON;
     }
 
-    parseInputs(delta) {
+    parseInputs() {
         let isPressed = false;
         const inputs = this.getBindedInputs();
         for (let i = 0; i < inputs.length; i++) {
@@ -88,8 +93,14 @@ class ButtonInputAction extends AbstractInputAction{
                 break;
             }
         }
-        if(isPressed && !(this._onClick && this._wasPressed)){
-            this.getActionCallbacks().forEach(buttonCallback => buttonCallback(delta));
+        const stateChanged = isPressed !== this._wasPressed;
+        const value = isPressed ? 1 : 0;
+        if(this._onClick && stateChanged){
+            // callback only if changed (press or release button)
+            this.getActionCallbacks().forEach(buttonCallback => buttonCallback(value));
+        } else if(isPressed || stateChanged) {
+            // callback if pressed/hold or freshly released
+            this.getActionCallbacks().forEach(buttonCallback => buttonCallback(value));
         }
         this._wasPressed = isPressed;
     }
@@ -102,9 +113,10 @@ class AxisInputAction extends AbstractInputAction{
     constructor(name) {
         super(name);
         this._type = ActionType.AXIS;
+        this._wasPressed = false;
     }
 
-    parseInputs(delta) {
+    parseInputs() {
         let val = 0;
         const inputs = this.getBindedInputs();
         for (let i = 0; i < inputs.length; i++) {
@@ -112,7 +124,13 @@ class AxisInputAction extends AbstractInputAction{
             if(tmp > val) val = tmp;
         }
         if(val > 0){
-            this.getActionCallbacks().forEach(axisCallback => axisCallback(delta, val));
+            // If axis is pressed, send callback all the time
+            this._wasPressed = true;
+            this.getActionCallbacks().forEach(axisCallback => axisCallback(val));
+        } else if (this._wasPressed){
+            // If axis is not pressed, only send a callback when it's released.
+            this._wasPressed = false;
+            this.getActionCallbacks().forEach(axisCallback => axisCallback(val));
         }
     }
 }
@@ -124,10 +142,7 @@ class AxisInputAction extends AbstractInputAction{
 //         this._type = ActionType.AXIS;
 //     }
 //
-//     /**
-//      * @param delta
-//      */
-//     parseInputs(delta) {
+//     parseInputs() {
 //         let val = 0;
 //         const inputs = this.getBindedInputs();
 //         for (let i = 0; i < inputs.length; i++) {
@@ -135,7 +150,7 @@ class AxisInputAction extends AbstractInputAction{
 //             if(tmp > val) val = tmp;
 //         }
 //         if(val > 0){
-//             this.getActionCallbacks().forEach(axisCallback => axisCallback(delta, val));
+//             this.getActionCallbacks().forEach(axisCallback => axisCallback(pos));
 //         }
 //     }
 // }

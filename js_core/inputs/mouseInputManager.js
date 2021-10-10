@@ -29,6 +29,8 @@ class MouseInputManager extends AbstractInputManager {
         canvas.addEventListener("touchend", self.mouseUp);
     }
 
+
+    // TODO deprecated
     updateStates(stateManager) {
         let x = this._mousePos.x / this._canvas.width;
         x = x * 2 - 1;

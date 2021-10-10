@@ -14,13 +14,13 @@ class SpaceCraft extends Sprite {
         this._spaceCraftBaseYPosition = 0;
     }
 
-    updateSpaceCraft(delta, direction) {
-        this.moveAndAnimate(delta, direction);
+    updateSpaceCraft(delta, movement) {
+        this.moveAndAnimate(delta, movement);
         this.wrapActorPosition();
     }
 
-    moveAndAnimate(delta, direction) {
-        this._movingDir = direction;
+    moveAndAnimate(delta, movement) {
+        this._movingDir = movement;
         this.updateAnimationLayer(delta);
         this.moveActor(delta);
     }

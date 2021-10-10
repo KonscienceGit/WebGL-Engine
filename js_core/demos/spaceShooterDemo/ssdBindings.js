@@ -23,40 +23,33 @@ class SsdBindings extends BindingGroup{
         this._gameplayGroup.setEnabled(true);
     }
 
-    /** @return {KeyboardInputManager} */
-    getKeyboardManager(){
-        return this._keyboardManager;
-    }
-
-    /** @return {GamepadInputManager} */
-    getGamepadManager(){
-        return this._gamepadManager;
-    }
-
-    /** @return {MouseInputManager} */
-    getMouseManager(){
-        return this._mouseManager;
-    }
-
     initActions() {
         const validateMenuAction = new ButtonInputAction(GameInputActions.MENU_VALID_SELECTION,true);
         validateMenuAction.addInput(this._gamepadManager.createControllerInput(XboxGamePadInputs.BUTTON_A, validateMenuAction.getType()));
+        validateMenuAction.addInput(this._keyboardManager.createControllerInput(US_Keyboard.Space, validateMenuAction.getType()));
+        validateMenuAction.addInput(this._keyboardManager.createControllerInput(US_Keyboard.Enter, validateMenuAction.getType()));
         this._menuGroup.addAction(validateMenuAction);
 
         const returnToMainMenuAction = new ButtonInputAction(GameInputActions.MENU_RETURN_TO_MAIN,true);
         returnToMainMenuAction.addInput(this._gamepadManager.createControllerInput(XboxGamePadInputs.BUTTON_START, returnToMainMenuAction.getType()));
-        this._menuGroup.addAction(returnToMainMenuAction);
+        returnToMainMenuAction.addInput(this._keyboardManager.createControllerInput(US_Keyboard.Escape, returnToMainMenuAction.getType()));
+        this._gameplayGroup.addAction(returnToMainMenuAction);
 
         const fireShipAction = new ButtonInputAction(GameInputActions.SHIP_FIRE,false);
-        fireShipAction.addInput(this._gamepadManager.createControllerInput(XboxGamePadInputs.BUTTON_A, returnToMainMenuAction.getType()));
+        fireShipAction.addInput(this._gamepadManager.createControllerInput(XboxGamePadInputs.BUTTON_A, fireShipAction.getType()));
+        fireShipAction.addInput(this._keyboardManager.createControllerInput(US_Keyboard.Space, validateMenuAction.getType()));
         this._gameplayGroup.addAction(fireShipAction);
 
-        const moveShipLeftAction = new ButtonInputAction(GameInputActions.SHIP_LEFT,false);
-        moveShipLeftAction.addInput(this._gamepadManager.createControllerInput(XboxGamePadInputs.BUTTON_CROSS_LEFT, returnToMainMenuAction.getType()));
+        const moveShipLeftAction = new AxisInputAction(GameInputActions.SHIP_LEFT);
+        moveShipLeftAction.addInput(this._gamepadManager.createControllerInput(XboxGamePadInputs.BUTTON_CROSS_LEFT, moveShipLeftAction.getType()));
+        moveShipLeftAction.addInput(this._gamepadManager.createControllerInput(XboxGamePadInputs.AXIS_LEFTAXIS_LEFT, moveShipLeftAction.getType()));
+        moveShipLeftAction.addInput(this._keyboardManager.createControllerInput(US_Keyboard.ArrowLeft, moveShipLeftAction.getType()));
         this._gameplayGroup.addAction(moveShipLeftAction);
 
-        const moveShipRightAction = new ButtonInputAction(GameInputActions.SHIP_RIGHT,false);
-        moveShipRightAction.addInput(this._gamepadManager.createControllerInput(XboxGamePadInputs.BUTTON_CROSS_RIGHT, returnToMainMenuAction.getType()));
+        const moveShipRightAction = new AxisInputAction(GameInputActions.SHIP_RIGHT);
+        moveShipRightAction.addInput(this._gamepadManager.createControllerInput(XboxGamePadInputs.BUTTON_CROSS_RIGHT, moveShipRightAction.getType()));
+        moveShipRightAction.addInput(this._gamepadManager.createControllerInput(XboxGamePadInputs.AXIS_LEFTAXIS_RIGHT, moveShipRightAction.getType()));
+        moveShipRightAction.addInput(this._keyboardManager.createControllerInput(US_Keyboard.ArrowRight, moveShipLeftAction.getType()));
         this._gameplayGroup.addAction(moveShipRightAction);
 
         // TODO this is not the right input action (need a cursor/touch type action)

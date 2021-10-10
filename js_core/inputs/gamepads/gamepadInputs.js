@@ -21,11 +21,6 @@ class AbstractGamepadInput extends AbstractInput{
         }
         return this._gamepad;
     }
-
-    isConflictingInput(anotherInput) {
-        ConsoleUtils.nonImplementedError();
-        return false;
-    }
 }
 
 class GamepadButtonInput extends AbstractGamepadInput{
@@ -67,10 +62,14 @@ class GamepadAxisInput extends AbstractGamepadInput{
      * @param {GamepadInputManager} gamepadManager
      * @param {String} gamepadType
      * @param {number} axisNumber
+     * @param {number} axisDirection the direction of the axis.
+     * if  1, axis will be mapped on the positive part of the axis input (0, 1)
+     * if -1, axis will be mapped on the negative part of the axis input (0,-1)
      */
-    constructor(gamepadManager, gamepadType, axisNumber) {
+    constructor(gamepadManager, gamepadType, axisNumber, axisDirection) {
         super(gamepadManager, gamepadType);
         this._axisNumber = axisNumber;
+        this._axisDirection = axisDirection;
         this._customDeadZone = undefined;
     }
 
@@ -80,7 +79,7 @@ class GamepadAxisInput extends AbstractGamepadInput{
         if (!controller) return val;
         const axis = this._gamepad.axes[this._axisNumber];
         if (axis != null) {
-            val = axis;
+            val = this.computeCalibratedValue(axis * this._axisDirection);
         }
         return val;
     }

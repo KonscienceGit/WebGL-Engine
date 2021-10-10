@@ -74,8 +74,8 @@ class StartMenuState extends AbstractState {
         this._logoTitleSprite.getRenderPosition().moveUp(slideOut);
     }
 
-    selectMenuActionCallback(){
-        if(this.isInMainLoop()){
+    selectMenuActionCallback(value){
+        if(this.isInMainLoop() && value > 0){
             this.setReadyForNextState();
         }
     }
