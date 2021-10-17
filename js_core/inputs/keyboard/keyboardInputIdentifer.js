@@ -12,7 +12,7 @@ class KeyboardInputIdentifier{
     getLocalizedValue(){return this._localizedValue;}
 }
 
-const US_Keyboard = Object.freeze({
+const US_Keyboard = {
         q : new KeyboardInputIdentifier('KeyQ', 'q'),
         w : new KeyboardInputIdentifier('KeyW', 'w'),
         e : new KeyboardInputIdentifier('KeyE', 'e'),
@@ -39,6 +39,7 @@ const US_Keyboard = Object.freeze({
         b : new KeyboardInputIdentifier('KeyB', 'b'),
         n : new KeyboardInputIdentifier('KeyN', 'n'),
         m : new KeyboardInputIdentifier('KeyM', 'm'),
+
         F1 : new KeyboardInputIdentifier('F1', 'F1'),
         F2 : new KeyboardInputIdentifier('F2', 'F2'),
         F3 : new KeyboardInputIdentifier('F3', 'F3'),
@@ -58,7 +59,7 @@ const US_Keyboard = Object.freeze({
         // ContextMenu : new KeyboardInputIdentifier('ContextMenu', 'Context Menu'),
         Escape : new KeyboardInputIdentifier('Escape', 'Escape'),
 
-        Backquote : new KeyboardInputIdentifier('Backquote', 'Backquote'),
+        Backquote : new KeyboardInputIdentifier('Backquote', '`'),
         Tab : new KeyboardInputIdentifier('Tab', 'Tab'),
         CapsLock : new KeyboardInputIdentifier('CapsLock', 'CapsLock'),
         ShiftLeft : new KeyboardInputIdentifier('ShiftLeft', 'Shift'),
@@ -99,12 +100,12 @@ const US_Keyboard = Object.freeze({
         PageDown : new KeyboardInputIdentifier('PageDown', 'PageDown'),
 
         NumLock : new KeyboardInputIdentifier('NumLock', 'NumLock'),
-        NumpadDivide : new KeyboardInputIdentifier('NumpadDivide', 'Numpad Divide'),
-        NumpadMultiply : new KeyboardInputIdentifier('NumpadMultiply', 'Numpad Multiply'),
-        NumpadSubtract : new KeyboardInputIdentifier('NumpadSubtract', 'Numpad Subtract'),
-        NumpadAdd : new KeyboardInputIdentifier('NumpadAdd', 'Numpad Add'),
+        NumpadDivide : new KeyboardInputIdentifier('NumpadDivide', 'Numpad /'),
+        NumpadMultiply : new KeyboardInputIdentifier('NumpadMultiply', 'Numpad *'),
+        NumpadSubtract : new KeyboardInputIdentifier('NumpadSubtract', 'Numpad -'),
+        NumpadAdd : new KeyboardInputIdentifier('NumpadAdd', 'Numpad +'),
         NumpadEnter : new KeyboardInputIdentifier('NumpadEnter', 'Numpad Enter'),
-        NumpadDecimal : new KeyboardInputIdentifier('NumpadDecimal', 'Numpad Decimal'),
+        NumpadDecimal : new KeyboardInputIdentifier('NumpadDecimal', 'Numpad .'),
         Numpad1 : new KeyboardInputIdentifier('Numpad1', 'Numpad1'),
         Numpad2 : new KeyboardInputIdentifier('Numpad2', 'Numpad2'),
         Numpad3 : new KeyboardInputIdentifier('Numpad3', 'Numpad3'),
@@ -116,12 +117,29 @@ const US_Keyboard = Object.freeze({
         Numpad9 : new KeyboardInputIdentifier('Numpad9', 'Numpad9'),
         Numpad0 : new KeyboardInputIdentifier('Numpad0', 'Numpad0'),
 
-        BracketLeft : new KeyboardInputIdentifier('BracketLeft', 'Bracket Left'),
-        BracketRight : new KeyboardInputIdentifier('BracketRight', 'Bracket Right'),
-        Semicolon : new KeyboardInputIdentifier('Semicolon', 'Semicolon'),
-        Quote : new KeyboardInputIdentifier('Quote', 'Quote'),
-        Backslash : new KeyboardInputIdentifier('Backslash', 'Backslash'),
-        Comma : new KeyboardInputIdentifier('Comma', 'Comma'),
-        Period : new KeyboardInputIdentifier('Period', 'Period'),
-        Slash : new KeyboardInputIdentifier('Slash', 'Slash')
-});
+        BracketLeft : new KeyboardInputIdentifier('BracketLeft', '['),
+        BracketRight : new KeyboardInputIdentifier('BracketRight', ']'),
+        Semicolon : new KeyboardInputIdentifier('Semicolon', ';'),
+        Quote : new KeyboardInputIdentifier('Quote', '\'/'),
+        Backslash : new KeyboardInputIdentifier('Backslash', '\\'),
+        Comma : new KeyboardInputIdentifier('Comma', ','),
+        Period : new KeyboardInputIdentifier('Period', '.'),
+        Slash : new KeyboardInputIdentifier('Slash', '/')
+};
+
+const FR_Keyboard = Object.assign({}, US_Keyboard);
+// Add/replace AZERTY specific keys
+FR_Keyboard.a = new KeyboardInputIdentifier('KeyQ', 'a');
+FR_Keyboard.q = new KeyboardInputIdentifier('KeyA', 'q');
+FR_Keyboard.w = new KeyboardInputIdentifier('KeyZ', 'w');
+FR_Keyboard.z = new KeyboardInputIdentifier('KeyW', 'z');
+FR_Keyboard.m = new KeyboardInputIdentifier('Semicolon', 'm');
+FR_Keyboard.Comma = new KeyboardInputIdentifier('KeyM', ',');
+FR_Keyboard.Semicolon = new KeyboardInputIdentifier('Comma', ';');
+FR_Keyboard.DeuxPoints = new KeyboardInputIdentifier('Period', ':');
+FR_Keyboard.Circonflexe = new KeyboardInputIdentifier('BracketLeft', '^');
+FR_Keyboard.Dollar = new KeyboardInputIdentifier('BracketRight', '$');
+FR_Keyboard.uAccentGrave = new KeyboardInputIdentifier('Quote', 'ù');
+FR_Keyboard.Etoile = new KeyboardInputIdentifier('Backslash', '*');
+FR_Keyboard.Exclamation = new KeyboardInputIdentifier('Slash', '!');
+FR_Keyboard.Exposant2 = new KeyboardInputIdentifier('Backquote', '²');
