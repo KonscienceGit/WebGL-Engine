@@ -120,12 +120,13 @@ const US_Keyboard = {
         BracketLeft : new KeyboardInputIdentifier('BracketLeft', '['),
         BracketRight : new KeyboardInputIdentifier('BracketRight', ']'),
         Semicolon : new KeyboardInputIdentifier('Semicolon', ';'),
-        Quote : new KeyboardInputIdentifier('Quote', '\'/'),
+        Quote : new KeyboardInputIdentifier('Quote', '\''),
         Backslash : new KeyboardInputIdentifier('Backslash', '\\'),
         Comma : new KeyboardInputIdentifier('Comma', ','),
         Period : new KeyboardInputIdentifier('Period', '.'),
         Slash : new KeyboardInputIdentifier('Slash', '/')
 };
+Object.freeze(US_Keyboard);
 
 const FR_Keyboard = Object.assign({}, US_Keyboard);
 // Add/replace AZERTY specific keys
@@ -143,3 +144,6 @@ FR_Keyboard.uAccentGrave = new KeyboardInputIdentifier('Quote', 'ù');
 FR_Keyboard.Etoile = new KeyboardInputIdentifier('Backslash', '*');
 FR_Keyboard.Exclamation = new KeyboardInputIdentifier('Slash', '!');
 FR_Keyboard.Exposant2 = new KeyboardInputIdentifier('Backquote', '²');
+Object.freeze(FR_Keyboard);
+
+// Add your own keyboard layouts!
