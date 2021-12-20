@@ -28,6 +28,7 @@ class SsdBindings extends BindingGroup{
         validateMenuAction.addInput(this._gamepadManager.createControllerInput(XboxGamePadInputs.BUTTON_A, validateMenuAction.getType()));
         validateMenuAction.addInput(this._keyboardManager.createControllerInput(US_Keyboard.Space, validateMenuAction.getType()));
         validateMenuAction.addInput(this._keyboardManager.createControllerInput(US_Keyboard.Enter, validateMenuAction.getType()));
+        validateMenuAction.addInput(this._mouseManager.createMouseButtonInput(MouseInputIdentifier.BUTTON_LEFT));
         this._menuGroup.addAction(validateMenuAction);
 
         const returnToMainMenuAction = new ButtonInputAction(GameInputActions.MENU_RETURN_TO_MAIN,true);
@@ -38,6 +39,7 @@ class SsdBindings extends BindingGroup{
         const fireShipAction = new ButtonInputAction(GameInputActions.SHIP_FIRE,false);
         fireShipAction.addInput(this._gamepadManager.createControllerInput(XboxGamePadInputs.BUTTON_A, fireShipAction.getType()));
         fireShipAction.addInput(this._keyboardManager.createControllerInput(US_Keyboard.Space, validateMenuAction.getType()));
+        fireShipAction.addInput(this._mouseManager.createMouseButtonInput(MouseInputIdentifier.BUTTON_LEFT));
         this._gameplayGroup.addAction(fireShipAction);
 
         const moveShipLeftAction = new AxisInputAction(GameInputActions.SHIP_LEFT);
@@ -49,14 +51,11 @@ class SsdBindings extends BindingGroup{
         const moveShipRightAction = new AxisInputAction(GameInputActions.SHIP_RIGHT);
         moveShipRightAction.addInput(this._gamepadManager.createControllerInput(XboxGamePadInputs.BUTTON_CROSS_RIGHT, moveShipRightAction.getType()));
         moveShipRightAction.addInput(this._gamepadManager.createControllerInput(XboxGamePadInputs.AXIS_LEFTAXIS_RIGHT, moveShipRightAction.getType()));
-        moveShipRightAction.addInput(this._keyboardManager.createControllerInput(US_Keyboard.ArrowRight, moveShipLeftAction.getType()));
+        moveShipRightAction.addInput(this._keyboardManager.createControllerInput(US_Keyboard.ArrowRight, moveShipRightAction.getType()));
         this._gameplayGroup.addAction(moveShipRightAction);
 
-        // TODO this is not the right input action (need a cursor/touch type action)
-        const moveShipToCursorAction = new ButtonInputAction(GameInputActions.SHIP_TO_CURSOR,false);
-        // moveShipToCursorAction.addInput(this.leMouseManager.createMouseOrSomethingInput(Mouse and touch actions));
+        const moveShipToCursorAction = new PositionInputAction(GameInputActions.SHIP_MOVE_TO_CURSOR);
+        moveShipToCursorAction.addInput(this._mouseManager.createMouseMoveInput());
         this._gameplayGroup.addAction(moveShipToCursorAction);
-
-        //TODO add other actions and inputs
     }
 }

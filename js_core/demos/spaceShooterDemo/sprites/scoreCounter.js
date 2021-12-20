@@ -1,5 +1,5 @@
 class ScoreCounter extends MultiSprite {
-    constructor(renderer) {
+    constructor(renderer, pixelPerfectTool) {
         super(renderer, "resources/numbers/", Sprite.generateFileNameList(11, ".png"));
         this._score = 0;
         this._moveSpeed = 100; // pixel per seconds
@@ -7,6 +7,7 @@ class ScoreCounter extends MultiSprite {
         /** @type {EntityProperties[]} */
         this._scoreCounterInstances = [];
         this._digitCount = 5;
+        this._pixelPerfectTool = pixelPerfectTool;
     }
 
     setScore(score) {
@@ -23,7 +24,11 @@ class ScoreCounter extends MultiSprite {
     }
 
     resetPosition() {
-        this.setTopLeftPixelPostition(40 + this._entityProperties.renderSizeXY.x / 2, 30 + this._entityProperties.renderSizeXY.y / 2);
+        this._pixelPerfectTool.setTopLeftPixelPostition(
+            this,
+            40 + this._entityProperties.renderSizeXY.x / 2,
+            30 + this._entityProperties.renderSizeXY.y / 2
+        );
     }
 
     /** @param { WebGL2RenderingContext} gl */

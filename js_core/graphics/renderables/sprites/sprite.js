@@ -10,14 +10,12 @@ class Sprite {
      * @param {String[]} imagesNames the array of images names to load in the sprites. Can contain only 1 image _name.
      */
     constructor(renderer, imageFolder, imagesNames) {
-        let gl = renderer.getGL();
+        let gl = renderer.getGLContext();
         this._entityProperties = new EntityProperties();
         this._entityProperties.isVisible = false;
         this._isLoaded = false;
         this._texture = gl.createTexture();
         this._referencePosition = new Vec2(0, 0);
-
-        this._canvasDim = renderer._viewPortPixelSize.clone();
         this._vertex_buffer = gl.createBuffer();
 
         this.loadTempTexture(gl, this._texture);
@@ -71,26 +69,28 @@ class Sprite {
     }
 
     /**
-     * @param {WebGL2RenderingContext} gl
+     * @param {Renderer} renderer
      */
-    draw(gl) {
+    draw(renderer) {
         if (!this.isVisible()) {
             return;
         }
-        this.setupContext(gl);
+        const gl = renderer.getGLContext();
+        this.setupContext(renderer);
         gl.drawArrays(gl.TRIANGLES, 0, 6);
         this.restoreContext(gl);
     }
 
     /**
-     * @param {WebGL2RenderingContext} gl
+     * @param {Renderer} renderer
      */
-    setupContext(gl) {
+    setupContext(renderer) {
+        const gl = renderer.getGLContext();
         gl.bindBuffer(gl.ARRAY_BUFFER, this._vertex_buffer);
         gl.useProgram(this._shaderProgram);
         gl.bindTexture(gl.TEXTURE_2D_ARRAY, this._texture);
         this.setupAttribs(gl);
-        this.setupUniforms(gl);
+        this.setupUniforms(renderer);
     }
 
     /**
@@ -132,14 +132,16 @@ class Sprite {
     }
 
     /**
-     * @param {WebGL2RenderingContext} gl
+     * @param {Renderer} renderer
      */
-    setupUniforms(gl) {
+    setupUniforms(renderer) {
+        const camera = renderer.getCamera();
+        const gl = renderer.getGLContext();
         gl.uniform2fv(this._scaleUniform, [this._entityProperties.scale.x, this._entityProperties.scale.y]);
         gl.uniform2fv(this._positionUniform, [this._entityProperties.position.x, this._entityProperties.position.y]);
         gl.uniform1f(this._rotationUniform, this._entityProperties.rotation);
         gl.uniform2fv(this._spriteDimensionsUniform, [this._entityProperties.renderSizeXY.x, this._entityProperties.renderSizeXY.y]);
-        gl.uniform2fv(this._canvasDimensionsUniform, [this._canvasDim.x, this._canvasDim.y]);
+        camera.setProjectionUniform(gl, this._canvasDimensionsUniform);
         gl.uniform1i(this._textureLayerUniform, this._entityProperties.textureLayer);
     }
 
@@ -282,22 +284,6 @@ class Sprite {
         this._entityProperties.position.y = y;
         this._referencePosition.x = x;
         this._referencePosition.y = y;
-    }
-
-    /**
-     * @param {number} x
-     * @param {number} y
-     */
-    setTopLeftPixelPostition(x, y) {
-        this.setPosition(x - this._canvasDim.x / 2, this._canvasDim.y / 2 - y);
-    }
-
-    /**
-     * @param {number} x
-     * @param {number} y
-     */
-    setTopRightPixelPostition(x, y) {
-        this.setPosition(this._canvasDim.x / 2 - x, this._canvasDim.y / 2 - y);
     }
 
     /**

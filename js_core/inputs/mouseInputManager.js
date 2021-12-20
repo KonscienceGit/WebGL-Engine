@@ -11,14 +11,12 @@ class MouseInputManager extends AbstractInputManager {
         this.mouseUp = this.mouseUp.bind(this);
         this.touchMoved = this.touchMoved.bind(this);
         this.touchStart = this.touchStart.bind(this);
-        this.touchStart = this.touchStart.bind(this);
+        this.touchEnd = this.touchEnd.bind(this);
 
         this._canvas = canvas;
         this._renderer = renderer;
-        this._hasNewInput = false;
-        this._mousePos = new Vec2(0, 0);
-        this._mouseButtonDown = false;
-        this._mouseButtonClicked = false;
+        this._cursor = new CursorProperties();
+        this._mouseBtn = new Array(5).fill(false);
 
         canvas.addEventListener("mousemove", self.mouseMoved);
         canvas.addEventListener("mousedown", self.mouseDown);
@@ -26,86 +24,91 @@ class MouseInputManager extends AbstractInputManager {
 
         canvas.addEventListener("touchmove", self.touchMoved, {'passive': false});
         canvas.addEventListener("touchstart", self.touchStart, {'passive': false});
-        canvas.addEventListener("touchend", self.mouseUp);
-    }
-
-
-    // TODO deprecated
-    updateStates(stateManager) {
-        let x = this._mousePos.x / this._canvas.width;
-        x = x * 2 - 1;
-        x = Math.round(x * this._renderer.getVirtualViewPortSize().x / 2);
-        let y = this._mousePos.y / this._canvas.height;
-        y = -(y * 2 - 1);
-        y = Math.round(y * this._renderer.getVirtualViewPortSize().y / 2);
-        stateManager.fireInputAction(GameInputActions.CURSOR_AT, [x, y]);
-
-        if (this._mouseButtonClicked) {
-            stateManager.fireInputAction(GameInputActions.CLICK_AT, [x, y]);
-            this._mouseButtonClicked = false;
-        }
+        canvas.addEventListener("touchend", self.touchEnd);
     }
 
     /**
-     * @deprecated
-     * @return {boolean}
+     * @returns {CursorProperties}
      */
-    parseInputs() {
-        //keyboard input parsing is done on the events.
-        const hasNewInput = this._hasNewInput;
-        this._hasNewInput = false;
-        return hasNewInput;
+    getCursor(){
+        return this._cursor;
+    }
+
+    /**
+     * @param {MouseInputIdentifier} buttonID
+     * @returns {boolean}
+     */
+    getMouseButton(buttonID){
+        return this._mouseBtn[buttonID];
     }
 
     /**
      * @param {MouseEvent} event
      */
     mouseMoved(event) {
-        this.move(event.clientX, event.clientY);
+        this.updateCursor(event);
     }
 
     mouseDown(event) {
-        this.clic(event.clientX, event.clientY);
+        this.updateCursor(event);
+        this._mouseBtn[event.button] = true;
     }
 
-    mouseUp() {
-        this._mouseButtonDown = false;
-        this._mouseButtonClicked = false;
-        this._hasNewInput = true;
+    mouseUp(event) {
+        this.updateCursor(event);
+        this._mouseBtn[event.button] = false;
     }
 
     /**
      * @param {TouchEvent} event
      */
     touchMoved(event){
-        const touch = event.touches[0];
-        this.move(touch.clientX, touch.clientY);
+        this.updateCursor(event.touches[0]);
     }
 
     /**
      * @param {TouchEvent} event
      */
     touchStart(event){
-        const touch = event.touches[0];
-        this.clic(touch.clientX, touch.clientY);
+        this._mouseBtn[0] = true;
+        this.updateCursor(event.touches[0]);
     }
 
-    clic(x,y){
-        this.move(x,y);
-        if (!this._mouseButtonDown)
-            this._mouseButtonClicked = true;
-        this._mouseButtonDown = true;
+    /**
+     * @param {TouchEvent} event
+     */
+    touchEnd(event){
+        this._mouseBtn[0] = false;
+        this.updateCursor(event.changedTouches[0]);
     }
 
-    move(x,y){
-        this.extractCanvasPos(x,y);
-        this._hasNewInput = true;
-    }
-
-    extractCanvasPos(x,y) {
+    updateCursor(event) {
         const rect = this._canvas.getBoundingClientRect();
-        this._mousePos.x = x - rect.left;
-        this._mousePos.y = y - rect.top;
+        // Get difference between previous position and current position
+        this._cursor.lastMovement.setValues(event.screenX - this._cursor.screenPos.x, event.screenY - this._cursor.screenPos.y);
+        this._cursor.screenPos.setValues(event.screenX, event.screenY)
+        // Adjust based on the real position of the current DOM element thingy
+        this._cursor.canvasPos.setValues(event.clientX - rect.left, event.clientY - rect.top);
+        // Convert to engine space (same dimensions in pixel, but coordinate 0,0 is at the center instead of top left, y axis is inverted)
+        this._cursor.pixelEnginePos.setValues(this._cursor.canvasPos.x - rect.width / 2,  rect.height / 2 - this._cursor.canvasPos.y);
+        this._cursor.viewPortPos.setValues(this._cursor.canvasPos.x / rect.width, this._cursor.canvasPos.y / rect.height);
+        // this._cursor.pickedObject = null; TODO
+    }
+
+    createMouseMoveInput(){
+        return new MouseMovedInput(this);
+    }
+
+    /**
+     * @param buttonID
+     * @returns {MouseButtonInput}
+     */
+    createMouseButtonInput(buttonID){
+        return new MouseButtonInput(this, buttonID);
+    }
+
+    createMouseWheelInput(){
+        // TODO
     }
 }
 

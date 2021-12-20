@@ -38,7 +38,7 @@ class AbstractInputAction{
         return this._type;
     }
 
-    /** @param {AbstractInput} input */
+    /** @param {AbstractInput} input */ // TODO remove, make each impl have it's addInput with typed input type.
     addInput(input){
         if(!this._bindedInputs.includes(input)) this._bindedInputs.push(input);
     }
@@ -135,22 +135,21 @@ class AxisInputAction extends AbstractInputAction{
     }
 }
 
-// TODO
-// class PositionInputAction extends AbstractInputAction{
-//     constructor(name, actionOnClick) {
-//         super(name);
-//         this._type = ActionType.AXIS;
-//     }
-//
-//     parseInputs() {
-//         let val = 0;
-//         const inputs = this.getBindedInputs();
-//         for (let i = 0; i < inputs.length; i++) {
-//             const tmp = inputs[i].getInputValue();
-//             if(tmp > val) val = tmp;
-//         }
-//         if(val > 0){
-//             this.getActionCallbacks().forEach(axisCallback => axisCallback(pos));
-//         }
-//     }
-// }
+class PositionInputAction extends AbstractInputAction{
+    constructor(name) {
+        super(name);
+        this._type = ActionType.POSITION;
+        this._previousPosition = new Vec2(0,0);
+    }
+
+    parseInputs() {
+        // TODO can use multiple mouses/touch devices?
+        const cursor = this.getBindedInputs()[0].getInputValue();
+
+        // Only callback if the position changed
+        if(!this._previousPosition.equals(cursor.screenPos)){
+            this._previousPosition.set(cursor.screenPos);
+            this.getActionCallbacks().forEach(positionCallback => positionCallback(cursor));
+        }
+    }
+}

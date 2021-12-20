@@ -1,12 +1,13 @@
 class SpaceCraft extends Sprite {
-    constructor(renderer) {
+    constructor(renderer, pixelPerfectTool) {
         super(renderer, "resources/actor/", Sprite.generateFileNameList(5, ".png"));
+        this._pixelPerfectTool = pixelPerfectTool;
         this._movingDir = 0;
         this._animationPos = 0.0;
         this._lifeCount = 5;
 
         //movement default settings
-        this._speed = 0.60 * this._canvasDim.x;
+        this._speed = 0.60 * this._pixelPerfectTool.getResolution().x;
         this._animationSpeed = 8;
 
         //defined at image load
@@ -88,8 +89,8 @@ class SpaceCraft extends Sprite {
 
     imageLoaded() {
         super.imageLoaded();
-        this._screenLimit = 1.25 * 0.5 * this._canvasDim.x;
-        this._spaceCraftBaseYPosition = 0.5 * (-this._canvasDim.y + this._entityProperties.renderSizeXY.y) + 1;
+        this._screenLimit = 1.25 * 0.5 * this._pixelPerfectTool.getResolution().x;
+        this._spaceCraftBaseYPosition = 0.5 * (-this._pixelPerfectTool.getResolution().y + this._entityProperties.renderSizeXY.y) + 1;
         this._entityProperties.radius = 0.6 * this._entityProperties.renderSizeXY.y;
         this.resetPosition();
     }

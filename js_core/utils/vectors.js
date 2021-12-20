@@ -13,9 +13,18 @@ class Vec2 {
         this.y = otherVec.y;
     }
 
+    setValues(x, y){
+        this.x = x;
+        this.y = y;
+    }
+
     add(v) {
         this.x += v.x;
         this.y += v.y;
+    }
+
+    equals(anotherVec2) {
+        return (this.x === anotherVec2.x && this.y === anotherVec2.y);
     }
 
     distance(anotherVec2) {
@@ -56,9 +65,18 @@ class Vec3 extends Vec2 {
         this.z = otherVec.z;
     }
 
+    setValues(x, y, z){
+        super.setValues(x, y);
+        this.z = z;
+    }
+
     add(v) {
         super.add(v);
         this.z += v.z;
+    }
+
+    equals(anotherVec3) {
+        return (super.equals(anotherVec3) && this.z === anotherVec3.z);
     }
 
     distance(anotherVec3) {
@@ -79,13 +97,22 @@ class Vec4 extends Vec3 {
         return new Vec4(this.x, this.y, this.z, this.w);
     }
 
-    set(otherVec) {
-        super.set(otherVec);
-        this.w = otherVec.w;
+    set(anotherVec4) {
+        super.set(anotherVec4);
+        this.w = anotherVec4.w;
+    }
+
+    setValues(x, y, z, w){
+        super.setValues(x, y, z);
+        this.w = w;
     }
 
     add(v) {
         super.add(v);
         this.w += v.w;
+    }
+
+    equals(anotherVec4) {
+        return (super.equals(anotherVec4) && this.w === anotherVec4.w);
     }
 }

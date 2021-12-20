@@ -9,11 +9,12 @@ class MultiSprite extends Sprite {
         this._spriteInstances = [];
     }
 
-    draw(gl) {
+    draw(renderer) {
         if (!this.isVisible()) {
             return;
         }
-        this.setupContext(gl);
+        const gl = renderer.getGLContext();
+        this.setupContext(renderer);
         this._spriteInstances.forEach(instance => {
             if (instance.isVisible) {
                 this.setupInstanceUniforms(gl, instance);
@@ -30,11 +31,6 @@ class MultiSprite extends Sprite {
     updateSprite(delta) {
         super.updateSprite(delta);
         this._spriteInstances.forEach(entity => entity.timeAlive += delta);
-    }
-
-    setupAttribs(gl) {
-        super.setupAttribs(gl);
-        gl.uniform2fv(this._canvasDimensionsUniform, [this._canvasDim.x, this._canvasDim.y]);
     }
 
     /**

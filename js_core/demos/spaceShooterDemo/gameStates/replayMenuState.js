@@ -2,12 +2,11 @@ class ReplayMenuState extends AbstractState {
     constructor(objectManager, gameBindings) {
         super();
         this._nextState = null;
-        this._canvasDimRef = objectManager.getSpaceCraft()._canvasDim;
         this._replaySprite = objectManager.getReplayMenuSprite();
         this._translucentOverlay = objectManager.getTranslucentOverlay();
         this._spaceCraft = objectManager.getSpaceCraft();
         this._scoreCounter = objectManager.getScoreCounter();
-        // TODO register new inputs system
+        this._worldPixelSize = objectManager.getPixelPerfectTool().getResolution();
 
         // Set animations duration
         this.setAnimateInLength(1.0);
@@ -20,7 +19,7 @@ class ReplayMenuState extends AbstractState {
 
     start(){
         this._menuSpriteAnimationState = 0.0;
-        this._guiShift = this._canvasDimRef.y;
+        this._guiShift = this._worldPixelSize.y;
         this._replaySprite.setPosition(0, 0);
         this._replaySprite.getRenderPosition().moveDown(this._guiShift);
         this._replaySprite.setVisible(true);
@@ -45,13 +44,13 @@ class ReplayMenuState extends AbstractState {
     }
 
     animateIn(delta, animationState) {
-        const slideIn = this._canvasDimRef.y * delta;
+        const slideIn = this._worldPixelSize.y * delta;
         this._translucentOverlay.setOpacity(animationState);
         this._replaySprite.getRenderPosition().moveUp(slideIn);
     }
 
     animateOut(delta, animationState) {
-        const slideOut = this._canvasDimRef.y * delta;
+        const slideOut = this._worldPixelSize.y * delta;
         this._replaySprite.getRenderPosition().moveDown(slideOut);
         this._scoreCounter.getReferencePosition().moveLeft(slideOut);
     }

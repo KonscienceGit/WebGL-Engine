@@ -9,12 +9,11 @@ class StartMenuState extends AbstractState {
         this._pressToPlayButton = objectManager.getPlayButton();
         this._logoTitleSprite = objectManager.getLogoTitle();
         this._translucentOverlay = objectManager.getTranslucentOverlay();
-        this._canvasDimRef = objectManager.getSpaceCraft()._canvasDim;
+        this._worldPixelSize = objectManager.getPixelPerfectTool().getResolution();
 
         // Bind the closure context
         this.selectMenuActionCallback = this.selectMenuActionCallback.bind(this);
 
-        // TODO register new inputs system
         this.registerBindings(gameBindings);
 
         // Set animations duration
@@ -29,8 +28,8 @@ class StartMenuState extends AbstractState {
         this._pressToPlayButton.setPosition(0, 0);
 
         //move before slideIn
-        this._pressToPlayButton.getRenderPosition().moveLeft(this._canvasDimRef.y);
-        this._logoTitleSprite.getRenderPosition().moveUp(this._canvasDimRef.y);
+        this._pressToPlayButton.getRenderPosition().moveLeft(this._worldPixelSize.y);
+        this._logoTitleSprite.getRenderPosition().moveUp(this._worldPixelSize.y);
 
         this._pressToPlayButton.setVisible(true);
         this._logoTitleSprite.setVisible(true);
@@ -62,13 +61,13 @@ class StartMenuState extends AbstractState {
     }
 
     animateIn(delta, animationState) {
-        const slideIn = this._canvasDimRef.y * delta;
+        const slideIn = this._worldPixelSize.y * delta;
         this._pressToPlayButton.getRenderPosition().moveRight(slideIn);
         this._logoTitleSprite.getRenderPosition().moveDown(slideIn);
     }
 
     animateOut(delta, animationState) {
-        const slideOut = this._canvasDimRef.y * delta;
+        const slideOut = this._worldPixelSize.y * delta;
         this._translucentOverlay.setOpacity(1 - animationState);
         this._pressToPlayButton.getRenderPosition().moveLeft(slideOut);
         this._logoTitleSprite.getRenderPosition().moveUp(slideOut);

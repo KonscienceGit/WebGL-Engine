@@ -6,7 +6,7 @@ const GameInputActions = Object.freeze({
     SHIP_LEFT:  "Move ship left",
     SHIP_RIGHT:  "Move ship right",
     SHIP_FIRE:  "Fire ship cannon",
-    SHIP_TO_CURSOR: "Move ship toward cursor position",
+    SHIP_MOVE_TO_CURSOR: "Move ship toward cursor position",
     //Menus
     MENU_RETURN_TO_MAIN: "Return to the main menu",
     MENU_VALID_SELECTION: "Valid the selected menu",

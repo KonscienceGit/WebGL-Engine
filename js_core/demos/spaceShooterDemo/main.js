@@ -4,9 +4,13 @@ function main() {
     const canvas = document.getElementById("game_canvas");
     let previousTime = 0.0;
 
-    const renderer = new Renderer(canvas, new Vec2(1100, 800));
+    const fixedResolution = new Vec2(1100, 800);
+    const camera = new Camera2D();
+    const renderer = new Renderer(canvas, camera);
+    renderer.setDisplayFixedResolution(fixedResolution);
+    camera.setVerticalWorldSize(fixedResolution.y);
     const gameObjectManager = new GameObjectsManager(renderer);
-    const spriteArray = gameObjectManager.getSpriteArray();
+    const renderableArray = gameObjectManager.getRenderableArray();
 
     // Inputs
     const keyboardManager = new KeyboardInputManager();
@@ -16,7 +20,7 @@ function main() {
 
     const gameStateManager = new StateManager(gameObjectManager, renderer, canvas, gameBindings);
 
-    LoadingManager.callbackWhenLoaded(spriteArray, init);
+    LoadingManager.callbackWhenLoaded(renderableArray, init);
 
     function init() {
         renderGameFrame(0);
@@ -58,8 +62,8 @@ function main() {
 
 
         gameStateManager.updateCurrentState(deltaTime);
-        updateSprites(spriteArray, deltaTime);
-        renderer.draw(spriteArray);
+        updateSprites(renderableArray, deltaTime);
+        renderer.draw(renderableArray);
 
         //Request another animation frame, at a pace that should match monitor refresh rate (or at least the web browser refresh rate)
         requestAnimationFrame(renderGameFrame);

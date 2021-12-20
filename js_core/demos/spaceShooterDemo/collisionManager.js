@@ -2,8 +2,9 @@ class CollisionManager {
     /**
      * @param {GameObjectsManager} objectManager
      * @param {GameState} gameState
+     * @param {Vec2} screenSize
      */
-    constructor(objectManager, gameState) {
+    constructor(objectManager, gameState, screenSize) {
         this._aliens = objectManager.getAliens();
         this._aliensMissiles = objectManager.getAliensMissiles();
         this._playerMissiles = objectManager.getPlayerMissiles();
@@ -14,10 +15,9 @@ class CollisionManager {
         this._airDensity = 0.;
         this._oneMeter = 0.05 * this._spaceCraft.getEntityProperties().renderSizeXY.y;// 1 meter size, in pixels
 
-        this._canvasDim = this._aliens._canvasDim.clone();
-        this._screenBottomY = -0.5 * this._canvasDim.y;
-        this._screenTopY = 0.5 * this._canvasDim.y;
-        this._screenLimitX = 0.5 * this._canvasDim.x;
+        this._screenBottomY = -0.5 * screenSize.y;
+        this._screenTopY = 0.5 * screenSize.y;
+        this._screenLimitX = 0.5 * screenSize.x;
     }
 
     update(delta) {

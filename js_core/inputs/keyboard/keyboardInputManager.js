@@ -35,7 +35,7 @@ class KeyboardInputManager extends AbstractInputManager {
      */
     createControllerInput(keyboardInputIdentifier, actionType){
         // Unruly combinations
-        if(actionType === ActionType.POSITION || actionType === ActionType.THROTTLE){
+        if(actionType === ActionType.POSITION || actionType === ActionType.THROTTLE){ // TODO replace by typed implementation of AbstractInpu (ButtonInput, AxisInput, PositionInput...
             throw new Error('Error: cannot bind a Button to a ' + actionType + ' action!');
         }
         return new KeyboardKeyInput(this, keyboardInputIdentifier.getCode(), keyboardInputIdentifier.getLocalizedValue());

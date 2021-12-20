@@ -1,7 +1,8 @@
 class LifeCounter extends Sprite {
-    constructor(renderer) {
+    constructor(renderer, pixelPerfectTool) {
         super(renderer, "resources/", Sprite.getFileName("life",".png"));
         this._lifeCount = 3;
+        this._pixelPerfectTool = pixelPerfectTool;
     }
 
     setLifeCount(lifes) {
@@ -18,7 +19,11 @@ class LifeCounter extends Sprite {
     }
 
     resetPosition() {
-        this.setTopRightPixelPostition(40 + this._entityProperties.renderSizeXY.x / 2, 30 + this._entityProperties.renderSizeXY.y / 2);
+        this._pixelPerfectTool.setTopRightPixelPostition(
+            this,
+            40 + this._entityProperties.renderSizeXY.x / 2,
+            30 + this._entityProperties.renderSizeXY.y / 2
+        );
     }
 
     draw(gl) {

@@ -3,18 +3,19 @@ class GameObjectsManager {
      * @param {Renderer} renderer
      */
     constructor(renderer) {
+        this._pixelPerfectTool = new PixelPerfectTool(renderer.getRenderResolution());
         this._background = new Sprite(renderer, "resources/", Sprite.getFileName("background",".png"));
         this._background.setVisible(true);
 
         this._aliensMissiles = new MultiSprite(renderer, "resources/", Sprite.getFileName("greenMissile",".png"));
         this._playerMissiles = new MultiSprite(renderer, "resources/", Sprite.getFileName("redMissile",".png"));
-        this._spaceCraft = new SpaceCraft(renderer);
+        this._spaceCraft = new SpaceCraft(renderer, this._pixelPerfectTool);
         this._aliens = new MultiSprite(renderer, "resources/aliens/", Sprite.generateFileNameList(4, ".png"));
 
-        this._scoreCounter = new ScoreCounter(renderer);
-        this._lifeCounter = new LifeCounter(renderer);
+        this._scoreCounter = new ScoreCounter(renderer, this._pixelPerfectTool);
+        this._lifeCounter = new LifeCounter(renderer, this._pixelPerfectTool);
 
-        this._translucentOverlay = new TranslucentOverlay(renderer, new Vec4(0, 0, 0, 150));
+        this._translucentOverlay = new TranslucentOverlay(renderer, new Vec4(0, 0, 0, 0.6));
         this._pressToPlayButton = new Sprite(renderer, "resources/", Sprite.getFileName("pressToPlay",".png"));
         this._logoTitle = new Sprite(renderer, "resources/", Sprite.getFileName("title_logo",".png"));
 
@@ -38,6 +39,11 @@ class GameObjectsManager {
         this._spriteArray.push(this._pressToPlayButton);
         this._spriteArray.push(this._logoTitle);
         this._spriteArray.push(this._replayMenuSprite);
+    }
+
+    /** @return {PixelPerfectTool} */
+    getPixelPerfectTool() {
+        return this._pixelPerfectTool;
     }
 
     /** @return {Sprite} */
@@ -91,7 +97,7 @@ class GameObjectsManager {
     }
 
     /** @return {Sprite[]} */
-    getSpriteArray() {
+    getRenderableArray() {
         return this._spriteArray;
     }
 }

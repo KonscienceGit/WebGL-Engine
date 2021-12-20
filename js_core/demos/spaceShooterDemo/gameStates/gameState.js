@@ -3,7 +3,8 @@ class GameState extends AbstractState {
         super();
         this._gameOverState = null;
         this._escapeState = null;
-        this._physicStuffManager = new CollisionManager(objectManager, this);
+        this._worldPixelSize = objectManager.getPixelPerfectTool().getResolution();
+        this._physicStuffManager = new CollisionManager(objectManager, this, this._worldPixelSize);
 
         this._aliensSprites = objectManager.getAliens();
         this._aliensMissilesSprites = objectManager.getAliensMissiles();
@@ -11,8 +12,6 @@ class GameState extends AbstractState {
         this._spaceCraft = objectManager.getSpaceCraft();
         this._scoreCounter = objectManager.getScoreCounter();
         this._lifeCounter = objectManager.getLifeCounter();
-
-        this._canvasDimRef = objectManager.getSpaceCraft()._canvasDim;
 
         this._deltaBetweenPlayerCanFire = 0.16;
         this._baseDifficulty = 0.7;
@@ -40,13 +39,13 @@ class GameState extends AbstractState {
 
         this._gameOver = false;
         this._XSpawnMargin = 100 + this._aliensSprites.getEntityProperties().renderSizeXY.x / 2;
-        this._XSpawnRange = this._canvasDimRef.x - 2 * this._XSpawnMargin;
+        this._XSpawnRange = this._worldPixelSize.x - 2 * this._XSpawnMargin;
 
         this._spaceCraft.setLifeCount(3);
         this._spaceCraft.resetPosition();
 
         this._timeSinceLastPlayerMissile = 0;
-        this._guiShift = this._canvasDimRef.x / 2;
+        this._guiShift = this._worldPixelSize.x / 2;
 
         this._difficulty = this._baseDifficulty;
         this._scoreCounter.setScore(0);
@@ -85,37 +84,6 @@ class GameState extends AbstractState {
         this._gameOverState = gameOverState;
     }
 
-    // fireInputAction(action, options) {// TODO remove, deprecated
-    //     switch (action) {
-    //         case GameInputActions.LEFT_HOLD:
-    //             this._moveLeft = true;
-    //             this._moveRight = false;
-    //             this._moveToCursor = false;
-    //             break;
-    //         case GameInputActions.RIGHT_HOLD:
-    //             this._moveRight = true;
-    //             this._moveLeft = false;
-    //             this._moveToCursor = false;
-    //             break;
-    //         case GameInputActions.CURSOR_AT:
-    //             this.moveTo(options);
-    //             break;
-    //         case GameInputActions.CLICK_AT:
-    //             this.moveTo(options);
-    //             this.firePlayerMissile();
-    //             break;
-    //         case GameInputActions.ACTION:
-    //         case GameInputActions.ACTION_HOLD:
-    //             this.firePlayerMissile();
-    //             break;
-    //         case GameInputActions.RETURN:
-    //             this.setReadyForNextState();
-    //             break;
-    //         default:
-    //             break;
-    //     }
-    // }
-
     getNextState() {
         if(this._gameOver){
             return this._gameOverState;
@@ -151,8 +119,9 @@ class GameState extends AbstractState {
     }
 
     moveTo(coords) {
+        // Every value is in pixel
         this._moveToOrigin = this._spaceCraft.getEntityProperties().position.x;
-        this._moveToDestination = coords[0];
+        this._moveToDestination = coords.x;
         const distance = this._moveToOrigin - this._moveToDestination;
         if (Math.abs(distance) >= 3)
             this._moveToCursor = true;
@@ -207,7 +176,7 @@ class GameState extends AbstractState {
 
     setRandomSpawnPosition(entity) {
         entity.position.x = Math.random() * this._XSpawnRange - this._XSpawnRange / 2;
-        entity.position.y = (this._canvasDimRef.y + entity.renderSizeXY.y) / 2;
+        entity.position.y = (this._worldPixelSize.y + entity.renderSizeXY.y) / 2;
     }
 
     consumeMovementEvents() {
@@ -271,10 +240,9 @@ class GameState extends AbstractState {
         this._moveToCursor = false;
     }
 
-    moveShipToCursorCallback(position){
+    moveShipToCursorCallback(cursor){
         if(this.isInMainLoop()){
-            // TODO implement mouse cursor binding input
-            this.moveTo(position);
+            this.moveTo(cursor.pixelEnginePos);
         }
     }
 
@@ -295,12 +263,10 @@ class GameState extends AbstractState {
         const moveRight = gameBindings.getActionByName(GameInputActions.SHIP_RIGHT);
         moveRight.addActionCallback(self.moveShipRightCallback);
 
-        const moveToCursor = gameBindings.getActionByName(GameInputActions.SHIP_TO_CURSOR);
+        const moveToCursor = gameBindings.getActionByName(GameInputActions.SHIP_MOVE_TO_CURSOR);
         moveToCursor.addActionCallback(self.moveShipToCursorCallback);
 
         const returnToMainMenu = gameBindings.getActionByName(GameInputActions.MENU_RETURN_TO_MAIN);
         returnToMainMenu.addActionCallback(self.returnToMainMenuCallback);
-
-        //TODO do all other bindings
     }
 }
