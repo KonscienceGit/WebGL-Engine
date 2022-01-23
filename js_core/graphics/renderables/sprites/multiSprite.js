@@ -10,7 +10,7 @@ class MultiSprite extends Sprite {
     }
 
     draw(renderer) {
-        if (!this.isVisible()) {
+        if (!this.visible) {
             return;
         }
         const gl = renderer.getGLContext();
@@ -26,16 +26,8 @@ class MultiSprite extends Sprite {
     }
 
     /**
-     * @param {number} delta
-     */
-    updateSprite(delta) {
-        super.updateSprite(delta);
-        this._spriteInstances.forEach(entity => entity.timeAlive += delta);
-    }
-
-    /**
      * @param {WebGL2RenderingContext} gl
-     * @param {EntityProperties} instance
+     * @param {Entity} instance
      */
     setupInstanceUniforms(gl, instance) {
         gl.uniform2fv(this._spriteDimensionsUniform, [instance.renderSizeXY.x, instance.renderSizeXY.y]);
@@ -46,32 +38,32 @@ class MultiSprite extends Sprite {
     }
 
     /**
-     * @param {Array.<EntityProperties>}instancesArray
+     * @param {Entity[]}instancesArray
      */
     setInstances(instancesArray) {
         this._spriteInstances = instancesArray;
     }
 
     /**
-     * @param {EntityProperties}instance
+     * @param {Entity}instance
      */
     addInstance(instance) {
         this._spriteInstances.push(instance);
     }
 
     /**
-     * @return {Array.<EntityProperties>}
+     * @return {Entity[]}
      */
     getInstances() {
         return this._spriteInstances;
     }
 
     /**
-     * @returns {EntityProperties}
+     * @returns {Entity}
      */
     createNewInstance() {
-        const newInstance = this._entityProperties.clone();
-        newInstance.isVisible = true;
+        const newInstance = new Entity().copy(this);
+        newInstance.visible = true;
         return newInstance;
     }
 

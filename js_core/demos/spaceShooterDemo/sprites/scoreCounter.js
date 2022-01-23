@@ -26,8 +26,8 @@ class ScoreCounter extends MultiSprite {
     resetPosition() {
         this._pixelPerfectTool.setTopLeftPixelPostition(
             this,
-            40 + this._entityProperties.renderSizeXY.x / 2,
-            30 + this._entityProperties.renderSizeXY.y / 2
+            40 + this.renderSizeXY.x / 2,
+            30 + this.renderSizeXY.y / 2
         );
     }
 
@@ -43,7 +43,7 @@ class ScoreCounter extends MultiSprite {
             }
         }
 
-        const increment = this._entityProperties.renderSizeXY.x;
+        const increment = this.renderSizeXY.x;
         //Reset base position
         this.getRenderPosition().x = this.getReferencePosition().x + 4 * increment;
 
@@ -68,7 +68,7 @@ class ScoreCounter extends MultiSprite {
         const pos = entityItem.position.clone();
         const scale = 0.4 + score / 75.;
         const scaleVec = new Vec2(scale, scale);
-        const offset = this.getEntityProperties().renderSizeXY.x * scale;
+        const offset = this.renderSizeXY.x * scale;
         const digits = this.getDigits(score);
         const digitsCount = digits.length;
         const plus = this.createNewInstance();
@@ -87,12 +87,13 @@ class ScoreCounter extends MultiSprite {
         this._scoreFeedbackInstances.push(plus);
     }
 
-    updateSprite(delta) {
-        super.updateSprite(delta);
+    updateEntity(delta) {
+        super.updateEntity(delta);
         let instanceToKeep = [];
+        const now = performance.now();
         this._scoreFeedbackInstances.forEach(entity => {
             entity.position.moveUp(delta * this._moveSpeed);
-            if (entity.timeAlive < 1) {
+            if (now - entity.creationTime < 1000) {
                 instanceToKeep.push(entity);
             }
         });

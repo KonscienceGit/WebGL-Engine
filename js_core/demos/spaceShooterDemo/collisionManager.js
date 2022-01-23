@@ -13,7 +13,7 @@ class CollisionManager {
 
         this._gravity = 0.;
         this._airDensity = 0.;
-        this._oneMeter = 0.05 * this._spaceCraft.getEntityProperties().renderSizeXY.y;// 1 meter size, in pixels
+        this._oneMeter = 0.05 * this._spaceCraft.renderSizeXY.y;// 1 meter size, in pixels
 
         this._screenBottomY = -0.5 * screenSize.y;
         this._screenTopY = 0.5 * screenSize.y;
@@ -107,7 +107,7 @@ class CollisionManager {
     updatePlayerCollisions(objects) {
         let objectStayOnScreen = [];
         objects.getInstances().forEach(object => {
-            if (this._spaceCraft.getEntityProperties().intersect(object)) {
+            if (this._spaceCraft.intersect(object)) {
                 this._spaceCraft.looseOneLife();
             } else {
                 objectStayOnScreen.push(object);

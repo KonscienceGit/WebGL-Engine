@@ -38,7 +38,7 @@ class GameState extends AbstractState {
         this._moveToDestination = 0;
 
         this._gameOver = false;
-        this._XSpawnMargin = 100 + this._aliensSprites.getEntityProperties().renderSizeXY.x / 2;
+        this._XSpawnMargin = 100 + this._aliensSprites.renderSizeXY.x / 2;
         this._XSpawnRange = this._worldPixelSize.x - 2 * this._XSpawnMargin;
 
         this._spaceCraft.setLifeCount(3);
@@ -120,7 +120,7 @@ class GameState extends AbstractState {
 
     moveTo(coords) {
         // Every value is in pixel
-        this._moveToOrigin = this._spaceCraft.getEntityProperties().position.x;
+        this._moveToOrigin = this._spaceCraft.position.x;
         this._moveToDestination = coords.x;
         const distance = this._moveToOrigin - this._moveToDestination;
         if (Math.abs(distance) >= 3)
@@ -197,12 +197,12 @@ class GameState extends AbstractState {
         }
 
         this._spaceCraft.updateSpaceCraft(delta, this.craftDirection());
-        this._moveToOrigin = this._spaceCraft.getEntityProperties().position.x;
+        this._moveToOrigin = this._spaceCraft.position.x;
 
         if (this._moveToCursor) {
             const newDistance = this._moveToOrigin - this._moveToDestination;
             if (Math.abs(newDistance) < 1 || (distance * newDistance) < 0) {
-                this._spaceCraft.getEntityProperties().position.x = this._moveToDestination;
+                this._spaceCraft.position.x = this._moveToDestination;
                 this._moveLeft = 0.;
                 this._moveRight = 0.;
                 this._moveToCursor = false;
@@ -214,7 +214,7 @@ class GameState extends AbstractState {
         if (this._timeSinceLastPlayerMissile < this._deltaBetweenPlayerCanFire) return;
         const missile = this._playerMissilesSprites.createNewInstance();
         this._playerMissilesSprites.addInstance(missile);
-        missile.position = this._spaceCraft.getEntityProperties().position.clone();
+        missile.position = this._spaceCraft.position.clone();
         missile.radius = 0; //smaller hit chance
         missile.translationSpeed.y = 500;
         this._timeSinceLastPlayerMissile = 0;

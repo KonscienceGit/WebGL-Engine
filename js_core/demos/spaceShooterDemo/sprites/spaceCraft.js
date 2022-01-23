@@ -90,8 +90,8 @@ class SpaceCraft extends Sprite {
     imageLoaded() {
         super.imageLoaded();
         this._screenLimit = 1.25 * 0.5 * this._pixelPerfectTool.getResolution().x;
-        this._spaceCraftBaseYPosition = 0.5 * (-this._pixelPerfectTool.getResolution().y + this._entityProperties.renderSizeXY.y) + 1;
-        this._entityProperties.radius = 0.6 * this._entityProperties.renderSizeXY.y;
+        this._spaceCraftBaseYPosition = 0.5 * (-this._pixelPerfectTool.getResolution().y + this.renderSizeXY.y) + 1;
+        this.radius = 0.6 * this.renderSizeXY.y;
         this.resetPosition();
     }
 

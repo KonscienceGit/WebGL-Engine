@@ -21,8 +21,8 @@ class LifeCounter extends Sprite {
     resetPosition() {
         this._pixelPerfectTool.setTopRightPixelPostition(
             this,
-            40 + this._entityProperties.renderSizeXY.x / 2,
-            30 + this._entityProperties.renderSizeXY.y / 2
+            40 + this.renderSizeXY.x / 2,
+            30 + this.renderSizeXY.y / 2
         );
     }
 
@@ -30,7 +30,7 @@ class LifeCounter extends Sprite {
         if (!this.isVisible()) {
             return;
         }
-        let increment = this._entityProperties.renderSizeXY.x;
+        let increment = this.renderSizeXY.x;
         this.getRenderPosition().x = this.getReferencePosition().x;
         for (let i = 0; i < 3; i++) {
             if (i < this._lifeCount) {

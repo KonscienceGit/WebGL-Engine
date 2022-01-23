@@ -1,10 +1,10 @@
-class TranslucentOverlay extends AbstractRenderable {
+class TranslucentOverlay extends Entity {
     /**
      * @param {Renderer} renderer
      * @param {Vec4} colorVec4
      */
     constructor(renderer, colorVec4) {
-        super(renderer, "", []);
+        super();
         this._program = null;
         this._shaderName = "TranslucentOverlay";
         this._colorVec4 = colorVec4;

@@ -3,16 +3,16 @@
  * Images should be named as follow (if the file extension is .png)
  * 0.png, 1.png, 2.png ... N.png
  */
-class Sprite {
+class Sprite extends Entity {
     /**
      * @param {Renderer} renderer
      * @param {String} imageFolder
      * @param {String[]} imagesNames the array of images names to load in the sprites. Can contain only 1 image _name.
      */
     constructor(renderer, imageFolder, imagesNames) {
+        super();
         let gl = renderer.getGLContext();
-        this._entityProperties = new EntityProperties();
-        this._entityProperties.isVisible = false;
+        this.visible = false;
         this._isLoaded = false;
         this._texture = gl.createTexture();
         this._referencePosition = new Vec2(0, 0);
@@ -59,13 +59,13 @@ class Sprite {
     }
 
     /**
-     * Must be called when this entity has finished loading and initializing (its texture thatm ight be deffered etc).
+     * Must be called when this entity has finished loading and initializing (its texture that might be deferred etc).
      * It is important that this method is called in a finite time, to allow loading managers that depend on it to progress.
      */
     imageLoaded() {
         this.setLoaded(true);
-        this._entityProperties.physicSizeXY.set(this._entityProperties.renderSizeXY);
-        this._entityProperties.radius = this._entityProperties.physicSizeXY.x / 2;
+        this.physicSizeXY.set(this.renderSizeXY);
+        this.radius = this.physicSizeXY.x / 2;
     }
 
     /**
@@ -111,17 +111,10 @@ class Sprite {
     }
 
     /**
-     * @param {number} delta
-     */
-    updateSprite(delta) {
-        this._entityProperties.timeAlive += delta;
-    }
-
-    /**
      * @param {number} layerIndex
      */
     setTextureLayer(layerIndex) {
-        this._entityProperties.textureLayer = layerIndex;
+        this.textureLayer = layerIndex;
     }
 
     /**
@@ -137,12 +130,12 @@ class Sprite {
     setupUniforms(renderer) {
         const camera = renderer.getCamera();
         const gl = renderer.getGLContext();
-        gl.uniform2fv(this._scaleUniform, [this._entityProperties.scale.x, this._entityProperties.scale.y]);
-        gl.uniform2fv(this._positionUniform, [this._entityProperties.position.x, this._entityProperties.position.y]);
-        gl.uniform1f(this._rotationUniform, this._entityProperties.rotation);
-        gl.uniform2fv(this._spriteDimensionsUniform, [this._entityProperties.renderSizeXY.x, this._entityProperties.renderSizeXY.y]);
+        gl.uniform2fv(this._scaleUniform, [this.scale.x, this.scale.y]);
+        gl.uniform2fv(this._positionUniform, [this.position.x, this.position.y]);
+        gl.uniform1f(this._rotationUniform, this.rotation);
+        gl.uniform2fv(this._spriteDimensionsUniform, [this.renderSizeXY.x, this.renderSizeXY.y]);
         camera.setProjectionUniform(gl, this._canvasDimensionsUniform);
-        gl.uniform1i(this._textureLayerUniform, this._entityProperties.textureLayer);
+        gl.uniform1i(this._textureLayerUniform, this.textureLayer);
     }
 
     /**
@@ -207,14 +200,7 @@ class Sprite {
      * @param {Vec2} imgDim
      */
     setImageDimensions(imgDim) {
-        this._entityProperties.renderSizeXY.set(imgDim);
-    }
-
-    /**
-     * @returns {Vec2}
-     */
-    getImageDimensions() {
-        return this._entityProperties.renderSizeXY;
+        this.renderSizeXY.set(imgDim);
     }
 
     /**
@@ -222,20 +208,6 @@ class Sprite {
      */
     getVertices() {
         return new Float32Array([-1, -1, 0.0, 1.0, +1, -1, 1.0, 1.0, -1, +1, 0.0, 0.0, +1, +1, 1.0, 0.0, -1, +1, 0.0, 0.0, +1, -1, 1.0, 1.0]);
-    }
-
-    /**
-     * @returns {boolean}
-     */
-    isVisible() {
-        return this._entityProperties.isVisible;
-    }
-
-    /**
-     * @param {boolean} bool
-     */
-    setVisible(bool) {
-        this._entityProperties.isVisible = bool;
     }
 
     /**
@@ -257,8 +229,8 @@ class Sprite {
      * @param {number} y
      */
     setScale(x, y) {
-        this._entityProperties.scale.x = x;
-        this._entityProperties.scale.y = y;
+        this.scale.x = x;
+        this.scale.y = y;
     }
 
     /**
@@ -272,7 +244,7 @@ class Sprite {
      * @returns {Vec2}
      */
     getRenderPosition() {
-        return this._entityProperties.position;
+        return this.position;
     }
 
     /**
@@ -280,16 +252,9 @@ class Sprite {
      * @param {number} y
      */
     setPosition(x, y) {
-        this._entityProperties.position.x = x;
-        this._entityProperties.position.y = y;
+        this.position.x = x;
+        this.position.y = y;
         this._referencePosition.x = x;
         this._referencePosition.y = y;
-    }
-
-    /**
-     * @returns {EntityProperties}
-     */
-    getEntityProperties() {
-        return this._entityProperties;
     }
 }

@@ -68,10 +68,13 @@ class Renderer {
     }
 
     /**
-     * @param {Array.<Sprite>} spriteArray
+     * @param {Array.<Entity>} entityArray
      */
-    draw(spriteArray) {
-        spriteArray.forEach(entity => entity.draw(this));
+    draw(entityArray) {
+        const self = this;
+        entityArray.forEach(function (entity){
+            if (entity.visible) entity.draw(self);
+        });
     }
 
     clear() {

@@ -28,7 +28,7 @@ function main() {
 
     // Profiling stuff
     const benchmarkCodeSection = false;
-    let timestart = 0;
+    let timeStart = 0;
     let timeTotal = 0;
     let frame = 0;
     let sumOver120Frames = 0;
@@ -40,13 +40,13 @@ function main() {
         const deltaTime = computeDelta(timeStamp);
 
         if (benchmarkCodeSection){
-            timestart = performance.now();
+            timeStart = performance.now();
         }
 
         gameBindings.parseBindings(deltaTime);
 
         if (benchmarkCodeSection){
-            const timeSpend = performance.now() - timestart;
+            const timeSpend = performance.now() - timeStart;
             frame++;
             sumOver120Frames += timeSpend;
             timeTotal += timeSpend;
@@ -84,7 +84,7 @@ function main() {
      * @param {number} delta
      */
     function updateSprites(spriteArray, delta) {
-        spriteArray.forEach(entity => entity.updateSprite(delta));
+        spriteArray.forEach(entity => entity.updateEntity(delta));
     }
 
     return null;
