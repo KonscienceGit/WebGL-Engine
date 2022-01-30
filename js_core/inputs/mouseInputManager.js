@@ -89,9 +89,12 @@ class MouseInputManager extends AbstractInputManager {
         this._cursor.screenPos.setValues(event.screenX, event.screenY)
         // Adjust based on the real position of the current DOM element thingy
         this._cursor.canvasPos.setValues(event.clientX - rect.left, event.clientY - rect.top);
+
         // Convert to engine space (same dimensions in pixel, but coordinate 0,0 is at the center instead of top left, y axis is inverted)
-        this._cursor.pixelEnginePos.setValues(this._cursor.canvasPos.x - rect.width / 2,  rect.height / 2 - this._cursor.canvasPos.y);
-        this._cursor.viewPortPos.setValues(this._cursor.canvasPos.x / rect.width, this._cursor.canvasPos.y / rect.height);
+        const screenWorldSize = this._renderer.getCamera().getScreenWorldSize();
+        this._cursor.screenWorldPos.setValues(this._cursor.canvasPos.x - rect.width / 2,  rect.height / 2 - this._cursor.canvasPos.y);
+        this._cursor.screenWorldPos.x *= screenWorldSize.x / rect.width;
+        this._cursor.screenWorldPos.y *= screenWorldSize.y / rect.height;
         // this._cursor.pickedObject = null; TODO
     }
 
@@ -111,4 +114,3 @@ class MouseInputManager extends AbstractInputManager {
         // TODO
     }
 }
-

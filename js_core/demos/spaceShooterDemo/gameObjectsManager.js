@@ -3,7 +3,7 @@ class GameObjectsManager {
      * @param {Renderer} renderer
      */
     constructor(renderer) {
-        this._pixelPerfectTool = new PixelPerfectTool(renderer.getRenderResolution());
+        this._pixelPerfectTool = new PositionTool(renderer);
         this._background = new Sprite(renderer, "resources/", Sprite.getFileName("background",".png"));
         this._background.setVisible(true);
 
@@ -41,7 +41,7 @@ class GameObjectsManager {
         this._spriteArray.push(this._replayMenuSprite);
     }
 
-    /** @return {PixelPerfectTool} */
+    /** @return {PositionTool} */
     getPixelPerfectTool() {
         return this._pixelPerfectTool;
     }

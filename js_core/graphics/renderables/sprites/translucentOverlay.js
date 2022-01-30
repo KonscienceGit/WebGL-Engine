@@ -11,14 +11,7 @@ class TranslucentOverlay extends Entity {
         this._opacity = 1.0;
     }
 
-    isLoaded(){
-        return true;
-    }
-
     draw(renderer) {
-        if (!this.isVisible()) {
-            return;
-        }
         if (this._program == null) this.initOverlay(renderer);
         const gl = renderer.getGLContext();
 
@@ -70,7 +63,7 @@ class TranslucentOverlay extends Entity {
 
     /** @param {Vec4} color */
     setColor(color) {
-        this._colorVec4.set(color);
+        this._colorVec4.copy(color);
     }
 
     /** @param {number} opacity */

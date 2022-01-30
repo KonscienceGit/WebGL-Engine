@@ -26,10 +26,6 @@ class SpaceCraft extends Sprite {
         this.moveActor(delta);
     }
 
-    draw(gl) {
-        super.draw(gl);
-    }
-
     looseOneLife() {
         this._lifeCount -= 1;
     }

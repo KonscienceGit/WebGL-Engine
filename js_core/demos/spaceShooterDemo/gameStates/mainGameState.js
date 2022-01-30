@@ -1,4 +1,4 @@
-class GameState extends AbstractState {
+class MainGameState extends AbstractState {
     constructor(objectManager, gameBindings) {
         super();
         this._gameOverState = null;
@@ -242,7 +242,7 @@ class GameState extends AbstractState {
 
     moveShipToCursorCallback(cursor){
         if(this.isInMainLoop()){
-            this.moveTo(cursor.pixelEnginePos);
+            this.moveTo(cursor.screenWorldPos);
         }
     }
 

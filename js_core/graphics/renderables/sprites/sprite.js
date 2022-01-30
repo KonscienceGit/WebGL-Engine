@@ -11,9 +11,8 @@ class Sprite extends Entity {
      */
     constructor(renderer, imageFolder, imagesNames) {
         super();
+        this.setLoaded(false);
         let gl = renderer.getGLContext();
-        this.visible = false;
-        this._isLoaded = false;
         this._texture = gl.createTexture();
         this._referencePosition = new Vec2(0, 0);
         this._vertex_buffer = gl.createBuffer();
@@ -64,17 +63,11 @@ class Sprite extends Entity {
      */
     imageLoaded() {
         this.setLoaded(true);
-        this.physicSizeXY.set(this.renderSizeXY);
+        this.physicSizeXY.copy(this.renderSizeXY);
         this.radius = this.physicSizeXY.x / 2;
     }
 
-    /**
-     * @param {Renderer} renderer
-     */
     draw(renderer) {
-        if (!this.isVisible()) {
-            return;
-        }
         const gl = renderer.getGLContext();
         this.setupContext(renderer);
         gl.drawArrays(gl.TRIANGLES, 0, 6);
@@ -200,7 +193,7 @@ class Sprite extends Entity {
      * @param {Vec2} imgDim
      */
     setImageDimensions(imgDim) {
-        this.renderSizeXY.set(imgDim);
+        this.renderSizeXY.copy(imgDim);
     }
 
     /**
@@ -208,20 +201,6 @@ class Sprite extends Entity {
      */
     getVertices() {
         return new Float32Array([-1, -1, 0.0, 1.0, +1, -1, 1.0, 1.0, -1, +1, 0.0, 0.0, +1, +1, 1.0, 0.0, -1, +1, 0.0, 0.0, +1, -1, 1.0, 1.0]);
-    }
-
-    /**
-     * @returns {boolean}
-     */
-    isLoaded() {
-        return this._isLoaded;
-    }
-
-    /**
-     * @param {boolean} bool
-     */
-    setLoaded(bool) {
-        this._isLoaded = bool;
     }
 
     /**

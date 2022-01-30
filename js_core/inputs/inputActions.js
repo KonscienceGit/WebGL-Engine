@@ -148,7 +148,7 @@ class PositionInputAction extends AbstractInputAction{
 
         // Only callback if the position changed
         if(!this._previousPosition.equals(cursor.screenPos)){
-            this._previousPosition.set(cursor.screenPos);
+            this._previousPosition.copy(cursor.screenPos);
             this.getActionCallbacks().forEach(positionCallback => positionCallback(cursor));
         }
     }

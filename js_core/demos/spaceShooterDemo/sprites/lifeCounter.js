@@ -19,22 +19,19 @@ class LifeCounter extends Sprite {
     }
 
     resetPosition() {
-        this._pixelPerfectTool.setTopRightPixelPostition(
+        this._pixelPerfectTool.setTopRightWorldPosition(
             this,
             40 + this.renderSizeXY.x / 2,
             30 + this.renderSizeXY.y / 2
         );
     }
 
-    draw(gl) {
-        if (!this.isVisible()) {
-            return;
-        }
+    draw(renderer) {
         let increment = this.renderSizeXY.x;
         this.getRenderPosition().x = this.getReferencePosition().x;
         for (let i = 0; i < 3; i++) {
             if (i < this._lifeCount) {
-                super.draw(gl);
+                super.draw(renderer); // render each number using parent draw method
             }
             this.getRenderPosition().moveLeft(increment);
         }

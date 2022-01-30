@@ -21,7 +21,7 @@ class Renderer {
         this._gl.blendEquation(this._gl.FUNC_ADD);
         // correct blending, even on non opaque destination
         this._gl.blendFuncSeparate(this._gl.SRC_ALPHA, this._gl.ONE_MINUS_SRC_ALPHA, this._gl.ONE, this._gl.ONE_MINUS_SRC_ALPHA);
-        this._gl.clearColor(1, 1, 1, 1);
+        this._gl.clearColor(1, 0, 1, 1);
 
         this.updateScreenSize();
 
@@ -39,27 +39,37 @@ class Renderer {
         FIXED_RESOLUTION: 2
     }
 
-    updateScreenSize() {
-        const clWidth = this._canvas.parentNode.clientWidth;
-        const clHeight = this._canvas.parentNode.clientHeight;
-        const scWidth = screen.availWidth;
-        const scHeight = screen.availHeight;
-        this._windowResolution.x = Math.min(clWidth, scWidth);
-        this._windowResolution.y = Math.min(clHeight, scHeight);
+    format(n){
+        return Math.round(n);
+    }
 
+    updateScreenSize() {
+        const docBody = document.body;
+        const docElem = document.documentElement;
+        // TODO only one of them is best for mobile, need to find which...
+        this._windowResolution.x = docElem.clientWidth || docBody.clientWidth || window.innerWidth;
+        this._windowResolution.y = docElem.clientHeight || docBody.clientHeight || window.innerHeight;
         switch (this._displayMode) {
             default:
             case Renderer.DISPLAY_MODE.FULLSCREEN:
-                this._renderResolution.set(this._windowResolution);
+                this._renderResolution.copy(this._windowResolution);
                 this._ratio =  this._renderResolution.x /  this._renderResolution.y;
                 break;
             case Renderer.DISPLAY_MODE.FIXED_RESOLUTION:
                 this._ratio =  this._renderResolution.x /  this._renderResolution.y;
                 break;
             case Renderer.DISPLAY_MODE.FIXED_RATIO:
-                this._renderResolution.set(this._windowResolution);
+                const ratioWidth = this._windowResolution.y * this._ratio;
+                if (ratioWidth > this._windowResolution.x) {
+                    this._renderResolution.x = this._windowResolution.x;
+                    this._renderResolution.y = this._windowResolution.x / this._ratio;
+                } else {
+                    this._renderResolution.x = ratioWidth;
+                    this._renderResolution.y = this._windowResolution.y;
+                }
                 break;
         }
+
         this._canvas.width = this._renderResolution.x;
         this._canvas.height = this._renderResolution.y;
         this._gl.viewport(0, 0, this._renderResolution.x, this._renderResolution.y);
@@ -68,12 +78,12 @@ class Renderer {
     }
 
     /**
-     * @param {Array.<Entity>} entityArray
+     * @param {Entity[]} entityArray
      */
     draw(entityArray) {
-        const self = this;
+        const renderer = this;
         entityArray.forEach(function (entity){
-            if (entity.visible) entity.draw(self);
+            if (entity.isVisible()) entity.draw(renderer);
         });
     }
 
@@ -88,7 +98,7 @@ class Renderer {
 
     setDisplayFixedResolution(resolution){
         this._displayMode = Renderer.DISPLAY_MODE.FIXED_RESOLUTION;
-        this._renderResolution.set(resolution);
+        this._renderResolution.copy(resolution);
         this.updateScreenSize();
     }
 

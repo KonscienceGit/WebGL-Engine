@@ -8,7 +8,7 @@ class Vec2 {
         return new Vec2(this.x, this.y);
     }
 
-    set(otherVec) {
+    copy(otherVec) {
         this.x = otherVec.x;
         this.y = otherVec.y;
     }
@@ -60,8 +60,8 @@ class Vec3 extends Vec2 {
         return new Vec3(this.x, this.y, this.z);
     }
 
-    set(otherVec) {
-        super.set(otherVec);
+    copy(otherVec) {
+        super.copy(otherVec);
         this.z = otherVec.z;
     }
 
@@ -97,8 +97,8 @@ class Vec4 extends Vec3 {
         return new Vec4(this.x, this.y, this.z, this.w);
     }
 
-    set(anotherVec4) {
-        super.set(anotherVec4);
+    copy(anotherVec4) {
+        super.copy(anotherVec4);
         this.w = anotherVec4.w;
     }
 

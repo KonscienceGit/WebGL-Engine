@@ -7,8 +7,9 @@ function main() {
     const fixedResolution = new Vec2(1100, 800);
     const camera = new Camera2D();
     const renderer = new Renderer(canvas, camera);
-    renderer.setDisplayFixedResolution(fixedResolution);
-    camera.setVerticalWorldSize(fixedResolution.y);
+    // renderer.setDisplayFixedResolution(fixedResolution);
+    renderer.setDisplayFixedRatio(11/8);
+    camera.setVerticalScreenWorldSize(fixedResolution.y);
     const gameObjectManager = new GameObjectsManager(renderer);
     const renderableArray = gameObjectManager.getRenderableArray();
 

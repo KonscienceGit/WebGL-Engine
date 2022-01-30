@@ -1,6 +1,7 @@
-class PixelPerfectTool {
-    constructor(resolution) {
-        this._resolution = new Vec2(resolution.x, resolution.y);
+class PositionTool {
+    constructor(renderer) {
+        this.camera = renderer.getCamera();
+        this.renderer = renderer;
     }
 
     /**
@@ -9,8 +10,9 @@ class PixelPerfectTool {
      * @param {number} x the horizontal offset from the screen leftmost position
      * @param {number} y the vertical offset from the screen topmost position
      */
-    setTopLeftPixelPostition(sprite, x, y) {
-        sprite.setPosition(x - this._resolution.x / 2, this._resolution.y / 2 - y);
+    setTopLeftWorldPosition(sprite, x, y) {
+        const ws = this.camera.getScreenWorldSize();
+        sprite.setPosition(x - ws.x / 2, ws.y / 2 - y);
     }
 
     /**
@@ -19,11 +21,12 @@ class PixelPerfectTool {
      * @param {number} x the horizontal offset from the screen rightmost position
      * @param {number} y the vertical offset from the screen topmost position
      */
-    setTopRightPixelPostition(sprite, x, y) {
-        sprite.setPosition(this._resolution.x / 2 - x, this._resolution.y / 2 - y);
+    setTopRightWorldPosition(sprite, x, y) {
+        const ws = this.camera.getScreenWorldSize();
+        sprite.setPosition(ws.x / 2 - x, ws.y / 2 - y);
     }
 
     getResolution(){
-        return this._resolution;
+        return this.camera.getScreenWorldSize().clone();
     }
 }

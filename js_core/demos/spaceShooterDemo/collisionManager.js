@@ -1,7 +1,7 @@
 class CollisionManager {
     /**
      * @param {GameObjectsManager} objectManager
-     * @param {GameState} gameState
+     * @param {MainGameState} gameState
      * @param {Vec2} screenSize
      */
     constructor(objectManager, gameState, screenSize) {

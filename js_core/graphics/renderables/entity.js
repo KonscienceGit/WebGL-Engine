@@ -4,7 +4,8 @@
 class Entity {
     constructor() {
         this.visible = false;
-        this.collidable = false;
+        this.loaded = true;
+        this.hasPhysics = false;
         this.updatable = false;
         this.creationTime = performance.now();
         this.childrenNodes = [];
@@ -55,19 +56,18 @@ class Entity {
      * @returns {Entity}
      */
     copy(toCopy) {
-        this.scale.set(toCopy.scale);
-        this.rotation = toCopy.rotation;
-        this.position.set(toCopy.position);
+        this.scale.copy(toCopy.scale);
+        this.rotation = toCopy.rotation; // TODO 3D rotation, vec3 or quaternion?
+        this.position.copy(toCopy.position);
 
-        this.renderSizeXY.set(toCopy.renderSizeXY);
-        this.isVisible = toCopy.isVisible;
+        this.renderSizeXY.copy(toCopy.renderSizeXY); // TODO Texture only
         this.textureLayer = toCopy.textureLayer;
 
-        this.physicSizeXY.set(toCopy.physicSizeXY);
+        this.physicSizeXY.copy(toCopy.physicSizeXY); // TODO create boundingBox
         this.isRound = toCopy.isRound;
-        this.radius = toCopy.radius;
-        this.translationSpeed.set(toCopy.translationSpeed);
-        this.rotationSpeed = toCopy.rotationSpeed;
+        this.radius = toCopy.radius; // TODO create boundingSphere
+        this.translationSpeed.copy(toCopy.translationSpeed);
+        this.rotationSpeed = toCopy.rotationSpeed; // TODO vec3 or quaternion (in units per seconds)
         this.density = toCopy.density;
         this.relativeSurface = toCopy.relativeSurface;
 
@@ -80,26 +80,54 @@ class Entity {
      * Return if this object has been loaded or not.
      * When used in a LoadingManager, the Loading process will not continue until the object is loaded.
      * (useful if this object's constructor can return before it's resources has finished loading, like files or asynchronous processing.)
-     * Override this method if your entity must perform asynchronous work after constructor call, before being usable in the game.
+     * Set this.loaded to false first if your entity must perform asynchronous work after constructor call, before being usable in the game.
      *
      * @returns {boolean}
      */
     isLoaded(){
-        return true;
+        return this.loaded;
     }
 
     /**
-     * Update this entity.
+     * Set if this object has been loaded or not.
+     * @param {boolean} bool
+     */
+    setLoaded(bool){
+        this.loaded = bool;
+    }
+
+
+    /**
+     * Update this entity and all its child entities if they are updatable.
      * This method is to be called each frame.
      * @param {number} delta the time delta (in seconds) since the last frame.
      */
-    updateEntity(delta){}
+    updateEntity(delta){
+        if (this.childrenNodes) {
+            for(let i = 0; i < this.childrenNodes.length; i++) {
+                if (this.childrenNodes[i].isUpdatable()) this.childrenNodes[i].updateEntity(delta);
+            }
+        }
+    }
 
     /**
-     * Draw this entity.
+     * Draw this entity and all its child entities if they are visible.
      * @param {Renderer} renderer
      */
-    draw(renderer) {}
+    draw(renderer) {
+        if (this.childrenNodes) {
+            for(let i = 0; i < this.childrenNodes.length; i++) {
+                if (this.childrenNodes[i].isVisible()) this.childrenNodes[i].draw(renderer);
+            }
+        }
+    }
+
+    /**
+     * Render this entity (if applicable) for picking purposes.
+     * @param {Renderer} renderer the offscreen renderer which will render this entity for picking.
+     * @param {number} id the id to assign to this entity in picking process.
+     */
+    drawForPicking(renderer, id){}
 
     /**
      * Return if this entity is visible or not.
@@ -119,19 +147,19 @@ class Entity {
     }
 
     /**
-     * Return if this entity can collide with others or not.
+     * Return if this entity have physics properties or not.
      * @returns {boolean}
      */
-    setCollidable() {
-        return this.collidable;
+    isPhysics() {
+        return this.hasPhysics;
     }
 
     /**
-     * Set if this entity can collide with others or not.
+     * Set if this entity have physics properties or not.
      * @param {boolean} canCollide
      */
-    setCollidable(canCollide) {
-        this.collidable = canCollide;
+    setPhysics(canCollide) {
+        this.hasPhysics = canCollide;
     }
 
     /**

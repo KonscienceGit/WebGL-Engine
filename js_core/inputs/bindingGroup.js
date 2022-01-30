@@ -14,7 +14,7 @@ class BindingGroup{
 
     /**
      * Enable or disable this binding group. Disabled binding group don't parse inputs and thus don't fire callbacks when inputs are pressed.
-     * Additionally, if set to false, this group's subgroups won't be parsed either.
+     * Additionally, if copy to false, this group's subgroups won't be parsed either.
      * @param {boolean} enable
      */
     setEnabled(enable){

@@ -9,7 +9,7 @@ class StateManager {
      */
     constructor(gameObjectManager, renderer, canvas, gameBindings) {
         this._startMenuState = new StartMenuState(gameObjectManager, gameBindings);
-        this._gameState = new GameState(gameObjectManager, gameBindings);
+        this._gameState = new MainGameState(gameObjectManager, gameBindings);
         this._replayMenuState = new ReplayMenuState(gameObjectManager, gameBindings);
 
         this._startMenuState.setNextState(this._gameState);

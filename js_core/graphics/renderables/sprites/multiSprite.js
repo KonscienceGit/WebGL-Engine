@@ -1,18 +1,18 @@
 class MultiSprite extends Sprite {
     /**
+     * Can render multiple similar sprites (of same image size) with reduced overhead. Useful for particles.
+     * Currently achieved by updating the basic uniforms between each render but only setting/binding a texture2D_array once for all sprites.
+     * Todo: implement/convert to instanced rendering.
      * @param {Renderer} renderer
      * @param {String} imageFolder
      * @param {String[]} imagesNames
      */
     constructor(renderer, imageFolder, imagesNames) {
         super(renderer, imageFolder, imagesNames);
-        this._spriteInstances = [];
+        this._spriteInstances = []; // TODO use childnodes as the sprites instances
     }
 
     draw(renderer) {
-        if (!this.visible) {
-            return;
-        }
         const gl = renderer.getGLContext();
         this.setupContext(renderer);
         this._spriteInstances.forEach(instance => {

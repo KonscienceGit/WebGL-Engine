@@ -4,7 +4,7 @@ class ScoreCounter extends MultiSprite {
         this._score = 0;
         this._moveSpeed = 100; // pixel per seconds
         this._scoreFeedbackInstances = [];
-        /** @type {EntityProperties[]} */
+        /** @type {Entity[]} */
         this._scoreCounterInstances = [];
         this._digitCount = 5;
         this._pixelPerfectTool = pixelPerfectTool;
@@ -24,19 +24,14 @@ class ScoreCounter extends MultiSprite {
     }
 
     resetPosition() {
-        this._pixelPerfectTool.setTopLeftPixelPostition(
+        this._pixelPerfectTool.setTopLeftWorldPosition(
             this,
             40 + this.renderSizeXY.x / 2,
             30 + this.renderSizeXY.y / 2
         );
     }
 
-    /** @param { WebGL2RenderingContext} gl */
-    draw(gl) {
-        if (!this.isVisible()) {
-            return;
-        }
-
+    draw(renderer) {
         if (this._scoreCounterInstances.length === 0) {
             for (let i = 0; i < this._digitCount; i++) {
                 this._scoreCounterInstances.push(this.createNewInstance());
@@ -50,17 +45,17 @@ class ScoreCounter extends MultiSprite {
         const numberToDisplay = this.getDigits(this._score);
         for (let i = 0; i < this._digitCount; i++) {
             this._scoreCounterInstances[i].textureLayer = numberToDisplay[i];
-            this._scoreCounterInstances[i].position.set(this.getRenderPosition());
+            this._scoreCounterInstances[i].position.copy(this.getRenderPosition());
             this.getRenderPosition().moveLeft(increment);
         }
 
         //Combine all instances array for drawing.
         this.setInstances(this._scoreCounterInstances.concat(this._scoreFeedbackInstances));
-        super.draw(gl);
+        super.draw(renderer);
     }
 
     /**
-     * @param {EntityProperties} entityItem
+     * @param {Entity} entityItem
      * @param {number} score
      */
     createScoreFeedbackAt(entityItem, score) {
@@ -73,17 +68,17 @@ class ScoreCounter extends MultiSprite {
         const digitsCount = digits.length;
         const plus = this.createNewInstance();
         plus.textureLayer = 10; // plus sign
-        plus.scale.set(scaleVec);
+        plus.scale.copy(scaleVec);
         pos.moveRight(digitsCount * offset / 2);
         for (let i = 0; i < digitsCount; i++) {
             const nextDigit = this.createNewInstance();
             nextDigit.textureLayer = digits[i];
-            nextDigit.position.set(pos);
-            nextDigit.scale.set(scaleVec);
+            nextDigit.position.copy(pos);
+            nextDigit.scale.copy(scaleVec);
             this._scoreFeedbackInstances.push(nextDigit);
             pos.moveLeft(offset);
         }
-        plus.position.set(pos);
+        plus.position.copy(pos);
         this._scoreFeedbackInstances.push(plus);
     }
 
