@@ -8,8 +8,9 @@ function main() {
     const camera = new Camera2D();
     const renderer = new Renderer(canvas, camera);
     // renderer.setDisplayFixedResolution(fixedResolution);
-    renderer.setDisplayFixedRatio(11/8);
-    camera.setVerticalScreenWorldSize(fixedResolution.y);
+    // renderer.setDisplayFixedRatio(11/8);
+    renderer.setDisplayFullscreen();
+    camera.setVerticalScreenWorldSize(renderer.getRenderResolution().y);
     const gameObjectManager = new GameObjectsManager(renderer);
     const renderableArray = gameObjectManager.getRenderableArray();
 
