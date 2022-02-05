@@ -52,3 +52,5 @@ Thumbs.db
 
 # Project stuff #
 build/
+node_modules/
+package-lock.json

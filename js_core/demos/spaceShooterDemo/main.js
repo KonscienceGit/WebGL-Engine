@@ -4,12 +4,12 @@ function main() {
     const canvas = document.getElementById("game_canvas");
     let previousTime = 0.0;
 
-    const fixedResolution = new Vec2(1100, 800);
     const camera = new Camera2D();
     const renderer = new Renderer(canvas, camera);
-    // renderer.setDisplayFixedResolution(fixedResolution);
+    const fixedResolution = new Vec2(1100, 800);
+    renderer.setDisplayFixedResolution(fixedResolution);
     // renderer.setDisplayFixedRatio(11/8);
-    renderer.setDisplayFullscreen();
+    // renderer.setDisplayFullscreen();
     camera.setVerticalScreenWorldSize(renderer.getRenderResolution().y);
     const gameObjectManager = new GameObjectsManager(renderer);
     const renderableArray = gameObjectManager.getRenderableArray();

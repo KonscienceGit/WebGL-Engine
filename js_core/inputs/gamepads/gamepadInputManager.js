@@ -3,41 +3,46 @@
 class GamepadInputManager extends AbstractInputManager {
     constructor() {
         super();
-        const haveEvents = 'GamepadEvent' in window;
-        const haveWebkitEvents = 'WebKitGamepadEvent' in window;
-        this.connecthandler = this.connecthandler.bind(this);
-        this.disconnecthandler = this.disconnecthandler.bind(this);
+        this._isSecureContext = window._isSecureContext;
         this._controllers = [];
         this._globalDeadZone = [0.2, 1.0];
         this._lastTime = performance.now();
+        if (!this._isSecureContext) {
+            console.log('This web page context is not "secure" (https), gamepads will be disabled.');
+            return;
+        }// require secure https for gamepads
+        const haveEvents = 'GamepadEvent' in window;
+        const haveWebkitEvents = 'WebKitGamepadEvent' in window;
+        this.connectHandler = this.connectHandler.bind(this);
+        this.disconnectHandler = this.disconnectHandler.bind(this);
 
         if (haveEvents) {
-            window.addEventListener("gamepadconnected", this.connecthandler);
-            window.addEventListener("gamepaddisconnected", this.disconnecthandler);
+            window.addEventListener("gamepadconnected", this.connectHandler);
+            window.addEventListener("gamepaddisconnected", this.disconnectHandler);
         } else if (haveWebkitEvents) {
-            window.addEventListener("webkitgamepadconnected", this.connecthandler);
-            window.addEventListener("webkitgamepaddisconnected", this.disconnecthandler);
+            window.addEventListener("webkitgamepadconnected", this.connectHandler);
+            window.addEventListener("webkitgamepaddisconnected", this.disconnectHandler);
         }
     }
 
     /**
-     * @param {GamepadInputIdentifier} controllerIdentifer
+     * @param {GamepadInputIdentifier} controllerIdentifier
      * @param {ActionType} actionType
      * @return {AbstractInput}
      */
-    createControllerInput(controllerIdentifer, actionType){
+    createControllerInput(controllerIdentifier, actionType){
         // Unruly combinations
-        if(controllerIdentifer.getInputType() === GAMEPAD_BUTTON && (
+        if(controllerIdentifier.getInputType() === GAMEPAD_BUTTON && (
             actionType === ActionType.POSITION ||
             actionType === ActionType.THROTTLE
         )){
             throw new Error('Error: cannot bind a Button to a ' + actionType + ' action!');
         }
 
-        if(controllerIdentifer.getInputType() === GAMEPAD_BUTTON){
-            return new GamepadButtonInput(this, controllerIdentifer.getType(), controllerIdentifer.getInputNumber());
-        } else if (controllerIdentifer.getInputType() === GAMEPAD_AXIS) {
-            return new GamepadAxisInput(this, controllerIdentifer.getType(), controllerIdentifer.getInputNumber(), controllerIdentifer.getAxisDirection());
+        if(controllerIdentifier.getInputType() === GAMEPAD_BUTTON){
+            return new GamepadButtonInput(this, controllerIdentifier.getType(), controllerIdentifier.getInputNumber());
+        } else if (controllerIdentifier.getInputType() === GAMEPAD_AXIS) {
+            return new GamepadAxisInput(this, controllerIdentifier.getType(), controllerIdentifier.getInputNumber(), controllerIdentifier.getAxisDirection());
         }
         throw new Error('Unknown controller identifier!');
     }
@@ -47,7 +52,7 @@ class GamepadInputManager extends AbstractInputManager {
      * @return {null|Gamepad}
      */
     getControllerByType(controllerType){
-        this.scangamepads();
+        this.scanGamepads();
         for (let i = 0; i < this._controllers.length; i++){
             if(!this._controllers[i] || !this._controllers[i].connected) continue;
             if (this._controllers[i].id.toLowerCase().includes(controllerType.toLowerCase())){
@@ -61,7 +66,7 @@ class GamepadInputManager extends AbstractInputManager {
      * @return {null|Gamepad}
      */
     getControllerByIndex(index){
-        this.scangamepads();
+        this.scanGamepads();
         if (this._controllers[index] && this._controllers[index].connected){
             return this._controllers[index];
         }
@@ -72,7 +77,7 @@ class GamepadInputManager extends AbstractInputManager {
      * @return {null|Gamepad}
      */
     getController(){
-        this.scangamepads();
+        this.scanGamepads();
         for (let i = 0; i < this._controllers.length; i++){
             if (this._controllers[i] && this._controllers[i].connected){
                 return this._controllers[i];
@@ -92,7 +97,8 @@ class GamepadInputManager extends AbstractInputManager {
         return this._globalDeadZone;
     }
 
-    scangamepads() {
+    scanGamepads() {
+        if (!this._isSecureContext) return;
         const now = performance.now();
         const sinceLastTime = now - this._lastTime;
         if (sinceLastTime > 15){
@@ -111,14 +117,14 @@ class GamepadInputManager extends AbstractInputManager {
     /**
      * @param {GamepadEvent} gamepadEvent
      */
-    connecthandler(gamepadEvent) {
+    connectHandler(gamepadEvent) {
         this._controllers[gamepadEvent.gamepad.index] = gamepadEvent.gamepad;
     }
 
     /**
      * @param {GamepadEvent} gamepadEvent
      */
-    disconnecthandler(gamepadEvent) {
+    disconnectHandler(gamepadEvent) {
         delete this._controllers[gamepadEvent.gamepad.index];
     }
 }
