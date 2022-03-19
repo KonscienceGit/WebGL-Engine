@@ -9,46 +9,43 @@ class TranslucentOverlay extends Entity {
         this._shaderName = "TranslucentOverlay";
         this._colorVec4 = colorVec4;
         this._opacity = 1.0;
+        this.initOverlay(renderer);
     }
 
     draw(renderer) {
-        if (this._program == null) this.initOverlay(renderer);
         const gl = renderer.getGLContext();
-
         this.setupContext(renderer);
         gl.drawArrays(gl.TRIANGLES, 0, 6);
         this.restoreContext(gl);
     }
 
     initOverlay(renderer){
+        // Shader
         const gl = renderer.getGLContext();
         const shaderUtils = renderer.getShaderUtils();
-        const vertexCode = shaderUtils.GLSL_300_ES + shaderUtils.FP_PRECISION_LOW + this.getVertexCode();
-        const fragmentCode = shaderUtils.GLSL_300_ES + shaderUtils.FP_PRECISION_LOW + this.getFragmentCode();
+        const vertexCode = shaderUtils.GLSL_300_ES + shaderUtils.FP_PRECISION_HIGH + this.getVertexCode();
+        const fragmentCode = shaderUtils.GLSL_300_ES + shaderUtils.FP_PRECISION_HIGH + this.getFragmentCode();
         this._program = shaderUtils.getOrCreateShader(gl, this._shaderName, vertexCode, fragmentCode, this.constructor.name);
         gl.useProgram(this._program);
-
-        // Vertices
-        this._vertex_buffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, this._vertex_buffer);
-        gl.bufferData(gl.ARRAY_BUFFER, this.getVertices(), gl.STATIC_DRAW);
-
-        // Attribute config
-        const stride = 2 * 4; // 2 * FP32
         this._coordAttrib = gl.getAttribLocation(this._program, "vertCoords");
-        gl.vertexAttribPointer(this._coordAttrib, 2, gl.FLOAT, false, stride, 0);
-        gl.bindBuffer(gl.ARRAY_BUFFER, null);
-
-        // Uniforms
         this._overlayColorUniform = gl.getUniformLocation(this._program, "overlayColor");
         this._opacityUniform = gl.getUniformLocation(this._program, "opacity");
+
+        // VAO
+        this._vertex_buffer = gl.createBuffer();
+        this._vao = gl.createVertexArray();
+        gl.bindVertexArray(this._vao);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this._vertex_buffer);
+        gl.bufferData(gl.ARRAY_BUFFER, this.getVertices(), gl.STATIC_DRAW);
+        gl.enableVertexAttribArray(this._coordAttrib);
+        const stride = 2 * 4; // 2 * FP32
+        gl.vertexAttribPointer(this._coordAttrib, 2, gl.FLOAT, false, stride, 0);
     }
 
     setupContext(renderer) {
         const gl = renderer.getGLContext();
+        gl.bindVertexArray(this._vao);
         gl.useProgram(this._program);
-        gl.bindBuffer(gl.ARRAY_BUFFER, this._vertex_buffer);
-        gl.enableVertexAttribArray(this._coordAttrib);
         gl.uniform4fv(this._overlayColorUniform, [this._colorVec4.x, this._colorVec4.y, this._colorVec4.z, this._colorVec4.w]);
         gl.uniform1f(this._opacityUniform, this._opacity);
     }
@@ -57,8 +54,7 @@ class TranslucentOverlay extends Entity {
      * @param {WebGL2RenderingContext} gl
      */
     restoreContext(gl) {
-        gl.disableVertexAttribArray(this._coordAttrib);
-        gl.bindBuffer(gl.ARRAY_BUFFER, null);
+        // gl.bindVertexArray(null);
     }
 
     /** @param {Vec4} color */
@@ -99,11 +95,11 @@ class TranslucentOverlay extends Entity {
     getVertices() { // Fullscreen quad
         return new Float32Array([
             -1, -1,// T1
-            +1, -1,
-            -1, +1,
-            +1, +1,// T2
-            -1, +1,
-            +1, -1
+            1, -1,
+            -1, 1,
+            1, 1,// T2
+            -1, 1,
+            1, -1
         ]);
     }
 }

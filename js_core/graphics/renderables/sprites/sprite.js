@@ -12,16 +12,11 @@ class Sprite extends Entity {
     constructor(renderer, imageFolder, imagesNames) {
         super();
         this.setLoaded(false);
+        this._referencePosition = new Vec2(0, 0);
         let gl = renderer.getGLContext();
         this._texture = gl.createTexture();
-        this._referencePosition = new Vec2(0, 0);
-        this._vertex_buffer = gl.createBuffer();
-
         this.loadTempTexture(gl, this._texture);
-        gl.bindBuffer(gl.ARRAY_BUFFER, this._vertex_buffer);
-        gl.bufferData(gl.ARRAY_BUFFER, this.getVertices(), gl.STATIC_DRAW);
-        this._shaderProgram = this.getShaderProgram(gl);
-        this.initShaderAttributes(gl);
+        this.initGraphics(gl);
         this._imageCount = imagesNames.length;
         this._imageFolder = imageFolder;
         this._imageLoadedCount = 0;
@@ -31,30 +26,36 @@ class Sprite extends Entity {
         }
     }
 
-    getShaderProgram(gl) {
-        return new ShadersUtil(gl).getSpriteShaderProgram();
-    }
-
-    initShaderAttributes(gl) {
+    initGraphics(gl) {
+        // Shaders, get attributes and uniforms handles
+        this._shaderProgram = new ShadersUtil(gl).getSpriteShaderProgram();
         gl.useProgram(this._shaderProgram);
         this._coordAttrib = gl.getAttribLocation(this._shaderProgram, "vertCoords");
         this._textCoordAttrib = gl.getAttribLocation(this._shaderProgram, "textCoordinates");
+
         this._scaleUniform = gl.getUniformLocation(this._shaderProgram, "scale");
         this._positionUniform = gl.getUniformLocation(this._shaderProgram, "position");
         this._rotationUniform = gl.getUniformLocation(this._shaderProgram, "rotation");
         this._spriteDimensionsUniform = gl.getUniformLocation(this._shaderProgram, "spriteDimensions");
         this._canvasDimensionsUniform = gl.getUniformLocation(this._shaderProgram, "canvasDimensions");
+        this._textureLayerUniform = gl.getUniformLocation(this._shaderProgram, "textureLayer");
+        this._initTexture = true;
 
+        // VAO setup
+        this._vertex_buffer = gl.createBuffer();
+        this._vao = gl.createVertexArray();
+        gl.bindVertexArray(this._vao);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this._vertex_buffer);
+        gl.bufferData(gl.ARRAY_BUFFER, this.getVertices(), gl.STATIC_DRAW);
         const floatBytes = 4;
         const vertexCoord = 2;
         const textCoord = 2;
-        const stride = vertexCoord * textCoord * floatBytes;
+        const stride = (vertexCoord + textCoord) * floatBytes;
         const textCoordOffset = vertexCoord * floatBytes;
+        gl.enableVertexAttribArray(this._coordAttrib);
         gl.vertexAttribPointer(this._coordAttrib, 2, gl.FLOAT, false, stride, 0);
+        gl.enableVertexAttribArray(this._textCoordAttrib);
         gl.vertexAttribPointer(this._textCoordAttrib, 2, gl.FLOAT, false, stride, textCoordOffset);
-        gl.bindBuffer(gl.ARRAY_BUFFER, null);
-        this._textureLayerUniform = gl.getUniformLocation(this._shaderProgram, "textureLayer");
-        this._initTexture = true;
     }
 
     /**
@@ -79,28 +80,17 @@ class Sprite extends Entity {
      */
     setupContext(renderer) {
         const gl = renderer.getGLContext();
-        gl.bindBuffer(gl.ARRAY_BUFFER, this._vertex_buffer);
+        gl.bindVertexArray(this._vao);
         gl.useProgram(this._shaderProgram);
         gl.bindTexture(gl.TEXTURE_2D_ARRAY, this._texture);
-        this.setupAttribs(gl);
         this.setupUniforms(renderer);
     }
 
     /**
      * @param {WebGL2RenderingContext} gl
      */
-    setupAttribs(gl) {
-        gl.enableVertexAttribArray(this._coordAttrib);
-        gl.enableVertexAttribArray(this._textCoordAttrib);
-    }
-
-    /**
-     * @param {WebGL2RenderingContext} gl
-     */
     restoreContext(gl) {
-        gl.disableVertexAttribArray(this._coordAttrib);
-        gl.disableVertexAttribArray(this._textCoordAttrib);
-        gl.bindBuffer(gl.ARRAY_BUFFER, null);
+        // gl.bindVertexArray(null);
     }
 
     /**
@@ -200,7 +190,7 @@ class Sprite extends Entity {
      * @returns {Float32Array}
      */
     getVertices() {
-        return new Float32Array([-1, -1, 0.0, 1.0, +1, -1, 1.0, 1.0, -1, +1, 0.0, 0.0, +1, +1, 1.0, 0.0, -1, +1, 0.0, 0.0, +1, -1, 1.0, 1.0]);
+        return new Float32Array([-1, -1, 0, 1, 1, -1, 1, 1, -1, 1, 0, 0, 1, 1, 1, 0, -1, 1, 0, 0, 1, -1, 1, 1]);
     }
 
     /**

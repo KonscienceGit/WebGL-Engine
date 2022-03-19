@@ -1,5 +1,5 @@
 const SHADER_HEADER = '#version 300 es \n' +
-    'precision mediump float;';
+    'precision highp float;';
 
 const VERTEX_SHADER_CODE = SHADER_HEADER +
     'uniform vec2 scale;' +
