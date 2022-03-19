@@ -3,7 +3,7 @@
 class GamepadInputManager extends AbstractInputManager {
     constructor() {
         super();
-        this._isSecureContext = window._isSecureContext;
+        this._isSecureContext = window.isSecureContext;
         this._controllers = [];
         this._globalDeadZone = [0.2, 1.0];
         this._lastTime = performance.now();
@@ -128,4 +128,3 @@ class GamepadInputManager extends AbstractInputManager {
         delete this._controllers[gamepadEvent.gamepad.index];
     }
 }
-
