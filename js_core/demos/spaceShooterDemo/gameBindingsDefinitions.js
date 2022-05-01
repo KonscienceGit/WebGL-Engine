@@ -1,4 +1,4 @@
-class SsdBindings extends BindingGroup{
+class GameBindingsDefinitions extends BindingGroup{
     constructor(keyboardManager, gamepadManager, mouseManager) {
         super("Controls", true, true);
         this._keyboardManager = keyboardManager;
@@ -11,16 +11,6 @@ class SsdBindings extends BindingGroup{
         this.addSubGroup(this._gameplayGroup);
 
         this.initActions();
-    }
-
-    switchToMenuMode(){
-        this._gameplayGroup.setEnabled(false);
-        this._menuGroup.setEnabled(true);
-    }
-
-    switchToGameplayMode(){
-        this._menuGroup.setEnabled(false);
-        this._gameplayGroup.setEnabled(true);
     }
 
     initActions() {

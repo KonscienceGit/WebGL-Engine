@@ -1,10 +1,12 @@
 /**
- * This define the base of each states.
+ * This define a basic implementation of a simple state (still bastract though).
+ * It features animations, a main loop, a start and finish stage.
+ * (So this state effectively have sub-states.)
  * Use states to define which part of the software/game the user/player is in (in the main menu, in the actual game, in the in-game menu, in the player inventory menu etc...)
  * Note: a state can be reused, as long as start and finish are properly called between uses.
  * @abstract
  */
-class BasicState {
+class AbstractState {
     constructor() {
         this.ANIMATE_IN = 0;
         this.ANIMATE_OUT = 1;
@@ -55,6 +57,12 @@ class BasicState {
         }
     }
 
+    /**
+     * Handle the animations (at the start and end) of this state.
+     * @param animationLength the duration of the animation, in seconds.
+     * @param delta the amount of time to advance the animation, in seconds.
+     * @param animationType the type of animation (animate in or out).
+     */
     animate(animationLength, delta, animationType){
         if(animationLength <= 0){// No animation
             this._currentState++;
@@ -93,7 +101,7 @@ class BasicState {
      * @public
      * @return {boolean} Return if this state have finished and the next state can take over.
      */
-    goToNextState(){
+    isStateFinished(){
         return this._goToNextState;
     }
 
@@ -106,7 +114,6 @@ class BasicState {
     }
 
     /**
-     * @abstract
      * This (re)initialize this state to it's starting status.
      * Called when this state become active.
      * This is usually used to enable the adequate inputs, position objects in the scene, make them visible, initialize the status and scores, etc.
@@ -116,7 +123,6 @@ class BasicState {
     }
 
     /**
-     * @abstract
      * Animate this state when it become active, just after calling start().
      * AnimateIn is then called until the animationState reach 1.0, the time it takes is defined by setAnimateInLength(seconds).
      * @param {number} delta in seconds.
@@ -136,7 +142,6 @@ class BasicState {
     }
 
     /**
-     * @abstract
      * Animate this state when it's going towards it's inactive state, before aclling finish().
      * AnimateOut is then called until the animationState reach 1.0, the time it takes is defined by setAnimateOutLength(seconds).
      * @param {number} delta in seconds.
@@ -150,7 +155,6 @@ class BasicState {
      * This allow to cleanup this state before leaving for the next state.
      * Called after animateOut() finish and before the final transition from this state to another.
      * This is usually used to disable this state inputs, hide this state objects by making them invisible, reset the status and scores, etc.
-     * @abstract
      */
     finish(){
         ConsoleUtils.nonImplementedError();
@@ -167,9 +171,8 @@ class BasicState {
     }
 
     /**
-     * @abstract
      * Return the next state following this state. One game state can lead to several different states, depending on the context, you can get creative.
-     * @returns {BasicState}
+     * @returns {AbstractState}
      */
     getNextState(){
         ConsoleUtils.nonImplementedError();

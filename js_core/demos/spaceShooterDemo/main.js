@@ -18,7 +18,7 @@ function main() {
     const keyboardManager = new KeyboardInputManager();
     const gamepadManager = new GamepadInputManager();
     const mouseManager = new MouseInputManager(canvas, renderer);
-    const gameBindings = new SsdBindings(keyboardManager, gamepadManager, mouseManager);
+    const gameBindings = new GameBindingsDefinitions(keyboardManager, gamepadManager, mouseManager);
 
     const gameStateManager = new StateManager(gameObjectManager, renderer, canvas, gameBindings);
 

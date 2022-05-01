@@ -1,7 +1,7 @@
-class StartMenuState extends BasicState {
+class StartMenuState extends AbstractState {
     /**
      * @param {GameObjectsManager} objectManager
-     * @param {SsdBindings} gameBindings
+     * @param {GameBindingsDefinitions} gameBindings
      */
     constructor(objectManager, gameBindings) {
         super();
