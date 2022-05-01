@@ -1,6 +1,6 @@
 /**
- * This define the base of each game states.
- * Use game states to define which part of the game the player is in (in the main menu, in the actual game, in the in-game menu, in the player inventory menu etc...)
+ * This define the base of each states.
+ * Use states to define which part of the software/game the user/player is in (in the main menu, in the actual game, in the in-game menu, in the player inventory menu etc...)
  * Note: a state can be reused, as long as start and finish are properly called between uses.
  * @abstract
  */
