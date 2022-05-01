@@ -4,7 +4,7 @@
  * Note: a state can be reused, as long as start and finish are properly called between uses.
  * @abstract
  */
-class AbstractState {
+class BasicState {
     constructor() {
         this.ANIMATE_IN = 0;
         this.ANIMATE_OUT = 1;
@@ -169,7 +169,7 @@ class AbstractState {
     /**
      * @abstract
      * Return the next state following this state. One game state can lead to several different states, depending on the context, you can get creative.
-     * @returns {AbstractState}
+     * @returns {BasicState}
      */
     getNextState(){
         ConsoleUtils.nonImplementedError();

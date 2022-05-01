@@ -17,7 +17,7 @@ class StateManager {
         this._gameState.setGameOverState(this._replayMenuState);
         this._replayMenuState.setNextState(this._startMenuState);
 
-        /** @type {AbstractState} */
+        /** @type {BasicState} */
         this._activeState = this._startMenuState;
     }
 

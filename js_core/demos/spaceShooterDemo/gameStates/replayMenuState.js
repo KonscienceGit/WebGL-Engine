@@ -1,4 +1,4 @@
-class ReplayMenuState extends AbstractState {
+class ReplayMenuState extends BasicState {
     constructor(objectManager, gameBindings) {
         super();
         this._nextState = null;

@@ -1,4 +1,4 @@
-class MainGameState extends AbstractState {
+class MainGameState extends BasicState {
     constructor(objectManager, gameBindings) {
         super();
         this._gameOverState = null;
