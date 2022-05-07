@@ -1,6 +1,6 @@
 class ScoreCounter extends MultiSprite {
-    constructor(renderer, pixelPerfectTool) {
-        super(renderer, "resources/numbers/", Sprite.generateFileNameList(11, ".png"));
+    constructor(renderer, resourcePath, pixelPerfectTool) {
+        super(renderer, resourcePath, Sprite.generateFileNameList(11, ".png"));
         this._score = 0;
         this._moveSpeed = 100; // pixel per seconds
         this._scoreFeedbackInstances = [];

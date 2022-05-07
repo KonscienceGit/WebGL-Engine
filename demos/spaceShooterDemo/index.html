@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" style="margin:0;padding:0">
+<meta charset="utf-8">
+<head>
+    <meta content="https://github.com/KonscienceGit" name="author">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>WebGL Engine Demo - Space Invaders</title>
+
+    <!-- UTILS -->
+    <script src="../../webgl_engine/utils/consoleUtils.js"></script>
+    <script src="../../webgl_engine/utils/vectors.js"></script>
+    <script src="../../webgl_engine/utils/stringUtils.js"></script>
+    <script src="../../webgl_engine/utils/cursorProperties.js"></script>
+    <script src="../../webgl_engine/utils/loadingManager.js"></script>
+    <script src="../../webgl_engine/graphics/shaderObject.js"></script>
+    <script src="../../webgl_engine/graphics/shadersUtil.js"></script>
+    <script src="../../webgl_engine/graphics/positionTool.js"></script>
+    <script src="./gameInputActions.js"></script>
+
+    <!-- MISC -->
+    <script src="./collisionManager.js"></script>
+    <script src="./gameObjectsManager.js"></script>
+    <script src="../../webgl_engine/graphics/renderer.js"></script>
+    <script src="../../webgl_engine/graphics/abstractCamera.js"></script>
+    <script src="../../webgl_engine/graphics/camera2D.js"></script>
+
+    <!-- GAME STATES -->
+    <script src="../../webgl_engine/statesManagement/abstractState.js"></script>
+    <script src="../../webgl_engine/statesManagement/abstractStateManager.js"></script>
+    <script src="./gameStates/startMenuState.js"></script>
+    <script src="./gameStates/mainGameState.js"></script>
+    <script src="./gameStates/replayMenuState.js"></script>
+    <script src="./gameStates/stateManager.js"></script>
+
+    <!-- INPUTS -->
+    <script src="../../webgl_engine/inputs/abstractInput.js"></script>
+    <script src="../../webgl_engine/inputs/gamepads/gamepadInputIdentifiers.js"></script>
+    <script src="../../webgl_engine/inputs/gamepads/gamepadInputs.js"></script>
+    <script src="../../webgl_engine/inputs/abstractInputManager.js"></script>
+    <script src="../../webgl_engine/inputs/gamepads/gamepadInputManager.js"></script>
+    <script src="../../webgl_engine/inputs/keyboard/keyboardInputIdentifier.js"></script>
+    <script src="../../webgl_engine/inputs/keyboard/keyboardInputManager.js"></script>
+    <script src="../../webgl_engine/inputs/keyboard/keyboardKeyInput.js"></script>
+    <script src="../../webgl_engine/inputs/mouseInputManager.js"></script>
+    <script src="../../webgl_engine/inputs/mouseInputs.js"></script>
+    <script src="../../webgl_engine/inputs/inputActions.js"></script>
+    <script src="../../webgl_engine/inputs/bindingGroup.js"></script>
+    <script src="./gameBindingsDefinitions.js"></script>
+
+
+    <!-- SPRITES -->
+    <script src="../../webgl_engine/graphics/renderables/entity.js"></script>
+    <script src="../../webgl_engine/graphics/renderables/sprites/sprite.js"></script>
+    <script src="./sprites/lifeCounter.js"></script>
+    <script src="../../webgl_engine/graphics/renderables/sprites/multiSprite.js"></script>
+    <script src="../../webgl_engine/graphics/renderables/sprites/translucentOverlay.js"></script>
+    <script src="./sprites/scoreCounter.js"></script>
+    <script src="./sprites/spaceCraft.js"></script>
+
+</head>
+<body style="margin:0;padding:0;background:white">
+<canvas height="800" id="game_canvas" width="1100"></canvas>
+<script type="module">
+    import {main} from './main.js';
+
+    window.onload = main();
+</script>
+</body>
+</html>

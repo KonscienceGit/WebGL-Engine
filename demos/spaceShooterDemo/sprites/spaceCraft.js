@@ -1,6 +1,6 @@
 class SpaceCraft extends Sprite {
-    constructor(renderer, pixelPerfectTool) {
-        super(renderer, "resources/actor/", Sprite.generateFileNameList(5, ".png"));
+    constructor(renderer, resourcePath, pixelPerfectTool) {
+        super(renderer, resourcePath, Sprite.generateFileNameList(5, ".png"));
         this._pixelPerfectTool = pixelPerfectTool;
         this._movingDir = 0;
         this._animationPos = 0.0;
