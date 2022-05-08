@@ -57,7 +57,7 @@ class TranslucentOverlay extends Entity {
         // gl.bindVertexArray(null);
     }
 
-    /** @param {Vec4} color */
+    /** @param {Vec4} color the color in [0 to 1] RBGA components */
     setColor(color) {
         this._colorVec4.copy(color);
     }

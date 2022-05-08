@@ -10,6 +10,7 @@ class Renderer {
         this._displayMode = Renderer.DISPLAY_MODE.FULLSCREEN;
         this._windowResolution = new Vec2(1,1);
         this._renderResolution = new Vec2(1,1);
+        this._clearColor = new Vec4(1, 0, 1, 1);
         this._gl = this._canvas.getContext('webgl2', {
             antialias: false,
             depth: false,
@@ -21,7 +22,7 @@ class Renderer {
         this._gl.blendEquation(this._gl.FUNC_ADD);
         // correct blending, even on non opaque destination
         this._gl.blendFuncSeparate(this._gl.SRC_ALPHA, this._gl.ONE_MINUS_SRC_ALPHA, this._gl.ONE, this._gl.ONE_MINUS_SRC_ALPHA);
-        this._gl.clearColor(1, 0, 1, 1);
+        this.setClearColor(this._clearColor);
 
         this.updateScreenSize();
 
@@ -37,10 +38,6 @@ class Renderer {
         FULLSCREEN: 0,
         FIXED_RATIO: 1,
         FIXED_RESOLUTION: 2
-    }
-
-    format(n){
-        return Math.round(n);
     }
 
     updateScreenSize() {
@@ -89,6 +86,12 @@ class Renderer {
 
     clear() {
         this._gl.clear(this._gl.COLOR_BUFFER_BIT);
+    }
+
+    /** @param {Vec4} color the color in [0 to 1] RBGA components */
+    setClearColor(color) {
+        this._clearColor.copy(color);
+        this._gl.clearColor(this._clearColor.x, this._clearColor.y, this._clearColor.z, this._clearColor.w);
     }
 
     setDisplayFullscreen() {

@@ -67,9 +67,9 @@ class MainGameState extends AbstractState {
         const nbRow = 9;
         const nbCol = 9;
         for (let row = 0; row < nbRow; row++) {
-            let y = row / nbRow - 0.5 - size / 2;
+            let y = row / nbRow - 0.5 + size / 2;
             for (let col = 0; col < nbCol; col++) {
-                let x = col / nbCol - 0.5 - size / 2;
+                let x = col / nbCol - 0.5 + size / 2;
                 const tile = this._tiles.createNewInstance();
                 tile.position.setValues(x, y);
                 tile.renderSizeXY.setValues(size, size);

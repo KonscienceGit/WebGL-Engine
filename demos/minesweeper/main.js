@@ -8,8 +8,8 @@ function main() {
     const renderer = new Renderer(canvas, camera);
     const fixedResolution = new Vec2(1100, 800);
     renderer.setDisplayFixedResolution(fixedResolution);
+    renderer.setClearColor(new Vec4(0.5,0.5,0.5,1));
     // renderer.setDisplayFullscreen();
-    // camera.setVerticalScreenWorldSize(renderer.getRenderResolution().y);
     camera.setVerticalScreenWorldSize(1.0);
     const gameObjectManager = new GameObjectsManager(renderer);
     const renderableArray = gameObjectManager.spriteArray;
@@ -36,6 +36,7 @@ function main() {
         gameBindings.parseBindings(deltaTime);
         gameStateManager.updateCurrentState(deltaTime);
         updateSprites(renderableArray, deltaTime);
+        renderer.clear();
         renderer.draw(renderableArray);
         //Request another animation frame, at a pace that should match monitor refresh rate (or at least the web browser refresh rate)
         requestAnimationFrame(renderGameFrame);
