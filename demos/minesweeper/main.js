@@ -9,9 +9,10 @@ function main() {
     const fixedResolution = new Vec2(1100, 800);
     renderer.setDisplayFixedResolution(fixedResolution);
     // renderer.setDisplayFullscreen();
-    camera.setVerticalScreenWorldSize(renderer.getRenderResolution().y);
+    // camera.setVerticalScreenWorldSize(renderer.getRenderResolution().y);
+    camera.setVerticalScreenWorldSize(1.0);
     const gameObjectManager = new GameObjectsManager(renderer);
-    const renderableArray = gameObjectManager.getRenderableArray();
+    const renderableArray = gameObjectManager.spriteArray;
 
     // Inputs
     const keyboardManager = new KeyboardInputManager();
