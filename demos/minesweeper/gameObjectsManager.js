@@ -5,6 +5,7 @@ class GameObjectsManager {
     constructor(renderer) {
         const resourcesPath = "../../resources/"
         this._pixelPerfectTool = new PositionTool(renderer);
+        this._Tiles = new MultiSprite(renderer, resourcesPath, Sprite.getFileName("greenMissile",".png"));
         // this._background = new Sprite(renderer, resourcesPath, Sprite.getFileName("background",".png"));
         // this._aliensMissiles = new MultiSprite(renderer, resourcesPath, Sprite.getFileName("greenMissile",".png"));
         // this._spaceCraft = new SpaceCraft(renderer, resourcesPath + "actor/", this._pixelPerfectTool);

@@ -1,15 +1,12 @@
 /**
  * Can be animated by storing multiple images.
- * Images should be named as follow (if the file extension is .png)
- * 0.png, 1.png, 2.png ... N.png
  */
 class Sprite extends Entity {
     /**
      * @param {Renderer} renderer
-     * @param {String} imageFolder
-     * @param {String[]} imagesNames the array of images names to load in the sprites. Can contain only 1 image _name.
+     * @param {String[]|String} imagesPaths the path (or array of pathes) to the images to loaf in the sprites.
      */
-    constructor(renderer, imageFolder, imagesNames) {
+    constructor(renderer, imagesPaths) {
         super();
         this.setLoaded(false);
         this._referencePosition = new Vec2(0, 0);
@@ -17,12 +14,12 @@ class Sprite extends Entity {
         this._texture = gl.createTexture();
         this.loadTempTexture(gl, this._texture);
         this.initGraphics(gl);
-        this._imageCount = imagesNames.length;
-        this._imageFolder = imageFolder;
+        if (!Array.isArray(imagesPaths)) imagesPaths = [imagesPaths];
+        this._imageCount = imagesPaths.length;
         this._imageLoadedCount = 0;
 
         for (let i = 0; i < this._imageCount; i++) {
-            this.loadSubImage(i, this._imageFolder + imagesNames[i], gl, this._texture);
+            this.loadImage(i, imagesPaths[i], gl, this._texture);
         }
     }
 
@@ -137,7 +134,7 @@ class Sprite extends Entity {
      * @param {WebGL2RenderingContext} gl
      * @param {WebGLTexture} tex
      */
-    loadSubImage(index, url, gl, tex) {
+    loadImage(index, url, gl, tex) {
         const _self = this;
         let image = new Image();
         image.src = url;
@@ -167,10 +164,10 @@ class Sprite extends Entity {
      * @param {String} extension
      * @returns {String[]}
      */
-    static generateFileNameList(spriteCount, extension) {
+    static generateFileNameList(imagePath, spriteCount, extension) {
         let numberList = [];
         for (let i = 0; i < spriteCount; i++) {
-            numberList.push(i.toString() + extension);
+            numberList.push(imagePath + i.toString() + extension);
         }
         return numberList;
     }

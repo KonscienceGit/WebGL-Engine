@@ -4,11 +4,10 @@ class MultiSprite extends Sprite {
      * Currently achieved by updating the basic uniforms between each render but only setting/binding a texture2D_array once for all sprites.
      * Todo: implement/convert to instanced rendering.
      * @param {Renderer} renderer
-     * @param {String} imageFolder
-     * @param {String[]} imagesNames
+     * @param {String[]|String} imagesPaths the path (or array of pathes) to the images to loaf in the sprites.
      */
-    constructor(renderer, imageFolder, imagesNames) {
-        super(renderer, imageFolder, imagesNames);
+    constructor(renderer, imagesPaths) {
+        super(renderer, imagesPaths);
         this._spriteInstances = []; // TODO use childnodes as the sprites instances
     }
 

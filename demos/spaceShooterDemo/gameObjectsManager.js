@@ -3,24 +3,24 @@ class GameObjectsManager {
      * @param {Renderer} renderer
      */
     constructor(renderer) {
-        const resourcesPath = "../../resources/"
+        const path = "../../resources/"
         this._pixelPerfectTool = new PositionTool(renderer);
-        this._background = new Sprite(renderer, resourcesPath, Sprite.getFileName("background",".png"));
+        this._background = new Sprite(renderer, path + "background.png");
         this._background.setVisible(true);
 
-        this._aliensMissiles = new MultiSprite(renderer, resourcesPath, Sprite.getFileName("greenMissile",".png"));
-        this._playerMissiles = new MultiSprite(renderer, resourcesPath, Sprite.getFileName("redMissile",".png"));
-        this._spaceCraft = new SpaceCraft(renderer, resourcesPath + "actor/", this._pixelPerfectTool);
-        this._aliens = new MultiSprite(renderer, resourcesPath + "aliens/", Sprite.generateFileNameList(4, ".png"));
+        this._aliensMissiles = new MultiSprite(renderer, path + "greenMissile.png");
+        this._playerMissiles = new MultiSprite(renderer, path + "redMissile.png");
+        this._spaceCraft = new SpaceCraft(renderer, path + "actor/", this._pixelPerfectTool);
+        this._aliens = new MultiSprite(renderer, Sprite.generateFileNameList(path + "aliens/", 4, ".png"));
 
-        this._scoreCounter = new ScoreCounter(renderer, resourcesPath + "numbers/", this._pixelPerfectTool);
-        this._lifeCounter = new LifeCounter(renderer, resourcesPath, this._pixelPerfectTool);
+        this._scoreCounter = new ScoreCounter(renderer, path + "numbers/", this._pixelPerfectTool);
+        this._lifeCounter = new LifeCounter(renderer, path, this._pixelPerfectTool);
 
         this._translucentOverlay = new TranslucentOverlay(renderer, new Vec4(0, 0, 0, 0.6));
-        this._pressToPlayButton = new Sprite(renderer, resourcesPath, Sprite.getFileName("pressToPlay",".png"));
-        this._logoTitle = new Sprite(renderer, resourcesPath, Sprite.getFileName("title_logo",".png"));
+        this._pressToPlayButton = new Sprite(renderer, path + "pressToPlay.png");
+        this._logoTitle = new Sprite(renderer, path + "title_logo.png");
 
-        this._replayMenuSprite = new Sprite(renderer, resourcesPath, Sprite.getFileName("gameOver",".png"));
+        this._replayMenuSprite = new Sprite(renderer, path + "gameOver.png");
 
         //---- Setup the sprite render order from back to front: ----//
         this._spriteArray = [];
