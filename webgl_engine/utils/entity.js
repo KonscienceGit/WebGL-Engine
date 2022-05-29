@@ -1,3 +1,4 @@
+const __tmpV2 = new Vec2(0, 0);
 /**
  * Define an object that can be rendered by the Renderer, and loaded by the LoadingManager.
  */
@@ -12,7 +13,7 @@ class Entity {
 
         // import from entityProperties.js
         // SRT (scale, rotation, translation)
-        this.scale = new Vec2(1., 1.); // TODO upgrade to vec3
+        this.scale = new Vec2(1., 1.);
         this.rotation = 0.;
         this.position = new Vec2(0, 0);
 
@@ -35,29 +36,13 @@ class Entity {
     }
 
     /**
-     * @param {Entity} entity
-     * @returns {boolean}
-     */
-    intersect(entity) {
-        if (!this.visible) {
-            return false;
-        }
-        if (entity.isRound && this.isRound) {
-            const minDistance = this.radius + entity.radius;
-            return (Math.abs(this.position.y - entity.position.y) < minDistance && Math.abs(this.position.x - entity.position.x) < minDistance);
-        } else {
-            //TODO intersect rectangles, or round/rectangle combination
-            return false;
-        }
-    }
-
-    /**
      * @param toCopy the entity to copy the properties of.
      * @returns {Entity}
      */
     copy(toCopy) {
+        this.visible = toCopy.visible;
         this.scale.copy(toCopy.scale);
-        this.rotation = toCopy.rotation; // TODO 3D rotation, vec3 or quaternion?
+        this.rotation = toCopy.rotation;
         this.position.copy(toCopy.position);
 
         this.renderSizeXY.copy(toCopy.renderSizeXY); // TODO Texture only
@@ -65,7 +50,7 @@ class Entity {
 
         this.physicSizeXY.copy(toCopy.physicSizeXY); // TODO create boundingBox
         this.isRound = toCopy.isRound;
-        this.radius = toCopy.radius; // TODO create boundingSphere
+        this.radius = toCopy.radius;
         this.translationSpeed.copy(toCopy.translationSpeed);
         this.rotationSpeed = toCopy.rotationSpeed; // TODO vec3 or quaternion (in units per seconds)
         this.density = toCopy.density;
@@ -77,11 +62,67 @@ class Entity {
     }
 
     /**
+     * @param {Entity} entity
+     * @returns {boolean}
+     */
+    intersect(entity) {
+        if (!this.visible || !entity.visible) return false;
+        if (entity.isRound && this.isRound) {
+            return this.intersectRounds(entity, this);
+        } else if (entity.isRound && !this.isRound) {
+            return this.intersectRoundWithRect(entity, this);
+        } else if (!entity.isRound && this.isRound) {
+            return this.intersectRoundWithRect(this, entity);
+        } else {
+            return this.intersectRects(this, entity);
+        }
+    }
+
+    intersectRounds(r1, r2) {
+        let dist = r1.radius + r2.radius;
+        dist *= dist;
+        let dX = r1.position.x - r2.position.x;
+        dX *= dX;
+        if (dX >= dist) return false;
+        let dY = r1.position.y - r2.position.y;
+        dY *= dY;
+        return (dX + dY) < dist;
+    }
+
+    intersectRoundWithRect(round, rect) {
+        const sizeRectX = rect.renderSizeXY.x * 0.5;
+        const distX = Math.abs(round.position.x - rect.position.x);
+        if (distX >= (sizeRectX + round.radius)) return false;
+        const sizeRectY = rect.renderSizeXY.y * 0.5;
+        const distY = Math.abs(round.position.y - rect.position.y);
+        if (distY >= (sizeRectY + round.radius)) return false;
+        if (round.radius === 0 || distX < sizeRectX || distY < sizeRectY) return true;
+        // Compute intersection with corners
+        const r2 = round.radius * round.radius;
+        __tmpV2.setValues(rect.position.x + rect.renderSizeXY.x / 2, rect.position.y + rect.renderSizeXY.y / 2);
+        if (__tmpV2.distanceSquared(round.position) < r2) return true;
+        __tmpV2.x = rect.position.x - rect.renderSizeXY.x / 2;
+        if (__tmpV2.distanceSquared(round.position) < r2) return true;
+        __tmpV2.y = rect.position.y - rect.renderSizeXY.y / 2;
+        if (__tmpV2.distanceSquared(round.position) < r2) return true;
+        __tmpV2.x = rect.position.x + rect.renderSizeXY.x / 2;
+        return __tmpV2.distanceSquared(round.position) < r2;
+    }
+
+    intersectRects(r1, r2) {
+        const distX = r1.renderSizeXY.x + r2.renderSizeXY.x;
+        const dX = Math.abs(r1.position.x - r2.position.x);
+        if (dX >= distX) return false;
+        const distY = r1.renderSizeXY.y + r2.renderSizeXY.y;
+        const dY = Math.abs(r1.position.y - r2.position.y);
+        return (dY < distY);
+    }
+
+    /**
      * Return if this object has been loaded or not.
      * When used in a LoadingManager, the Loading process will not continue until the object is loaded.
      * (useful if this object's constructor can return before it's resources has finished loading, like files or asynchronous processing.)
      * Set this.loaded to false first if your entity must perform asynchronous work after constructor call, before being usable in the game.
-     *
      * @returns {boolean}
      */
     isLoaded(){

@@ -15,7 +15,7 @@ class MultiSprite extends Sprite {
         const gl = renderer.getGLContext();
         this.setupContext(renderer);
         this._spriteInstances.forEach(instance => {
-            if (instance.isVisible) {
+            if (instance.isVisible()) {
                 this.setupInstanceUniforms(gl, instance);
                 gl.drawArrays(gl.TRIANGLES, 0, 6);
             }

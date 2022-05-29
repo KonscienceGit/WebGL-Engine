@@ -14,8 +14,4 @@ class KeyboardKeyInput extends AbstractInput{
     getInputValue() {
         return this._keyboardInputManager.getKeyValue(this._code) ? 1 : 0;
     }
-
-    isInputPressed() {
-        return this.getInputValue() > 0;
-    }
 }

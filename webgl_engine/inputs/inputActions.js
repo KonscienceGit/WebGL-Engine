@@ -88,20 +88,16 @@ class ButtonInputAction extends AbstractInputAction{
         let isPressed = false;
         const inputs = this.getBindedInputs();
         for (let i = 0; i < inputs.length; i++) {
-            if (inputs[i].isInputPressed()) {
+            if (inputs[i].getInputValue() > 0) {
                 isPressed = true;
                 break;
             }
         }
         const stateChanged = isPressed !== this._wasPressed;
+        if (this._onClick && !stateChanged) return;
+        // callback only if changed (press or release button)
         const value = isPressed ? 1 : 0;
-        if(this._onClick && stateChanged){
-            // callback only if changed (press or release button)
-            this.getActionCallbacks().forEach(buttonCallback => buttonCallback(value));
-        } else if(isPressed || stateChanged) {
-            // callback if pressed/hold or freshly released
-            this.getActionCallbacks().forEach(buttonCallback => buttonCallback(value));
-        }
+        this.getActionCallbacks().forEach(buttonCallback => buttonCallback(value));
         this._wasPressed = isPressed;
     }
 }
@@ -121,9 +117,9 @@ class AxisInputAction extends AbstractInputAction{
         const inputs = this.getBindedInputs();
         for (let i = 0; i < inputs.length; i++) {
             const tmp = inputs[i].getInputValue();
-            if(tmp > val) val = tmp;
+            if (tmp > val) val = tmp;
         }
-        if(val > 0){
+        if (val > 0){
             // If axis is pressed, send callback all the time
             this._wasPressed = true;
             this.getActionCallbacks().forEach(axisCallback => axisCallback(val));

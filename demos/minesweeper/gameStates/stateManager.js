@@ -5,7 +5,7 @@ class StateManager extends AbstractStateManager{
      * @param {GameObjectsManager} gameObjectManager
      * @param {Renderer} renderer
      * @param {HTMLCanvasElement} canvas
-     * @param {GameBindingsDefinitions} gameBindings
+     * @param {ActionsBindingsDefinitions} gameBindings
      */
     constructor(gameObjectManager, renderer, canvas, gameBindings) {
         super();

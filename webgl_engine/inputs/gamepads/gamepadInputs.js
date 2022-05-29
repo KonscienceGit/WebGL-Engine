@@ -51,10 +51,6 @@ class GamepadButtonInput extends AbstractGamepadInput{
         }
         return val;
     }
-
-    isInputPressed() {
-        return this.getInputValue() > 0;
-    }
 }
 
 class GamepadAxisInput extends AbstractGamepadInput{
@@ -105,9 +101,5 @@ class GamepadAxisInput extends AbstractGamepadInput{
     setCustomDeadZone(start, end){
         this._customDeadZone[0] = start;
         this._customDeadZone[1] = end;
-    }
-
-    isInputPressed() {
-        return this.getInputValue() > 0;
     }
 }

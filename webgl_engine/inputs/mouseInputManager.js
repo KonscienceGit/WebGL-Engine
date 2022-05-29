@@ -2,25 +2,30 @@ class MouseInputManager extends AbstractInputManager {
     /**
      * @param {HTMLCanvasElement} canvas
      * @param {Renderer} renderer
+     * @param {CursorProperties} [cursorProperties] set a custom cursorProperties, when it needs to be shared among inputManagers or cursors.
      */
-    constructor(canvas, renderer) {
+    constructor(canvas, renderer, cursorProperties) {
         super();
         const self = this;
         this.mouseMoved = this.mouseMoved.bind(this);
         this.mouseDown = this.mouseDown.bind(this);
         this.mouseUp = this.mouseUp.bind(this);
+        this.mouseEnter = this.mouseEnter.bind(this);
+        this.mouseLeave = this.mouseLeave.bind(this);
         this.touchMoved = this.touchMoved.bind(this);
         this.touchStart = this.touchStart.bind(this);
         this.touchEnd = this.touchEnd.bind(this);
 
         this._canvas = canvas;
         this._renderer = renderer;
-        this._cursor = new CursorProperties();
+        this._cursorProperties = cursorProperties != null ? cursorProperties : new CursorProperties();
         this._mouseBtn = new Array(5).fill(false);
 
         canvas.addEventListener("mousemove", self.mouseMoved);
         canvas.addEventListener("mousedown", self.mouseDown);
         canvas.addEventListener("mouseup", self.mouseUp);
+        canvas.addEventListener("mouseenter", self.mouseEnter);
+        canvas.addEventListener("mouseleave", self.mouseLeave);
 
         canvas.addEventListener("touchmove", self.touchMoved, {'passive': false});
         canvas.addEventListener("touchstart", self.touchStart, {'passive': false});
@@ -30,8 +35,8 @@ class MouseInputManager extends AbstractInputManager {
     /**
      * @returns {CursorProperties}
      */
-    getCursor(){
-        return this._cursor;
+    getCursorProperties(){
+        return this._cursorProperties;
     }
 
     /**
@@ -57,6 +62,14 @@ class MouseInputManager extends AbstractInputManager {
     mouseUp(event) {
         this.updateCursor(event);
         this._mouseBtn[event.button] = false;
+    }
+
+    mouseEnter() {
+        this._cursorProperties.isOutside = false;
+    }
+
+    mouseLeave() {
+        this._cursorProperties.isOutside = true;
     }
 
     /**
@@ -85,17 +98,16 @@ class MouseInputManager extends AbstractInputManager {
     updateCursor(event) {
         const rect = this._canvas.getBoundingClientRect();
         // Get difference between previous position and current position
-        this._cursor.lastMovement.setValues(event.screenX - this._cursor.screenPos.x, event.screenY - this._cursor.screenPos.y);
-        this._cursor.screenPos.setValues(event.screenX, event.screenY)
+        this._cursorProperties.lastMovement.setValues(event.screenX - this._cursorProperties.screenPos.x, event.screenY - this._cursorProperties.screenPos.y);
+        this._cursorProperties.screenPos.setValues(event.screenX, event.screenY)
         // Adjust based on the real position of the current DOM element thingy
-        this._cursor.canvasPos.setValues(event.clientX - rect.left, event.clientY - rect.top);
+        this._cursorProperties.canvasPos.setValues(event.clientX - rect.left, event.clientY - rect.top);
 
         // Convert to engine space (same dimensions in pixel, but coordinate 0,0 is at the center instead of top left, y axis is inverted)
         const screenWorldSize = this._renderer.getCamera().getScreenWorldSize();
-        this._cursor.screenWorldPos.setValues(this._cursor.canvasPos.x - rect.width / 2,  rect.height / 2 - this._cursor.canvasPos.y);
-        this._cursor.screenWorldPos.x *= screenWorldSize.x / rect.width;
-        this._cursor.screenWorldPos.y *= screenWorldSize.y / rect.height;
-        // this._cursor.pickedObject = null; TODO
+        this._cursorProperties.screenWorldPos.setValues(this._cursorProperties.canvasPos.x - rect.width / 2,  rect.height / 2 - this._cursorProperties.canvasPos.y);
+        this._cursorProperties.screenWorldPos.x *= screenWorldSize.x / rect.width;
+        this._cursorProperties.screenWorldPos.y *= screenWorldSize.y / rect.height;
     }
 
     createMouseMoveInput(){

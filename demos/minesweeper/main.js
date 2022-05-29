@@ -2,26 +2,28 @@
 
 function main() {
     const canvas = document.getElementById("game_canvas");
+    canvas.style.cursor = 'none';
     let previousTime = 0.0;
 
     const camera = new Camera2D();
     const renderer = new Renderer(canvas, camera);
     const fixedResolution = new Vec2(1100, 800);
     renderer.setDisplayFixedResolution(fixedResolution);
-    renderer.setClearColor(new Vec4(0.5,0.5,0.5,1));
+    const grey = 150/255;
+    renderer.setClearColor(new Vec4(grey, grey, grey, 1));
     // renderer.setDisplayFullscreen();
     camera.setVerticalScreenWorldSize(1.0);
-    const gameObjectManager = new GameObjectsManager(renderer);
-    const renderableArray = gameObjectManager.spriteArray;
 
     // Inputs
+    const cursorProperties = new CursorProperties();
     const keyboardManager = new KeyboardInputManager();
     const gamepadManager = new GamepadInputManager();
-    const mouseManager = new MouseInputManager(canvas, renderer);
-    const gameBindings = new GameBindingsDefinitions(keyboardManager, gamepadManager, mouseManager);
+    const mouseManager = new MouseInputManager(canvas, renderer, cursorProperties);
+    const gameBindings = new ActionsBindingsDefinitions(keyboardManager, gamepadManager, mouseManager);
 
+    const gameObjectManager = new GameObjectsManager(renderer, cursorProperties);
     const gameStateManager = new StateManager(gameObjectManager, renderer, canvas, gameBindings);
-
+    const renderableArray = gameObjectManager.spriteArray;
     LoadingManager.callbackWhenLoaded(renderableArray, init);
 
     function init() {
@@ -43,7 +45,8 @@ function main() {
     }
 
     /**
-     * @param {number} timeStamp
+     * @param {number} timeStamp in ms
+     * @returns {number} delta since last frame in seconds
      */
     function computeDelta(timeStamp) {
         const time = timeStamp * 0.001;
@@ -54,7 +57,7 @@ function main() {
 
     /**
      * @param {Sprite[]} spriteArray
-     * @param {number} delta
+     * @param {number} delta in seconds
      */
     function updateSprites(spriteArray, delta) {
         spriteArray.forEach(entity => entity.updateEntity(delta));

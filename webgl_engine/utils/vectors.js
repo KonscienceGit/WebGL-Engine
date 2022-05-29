@@ -8,9 +8,9 @@ class Vec2 {
         return new Vec2(this.x, this.y);
     }
 
-    copy(otherVec) {
-        this.x = otherVec.x;
-        this.y = otherVec.y;
+    copy(v2) {
+        this.x = v2.x;
+        this.y = v2.y;
     }
 
     setValues(x, y){
@@ -23,14 +23,23 @@ class Vec2 {
         this.y += v.y;
     }
 
-    equals(anotherVec2) {
-        return (this.x === anotherVec2.x && this.y === anotherVec2.y);
+    equals(v2) {
+        return (this.x === v2.x && this.y === v2.y);
     }
 
-    distance(anotherVec2) {
-        let dx = this.x - anotherVec2.x;
-        let dy = this.y - anotherVec2.y;
-        return Math.sqrt(dx * dx + dy * dy);
+    distance(v2) {
+        return Math.sqrt(this.distanceSquared(v2));
+    }
+
+    /**
+     * Faster for computing intersections
+     * @param v2
+     * @returns {number}
+     */
+    distanceSquared(v2) {
+        const dx = this.x - v2.x;
+        const dy = this.y - v2.y;
+        return dx * dx + dy * dy;
     }
 
     moveLeft(movement) {
@@ -60,9 +69,9 @@ class Vec3 extends Vec2 {
         return new Vec3(this.x, this.y, this.z);
     }
 
-    copy(otherVec) {
-        super.copy(otherVec);
-        this.z = otherVec.z;
+    copy(v3) {
+        super.copy(v3);
+        this.z = v3.z;
     }
 
     setValues(x, y, z){
@@ -75,14 +84,14 @@ class Vec3 extends Vec2 {
         this.z += v.z;
     }
 
-    equals(anotherVec3) {
-        return (super.equals(anotherVec3) && this.z === anotherVec3.z);
+    equals(v3) {
+        return (super.equals(v3) && this.z === v3.z);
     }
 
-    distance(anotherVec3) {
-        let dx = this.x - anotherVec3.x;
-        let dy = this.y - anotherVec3.y;
-        let dz = this.z - anotherVec3.z;
+    distance(v3) {
+        let dx = this.x - v3.x;
+        let dy = this.y - v3.y;
+        let dz = this.z - v3.z;
         return Math.sqrt(dx * dx + dy * dy + dz * dz);
     }
 }
@@ -97,9 +106,9 @@ class Vec4 extends Vec3 {
         return new Vec4(this.x, this.y, this.z, this.w);
     }
 
-    copy(anotherVec4) {
-        super.copy(anotherVec4);
-        this.w = anotherVec4.w;
+    copy(v4) {
+        super.copy(v4);
+        this.w = v4.w;
     }
 
     setValues(x, y, z, w){
@@ -112,7 +121,7 @@ class Vec4 extends Vec3 {
         this.w += v.w;
     }
 
-    equals(anotherVec4) {
-        return (super.equals(anotherVec4) && this.w === anotherVec4.w);
+    equals(v4) {
+        return (super.equals(v4) && this.w === v4.w);
     }
 }

@@ -3,15 +3,17 @@ class MainGameState extends AbstractState {
         super();
         this._gameOverState = null;
         this._escapeState = null;
-        this._worldPixelSize = objectManager.pixelPerfectTool.getResolution();
         this._tiles = objectManager.tiles;
+        this._cursorProperties = null;
 
         // Set animations duration
         this.setAnimateInLength(0.0);
         this.setAnimateOutLength(0.0);// No animation
 
         // Bind closure context
-        // this.fireShipCallback = this.fireShipCallback.bind(this);
+        this.leftClickCallback = this.leftClickCallback.bind(this);
+        this.cursorMoveCallback = this.cursorMoveCallback.bind(this);
+
         this.registerBindings(gameBindings);
     }
 
@@ -19,24 +21,9 @@ class MainGameState extends AbstractState {
         this._gameOver = false;
         this.createTiles();
         this._tiles.setVisible(true);
-        // this._scoreCounter.setScore(0);
-        // this._scoreCounter.resetPosition();
-        // this._scoreCounter.getReferencePosition().moveLeft(this._guiShift);
-        // this._scoreCounter.setVisible(true);
-        // this._aliensSprites.setVisible(true);
     }
 
-    finish() {
-        // this._aliensSprites.setVisible(false);
-    }
-
-    setEscapeState(escapeState){
-        this._escapeState = escapeState;
-    }
-
-    setGameOverState(gameOverState){
-        this._gameOverState = gameOverState;
-    }
+    finish() {}
 
     getNextState() {
         if(this._gameOver){
@@ -46,20 +33,34 @@ class MainGameState extends AbstractState {
         }
     }
 
-    mainLoop(delta) {
+    mainLoop(delta) {}
+
+    animateIn(delta, animationState) {}
+
+    animateOut(delta, animationState) {}
+
+    leftClickCallback(value){
+        if (!this._cursorProperties || value < 1) return;
+        const pickedObj = this._cursorProperties.pick(this._tiles.getInstances());
+        if (pickedObj == null) return;
+        pickedObj.textureLayer++;
     }
 
-    animateIn(delta, animationState) { }
-
-    animateOut(delta, animationState) {/* Nothing to animate */}
-
-    // fireShipCallback(value){
-    // }
+    /**
+     * @param {CursorProperties} cursorProperties
+     */
+    cursorMoveCallback(cursorProperties){
+        this._cursorProperties = cursorProperties;
+        // TODO create false cursor
+    }
 
     registerBindings(gameBindings){
         const self = this;
-        // const fireShip = gameBindings.getActionByName(GameInputActions.SHIP_FIRE);
-        // fireShip.addActionCallback(self.fireShipCallback);
+        const cursorMove = gameBindings.getActionByName(GameInputActions.CURSOR_AT);
+        cursorMove.addActionCallback(self.cursorMoveCallback);
+
+        const leftClick = gameBindings.getActionByName(GameInputActions.LEFT_CLICK);
+        leftClick.addActionCallback(self.leftClickCallback);
     }
 
     createTiles() {
@@ -71,7 +72,9 @@ class MainGameState extends AbstractState {
             for (let col = 0; col < nbCol; col++) {
                 let x = col / nbCol - 0.5 + size / 2;
                 const tile = this._tiles.createNewInstance();
+                tile.name = col +'_' + row;
                 tile.position.setValues(x, y);
+                tile.isRound = false;
                 tile.renderSizeXY.setValues(size, size);
                 this._tiles.addInstance(tile);
             }

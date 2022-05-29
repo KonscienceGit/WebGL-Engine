@@ -8,22 +8,23 @@ const MouseInputIdentifier = Object.freeze({
 
 class MouseMovedInput extends AbstractInput{
     /**
-     *
-     * @param mouseInputManager
+     * @param {MouseInputManager} mouseInputManager
      */
     constructor(mouseInputManager) {
         super();
         this._mouseInputManager = mouseInputManager;
     }
 
+    /**
+     * @returns {CursorProperties}
+     */
     getInputValue() {
-        return this._mouseInputManager.getCursor();
+        return this._mouseInputManager.getCursorProperties();
     }
 }
 
 class MouseButtonInput extends AbstractInput{
     /**
-     *
      * @param {MouseInputManager} mouseInputManager
      * @param {MouseInputIdentifier} buttonID
      */
@@ -33,7 +34,7 @@ class MouseButtonInput extends AbstractInput{
         this._buttonID = buttonID;
     }
 
-    isInputPressed() {
+    getInputValue() {
         return this._mouseInputManager.getMouseButton(this._buttonID);
     }
 }

@@ -1,16 +1,5 @@
 class AbstractInput {
     constructor() {}
-
-    /**
-     * @abstract
-     * Return whether the input is pressed or not.
-     * @returns {boolean}
-     */
-    isInputPressed(){
-        ConsoleUtils.nonImplementedError();
-        return false;
-    }
-
     /**
      * @abstract
      * Return the value of this input.
