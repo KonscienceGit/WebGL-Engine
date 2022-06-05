@@ -12,7 +12,7 @@ class PositionTool {
      */
     setTopLeftWorldPosition(sprite, x, y) {
         const ws = this.camera.getScreenWorldSize();
-        sprite.setPosition(x - ws.x / 2, ws.y / 2 - y);
+        sprite.position.setValues(x - ws.x / 2, ws.y / 2 - y);
     }
 
     /**
@@ -23,7 +23,7 @@ class PositionTool {
      */
     setTopRightWorldPosition(sprite, x, y) {
         const ws = this.camera.getScreenWorldSize();
-        sprite.setPosition(ws.x / 2 - x, ws.y / 2 - y);
+        sprite.position.setValues(ws.x / 2 - x, ws.y / 2 - y);
     }
 
     getResolution(){

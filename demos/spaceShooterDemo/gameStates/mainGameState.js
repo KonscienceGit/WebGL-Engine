@@ -50,11 +50,11 @@ class MainGameState extends AbstractState {
         this._difficulty = this._baseDifficulty;
         this._scoreCounter.setScore(0);
         this._scoreCounter.resetPosition();
-        this._scoreCounter.getReferencePosition().moveLeft(this._guiShift);
+        this._scoreCounter.position.moveLeft(this._guiShift);
 
         this._lifeCounter.resetPosition();
         this._lifeCounter.setLifeCount(this._spaceCraft.getLifeCount());
-        this._lifeCounter.getReferencePosition().moveRight(this._guiShift);
+        this._lifeCounter.position.moveRight(this._guiShift);
 
         this._aliensSprites.setVisible(true);
         this._aliensMissilesSprites.setVisible(true);
@@ -129,14 +129,14 @@ class MainGameState extends AbstractState {
 
     //Animate craft and score counter to slide into the game screen
     animateIn(delta, animationState) {
-        if (this._spaceCraft.getRenderPosition().x > 0) {
+        if (this._spaceCraft.position.x > 0) {
             this._spaceCraft.moveAndAnimate(delta, -1);
         } else {
             this._spaceCraft.moveAndAnimate(0, 0);
         }
         const slideIn = this._guiShift * delta;
-        this._scoreCounter.getReferencePosition().moveRight(slideIn);
-        this._lifeCounter.getReferencePosition().moveLeft(slideIn);
+        this._scoreCounter.position.moveRight(slideIn);
+        this._lifeCounter.position.moveLeft(slideIn);
     }
 
     animateOut(delta, animationState) {/* Nothing to animate */}

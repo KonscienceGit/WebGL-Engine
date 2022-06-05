@@ -49,7 +49,7 @@ class SpaceCraft extends Sprite {
      */
     updateAnimationLayer(delta) {
         if (this._movingDir === 0) {
-            this.setTextureLayer(0);
+            this.textureLayer = 0;
             return;
         }
 
@@ -67,7 +67,7 @@ class SpaceCraft extends Sprite {
         if (this._animationPos > lastAnimationFrame || this._animationPos < firstAnimationFrame) {
             this._animationPos = firstAnimationFrame;
         }
-        this.setTextureLayer(Math.round(this._animationPos));
+        this.textureLayer = Math.round(this._animationPos);
         this._animationPos += delta * this._animationSpeed;
     }
 
@@ -75,15 +75,15 @@ class SpaceCraft extends Sprite {
         if (this._movingDir === 0) {
             return;
         }
-        this.getRenderPosition().x += delta * this._movingDir * this._speed;
+        this.position.x += delta * this._movingDir * this._speed;
     }
 
     wrapActorPosition() {
         //Wrap around edges
-        if (this.getRenderPosition().x > this._screenLimit) {
-            this.getRenderPosition().x = -this._screenLimit + 1;
-        } else if (this.getRenderPosition().x < -this._screenLimit) {
-            this.getRenderPosition().x = this._screenLimit - 1;
+        if (this.position.x > this._screenLimit) {
+            this.position.x = -this._screenLimit + 1;
+        } else if (this.position.x < -this._screenLimit) {
+            this.position.x = this._screenLimit - 1;
         }
     }
 
@@ -96,6 +96,6 @@ class SpaceCraft extends Sprite {
     }
 
     resetPosition() {
-        this.setPosition(this._screenLimit - 1, this._spaceCraftBaseYPosition);
+        this.position.setValues(this._screenLimit - 1, this._spaceCraftBaseYPosition);
     }
 }

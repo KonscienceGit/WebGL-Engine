@@ -51,32 +51,32 @@ class GameObjectsManager {
         return this._pixelPerfectTool;
     }
 
-    /** @return {Sprite} */
+    /** @return {MultiSprite} */
     getAliens() {
         return this._aliens;
     }
 
-    /** @return {Sprite} */
+    /** @return {MultiSprite} */
     getAliensMissiles() {
         return this._aliensMissiles;
     }
 
-    /** @return {Sprite} */
+    /** @return {MultiSprite} */
     getPlayerMissiles() {
         return this._playerMissiles;
     }
 
-    /** @return {Sprite} */
+    /** @return {SpaceCraft} */
     getSpaceCraft() {
         return this._spaceCraft;
     }
 
-    /** @return {Sprite} */
+    /** @return {ScoreCounter} */
     getScoreCounter() {
         return this._scoreCounter;
     }
 
-    /** @return {Sprite} */
+    /** @return {LifeCounter} */
     getLifeCounter() {
         return this._lifeCounter;
     }

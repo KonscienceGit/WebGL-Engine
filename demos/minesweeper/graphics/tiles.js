@@ -1,5 +1,5 @@
 class Tiles extends MultiSprite {
-    constructor(renderer) {
+    constructor(renderer, numbersSprites) {
         const path = "../../resources/minesweeper/"
         super(renderer, [
             path + "Tile.png",
@@ -7,29 +7,33 @@ class Tiles extends MultiSprite {
             path + "Mine.png",
             path + "SecureTile.png"
             ]);
-
-        const numbersPath = "../../resources/numbers/";
-        const numbersPathes = [];
-        for (let i = 0; i < 10; i++) {
-            numbersPathes.push(numbersPath + i + ".png");
-        }
-        this._numbers = new MultiSprite(renderer, numbersPathes);
+        this._numbers = numbersSprites;
 
         // Texture layers
         this._COVER = 0;
         this._REVEALED = 1;
         this._MINE = 2;
         this._SECURED = 3;
+
+        // Numbers Colormap
+        this._numColor = [];
+        this._numColor[0] = new Vec4(1, 1, 1, 1);
+        this._numColor[1] = new Vec4(0, 0, 1, 1);
+        this._numColor[2] = new Vec4(0, 1, 0, 1);
+        this._numColor[3] = new Vec4(1, 0, 0, 1);
+        this._numColor[4] = new Vec4(1, 1, 0, 1);
+        this._numColor[5] = new Vec4(1, 1, 1, 1);
+        this._numColor[6] = new Vec4(1, 1, 1, 1);
+        this._numColor[7] = new Vec4(1, 1, 1, 1);
+        this._numColor[8] = new Vec4(1, 1, 1, 1);
     }
 
     createTiles() {
         const nbRow = 9;
         const nbCol = 9;
         const size = 1 / Math.max(nbRow, nbCol);
-        const numberRatio = 25 / 19;
-        const numberWidth = size * 0.6 / numberRatio;
         const numberHeight = size * 0.6;
-        this._numbers.size.setValues(numberWidth, numberHeight);
+        this._numbers.setHeight(numberHeight);
         const array = [];
         for (let row = 0; row < nbRow; row++) {
             array.push([]);
@@ -50,7 +54,8 @@ class Tiles extends MultiSprite {
         }
         for (let row = 0; row < nbRow; row++) {
             for (let col = 0; col < nbCol; col++) {
-                array[row][col].nbMine = this.getNbMine(array, row, col, nbRow - 1, nbCol - 1);
+                const tile = array[row][col];
+                tile.nbMine = this.getNbMine(array, row, col, nbRow - 1, nbCol - 1);
             }
         }
     }
@@ -101,11 +106,7 @@ class Tiles extends MultiSprite {
         const num = this._numbers.createNewInstance();
         num.position.copy(tile.position);
         num.textureLayer = tile.nbMine;
+        num.color.copy(this._numColor[tile.nbMine]);
         this._numbers.addInstance(num);
-    }
-
-    draw(renderer) {
-        super.draw(renderer);
-        this._numbers.draw(renderer);
     }
 }

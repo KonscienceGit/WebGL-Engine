@@ -12,6 +12,7 @@ class ScoreCounter extends MultiSprite {
         this._scoreCounterInstances = [];
         this._digitCount = 5;
         this._pixelPerfectTool = pixelPerfectTool;
+        this._xRefPosition = 0;
     }
 
     setScore(score) {
@@ -33,6 +34,7 @@ class ScoreCounter extends MultiSprite {
             40 + this.size.x / 2,
             30 + this.size.y / 2
         );
+        this._xRefPosition = this.position.x;
     }
 
     draw(renderer) {
@@ -44,13 +46,13 @@ class ScoreCounter extends MultiSprite {
 
         const increment = this.size.x;
         //Reset base position
-        this.getRenderPosition().x = this.getReferencePosition().x + 4 * increment;
+        this.position.x = this._xRefPosition + 4 * increment;
 
         const numberToDisplay = this.getDigits(this._score);
         for (let i = 0; i < this._digitCount; i++) {
             this._scoreCounterInstances[i].textureLayer = numberToDisplay[i];
-            this._scoreCounterInstances[i].position.copy(this.getRenderPosition());
-            this.getRenderPosition().moveLeft(increment);
+            this._scoreCounterInstances[i].position.copy(this.position);
+            this.position.moveLeft(increment);
         }
 
         //Combine all instances array for drawing.

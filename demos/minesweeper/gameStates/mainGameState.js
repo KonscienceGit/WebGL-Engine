@@ -4,6 +4,7 @@ class MainGameState extends AbstractState {
         this._gameOverState = null;
         this._escapeState = null;
         this._tiles = objectManager.tiles;
+        this._tilesNumbers = objectManager.tilesNumbers;
         this._cursorProperties = null;
 
         // Set animations duration
@@ -21,6 +22,7 @@ class MainGameState extends AbstractState {
         this._gameOver = false;
         this._tiles.createTiles();
         this._tiles.setVisible(true);
+        this._tilesNumbers.setVisible(true);
     }
 
     finish() {}

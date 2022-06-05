@@ -1,8 +1,9 @@
 class LifeCounter extends Sprite {
     constructor(renderer, resourcePath, pixelPerfectTool) {
-        super(renderer, Sprite.getFileName(resourcePath + "life", ".png"));
+        super(renderer, resourcePath + "life.png");
         this._lifeCount = 3;
         this._pixelPerfectTool = pixelPerfectTool;
+        this._xRefPosition = 0;
     }
 
     setLifeCount(lifes) {
@@ -24,16 +25,17 @@ class LifeCounter extends Sprite {
             40 + this.size.x / 2,
             30 + this.size.y / 2
         );
+        this._xRefPosition = this.position.x;
     }
 
     draw(renderer) {
         let increment = this.size.x;
-        this.getRenderPosition().x = this.getReferencePosition().x;
+        this.position.x = this._xRefPosition;
         for (let i = 0; i < 3; i++) {
             if (i < this._lifeCount) {
                 super.draw(renderer); // render each number using parent draw method
             }
-            this.getRenderPosition().moveLeft(increment);
+            this.position.moveLeft(increment);
         }
     }
 }

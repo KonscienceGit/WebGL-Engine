@@ -39,12 +39,14 @@ const VERTEX_SHADER_CODE = SHADER_HEADER +
 const SPRITE_FRAGMENT_SHADER_CODE = SHADER_HEADER +
     'precision mediump sampler2DArray;' +
     'uniform int textureLayer;' +
+    'uniform vec4 color;' +
     'uniform sampler2DArray textureSample;' +
     'in vec2 textCoord;' +
     'out vec4 outColor;' +
 
     'void main(void) {' +
-    '    outColor = texture(textureSample, vec3(textCoord, textureLayer));' +
+    // '    outColor = texture(textureSample, vec3(textCoord, textureLayer));' +
+    '    outColor = color * texture(textureSample, vec3(textCoord, textureLayer));' +
     '}';
 
 const DEFAULT_BLUE_PIXEL_DATA = new Uint8Array([0, 0, 255, 255]);

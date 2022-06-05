@@ -10,6 +10,8 @@ class StartMenuState extends AbstractState {
         this._logoTitleSprite = objectManager.getLogoTitle();
         this._translucentOverlay = objectManager.getTranslucentOverlay();
         this._worldPixelSize = objectManager.getPixelPerfectTool().getResolution();
+        this._scoreCounter = objectManager.getScoreCounter();
+        this._lifeCounter = objectManager.getLifeCounter();
 
         // Bind the closure context
         this.selectMenuActionCallback = this.selectMenuActionCallback.bind(this);
@@ -24,17 +26,19 @@ class StartMenuState extends AbstractState {
     start(){
         this._growingAnimationState = 0.0;
 
-        this._logoTitleSprite.setPosition(0, 300);
-        this._pressToPlayButton.setPosition(0, 0);
+        this._logoTitleSprite.position.setValues(0, 0);
+        this._pressToPlayButton.position.setValues(0, 0);
 
-        //move before slideIn
-        this._pressToPlayButton.getRenderPosition().moveLeft(this._worldPixelSize.y);
-        this._logoTitleSprite.getRenderPosition().moveUp(this._worldPixelSize.y);
+        // move before slideIn
+        this._pressToPlayButton.position.moveLeft(this._worldPixelSize.y);
+        this._logoTitleSprite.position.moveUp(this._worldPixelSize.y);
 
         this._pressToPlayButton.setVisible(true);
         this._logoTitleSprite.setVisible(true);
         this._translucentOverlay.setOpacity(1.0);
         this._translucentOverlay.setVisible(true);
+        this._scoreCounter.setVisible(false);
+        this._lifeCounter.setVisible(false);
     }
 
     finish() {
@@ -57,20 +61,20 @@ class StartMenuState extends AbstractState {
             this._growingAnimationState = 0.0;
         }
         const grow = 1.0 + 0.1 * Math.sin(this._growingAnimationState);
-        this._pressToPlayButton.setScale(grow, grow);
+        this._pressToPlayButton.scale.setValues(grow, grow);
     }
 
     animateIn(delta, animationState) {
         const slideIn = this._worldPixelSize.y * delta;
-        this._pressToPlayButton.getRenderPosition().moveRight(slideIn);
-        this._logoTitleSprite.getRenderPosition().moveDown(slideIn);
+        this._pressToPlayButton.position.moveRight(slideIn);
+        this._logoTitleSprite.position.moveDown(slideIn);
     }
 
     animateOut(delta, animationState) {
         const slideOut = this._worldPixelSize.y * delta;
         this._translucentOverlay.setOpacity(1 - animationState);
-        this._pressToPlayButton.getRenderPosition().moveLeft(slideOut);
-        this._logoTitleSprite.getRenderPosition().moveUp(slideOut);
+        this._pressToPlayButton.position.moveLeft(slideOut);
+        this._logoTitleSprite.position.moveUp(slideOut);
     }
 
     selectMenuActionCallback(value){

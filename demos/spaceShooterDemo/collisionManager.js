@@ -31,11 +31,11 @@ class CollisionManager {
 
     release() {
         this._aliens.setVisible(false);
-        this._aliens.release();
+        this._aliens.setInstances([]);
         this._aliensMissiles.setVisible(false);
-        this._aliensMissiles.release();
+        this._aliensMissiles.setInstances([]);
         this._playerMissiles.setVisible(false);
-        this._playerMissiles.release();
+        this._playerMissiles.setInstances([]);
     }
 
     /**
@@ -47,9 +47,6 @@ class CollisionManager {
         let objectStayOnScreen = [];
         objects.getInstances().forEach(object => {
             this.applyMovement(object, delta);
-            // this.applyGravity(fallingEntity, delta);
-            // this.applyAirDrag(fallingEntity, delta);
-
             const moveDown = object.translationSpeed.y < 0;
 
             //touch bottom

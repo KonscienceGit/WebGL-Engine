@@ -8,8 +8,11 @@ class Sprite extends Entity {
      */
     constructor(renderer, imagesPaths) {
         super();
+        this.size.setValues(0, 0);
+        this._definedWidth = null;
+        this._definedHeight = null;
+        this.textureSize = new Vec2(0, 0);
         this.setLoaded(false);
-        this._referencePosition = new Vec2(0, 0);
         let gl = renderer.getGLContext();
         this._texture = gl.createTexture();
         this.loadTempTexture(gl, this._texture);
@@ -33,6 +36,7 @@ class Sprite extends Entity {
         this._scaleUniform = gl.getUniformLocation(this._shaderProgram, "scale");
         this._positionUniform = gl.getUniformLocation(this._shaderProgram, "position");
         this._rotationUniform = gl.getUniformLocation(this._shaderProgram, "rotation");
+        this._colorUniform = gl.getUniformLocation(this._shaderProgram, "color");
         this._spriteDimensionsUniform = gl.getUniformLocation(this._shaderProgram, "spriteDimensions");
         this._canvasDimensionsUniform = gl.getUniformLocation(this._shaderProgram, "canvasDimensions");
         this._textureLayerUniform = gl.getUniformLocation(this._shaderProgram, "textureLayer");
@@ -61,7 +65,7 @@ class Sprite extends Entity {
      */
     imageLoaded() {
         this.setLoaded(true);
-        this.radius = this.size.x / 2;
+        this.radius = (this.size.x + this.size.y) / 4;
     }
 
     draw(renderer) {
@@ -72,6 +76,46 @@ class Sprite extends Entity {
     }
 
     /**
+     * Set the sprite width, the sprite will adapt the height based on the sprite aspect ratio
+     * @param {number | null} s size in world coordinates, or null for automatic size based on height and the texture aspect ratio
+     */
+    setWidth(s) {
+        this._definedWidth = s;
+        if (this.isLoaded()) this.updateSize();
+    }
+
+    /**
+     * Set the sprite height, the sprite will adapt the width based on the sprite aspect ratio
+     * @param {number | null} s size in world coordinates, or null for automatic size based on width and the texture aspect ratio
+     */
+    setHeight(s) {
+        this._definedHeight = s;
+        if (this.isLoaded()) this.updateSize();
+    }
+
+    /**
+     * @private
+     */
+    updateSize() {
+        const ratio = this.textureSize.x / this.textureSize.y;
+        this.size.x = this._definedWidth;
+        this.size.y = this._definedHeight;
+        // case 1: width defined, but not height
+        if (this.size.x == null && this.size.y != null) {
+            this.size.x = this.size.y * ratio;
+        }
+        // case 2: height defined, but not width
+        if (this.size.x != null && this.size.y == null) {
+            this.size.y = this.size.x / ratio;
+        }
+        // case 3: both undefined
+        if (this.size.x == null && this.size.y == null) {
+            this.size.copy(this.textureSize);
+        }
+    }
+
+    /**
+     * @protected
      * @param {Renderer} renderer
      */
     setupContext(renderer) {
@@ -79,7 +123,8 @@ class Sprite extends Entity {
         gl.bindVertexArray(this._vao);
         gl.useProgram(this._shaderProgram);
         gl.bindTexture(gl.TEXTURE_2D_ARRAY, this._texture);
-        this.setupUniforms(renderer);
+        this.setupUniforms(gl, this);
+        renderer.getCamera().setProjectionUniform(gl, this._canvasDimensionsUniform);
     }
 
     /**
@@ -90,13 +135,6 @@ class Sprite extends Entity {
     }
 
     /**
-     * @param {number} layerIndex
-     */
-    setTextureLayer(layerIndex) {
-        this.textureLayer = layerIndex;
-    }
-
-    /**
      * @returns {number}
      */
     getImageCount() {
@@ -104,17 +142,17 @@ class Sprite extends Entity {
     }
 
     /**
-     * @param {Renderer} renderer
+     * @protected
+     * @param {WebGL2RenderingContext} gl
+     * @param {Entity} entity
      */
-    setupUniforms(renderer) {
-        const camera = renderer.getCamera();
-        const gl = renderer.getGLContext();
-        gl.uniform2fv(this._scaleUniform, [this.scale.x, this.scale.y]);
-        gl.uniform2fv(this._positionUniform, [this.position.x, this.position.y]);
-        gl.uniform1f(this._rotationUniform, this.rotation);
-        gl.uniform2fv(this._spriteDimensionsUniform, [this.size.x, this.size.y]);
-        camera.setProjectionUniform(gl, this._canvasDimensionsUniform);
-        gl.uniform1i(this._textureLayerUniform, this.textureLayer);
+    setupUniforms(gl, entity) {
+        gl.uniform2fv(this._spriteDimensionsUniform, [entity.size.x, entity.size.y]);
+        gl.uniform2fv(this._scaleUniform, [entity.scale.x, entity.scale.y]);
+        gl.uniform2fv(this._positionUniform, [entity.position.x, entity.position.y]);
+        gl.uniform1f(this._rotationUniform, entity.rotation);
+        gl.uniform4fv(this._colorUniform, [entity.color.x, entity.color.y, entity.color.z, entity.color.w]);
+        gl.uniform1i(this._textureLayerUniform, entity.textureLayer);
     }
 
     /**
@@ -139,75 +177,32 @@ class Sprite extends Entity {
         image.src = url;
         image.addEventListener('load', function () {
             // Now that the image has loaded make copy it to the texture.
-            let imgDim = new Vec2(image.width, image.height);
-            gl.bindTexture(gl.TEXTURE_2D_ARRAY, tex);
+            const tsize = _self.textureSize;
+            const target = gl.TEXTURE_2D_ARRAY;
+            gl.bindTexture(target, tex);
             if (_self._initTexture) {
                 _self._initTexture = false;
-                _self.setImageDimensions(new Vec2(image.width, image.height));
-                gl.texStorage3D(gl.TEXTURE_2D_ARRAY, 1, gl.RGBA8, imgDim.x, imgDim.y, _self._imageCount);
-                gl.texParameteri(gl.TEXTURE_2D_ARRAY, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-                gl.texParameteri(gl.TEXTURE_2D_ARRAY, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-                gl.texParameteri(gl.TEXTURE_2D_ARRAY, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-                gl.texParameteri(gl.TEXTURE_2D_ARRAY, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+                tsize.setValues(image.width, image.height);
+                gl.texStorage3D(target, 1, gl.RGBA8, tsize.x, tsize.y, _self._imageCount);
+                gl.texParameteri(target, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+                gl.texParameteri(target, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+                gl.texParameteri(target, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+                gl.texParameteri(target, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
             }
-            gl.texSubImage3D(gl.TEXTURE_2D_ARRAY, 0, 0, 0, index, imgDim.x, imgDim.y, 1, gl.RGBA, gl.UNSIGNED_BYTE, image);
+            gl.texSubImage3D(target, 0, 0, 0, index, tsize.x, tsize.y, 1, gl.RGBA, gl.UNSIGNED_BYTE, image);
             _self._imageLoadedCount++;
             if (_self._imageLoadedCount === _self._imageCount) {
+                _self.updateSize();
                 _self.imageLoaded();
             }
         });
     }
 
-    static getFileName(fileName, extension) {
-        return [fileName + extension];
-    }
-
     /**
-     * @param {Vec2} imgDim
-     */
-    setImageDimensions(imgDim) {
-        this.size.copy(imgDim);
-    }
-
-    /**
+     * @private
      * @returns {Float32Array}
      */
     getVertices() {
         return new Float32Array([-1, -1, 0, 1, 1, -1, 1, 1, -1, 1, 0, 0, 1, 1, 1, 0, -1, 1, 0, 0, 1, -1, 1, 1]);
-    }
-
-    /**
-     * @param {number} x
-     * @param {number} y
-     */
-    setScale(x, y) {
-        this.scale.x = x;
-        this.scale.y = y;
-    }
-
-    /**
-     * @returns {Vec2}
-     */
-    // TODO remove
-    getReferencePosition() {
-        return this._referencePosition;
-    }
-
-    /**
-     * @returns {Vec2}
-     */
-    getRenderPosition() {
-        return this.position;
-    }
-
-    /**
-     * @param {number} x
-     * @param {number} y
-     */
-    setPosition(x, y) {
-        this.position.x = x;
-        this.position.y = y;
-        this._referencePosition.x = x;
-        this._referencePosition.y = y;
     }
 }

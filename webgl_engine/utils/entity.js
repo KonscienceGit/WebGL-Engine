@@ -20,6 +20,7 @@ class Entity {
         // Render properties
         this.size = new Vec2(1, 1);
         this.textureLayer = 0;
+        this.color = new Vec4(1,1,1,1);
 
         // Physics properties
         this.radius = 0;
@@ -46,6 +47,10 @@ class Entity {
 
         this.size.copy(toCopy.size);
         this.textureLayer = toCopy.textureLayer;
+        // Define the color values/multipliers of the entity.
+        // When used as base color,range is 0-1,
+        // When used as multiplier it can be above 1 (resulting color is fragment color (texture or vertex) * color
+        this.color.copy(toCopy.color);
 
         this.isRound = toCopy.isRound;
         this.radius = toCopy.radius;
