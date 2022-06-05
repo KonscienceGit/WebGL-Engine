@@ -13,7 +13,7 @@ class CollisionManager {
 
         this._gravity = 0.;
         this._airDensity = 0.;
-        this._oneMeter = 0.05 * this._spaceCraft.renderSizeXY.y;// 1 meter size, in pixels
+        this._oneMeter = 0.05 * this._spaceCraft.size.y;// 1 meter size, in pixels
 
         this._screenBottomY = -0.5 * screenSize.y;
         this._screenTopY = 0.5 * screenSize.y;
@@ -53,14 +53,14 @@ class CollisionManager {
             const moveDown = object.translationSpeed.y < 0;
 
             //touch bottom
-            if (moveDown && object.position.y >= this._screenBottomY - object.renderSizeXY.y) {
+            if (moveDown && object.position.y >= this._screenBottomY - object.size.y) {
                 objectStayOnScreen.push(object);
             } else if (reachBottomHurt) {
                 this._spaceCraft.looseOneLife();
             }
 
             //touch top
-            if (!moveDown && object.position.y <= this._screenTopY + object.renderSizeXY.y) {
+            if (!moveDown && object.position.y <= this._screenTopY + object.size.y) {
                 objectStayOnScreen.push(object);
             }
 

@@ -1,6 +1,10 @@
 class ScoreCounter extends MultiSprite {
     constructor(renderer, resourcePath, pixelPerfectTool) {
-        super(renderer, Sprite.generateFileNameList(resourcePath, 11, ".png"));
+        const numPathes = [];
+        for (let i = 0; i < 11; i++) {
+            numPathes.push(resourcePath + i + '.png');
+        }
+        super(renderer, numPathes);
         this._score = 0;
         this._moveSpeed = 100; // pixel per seconds
         this._scoreFeedbackInstances = [];
@@ -26,8 +30,8 @@ class ScoreCounter extends MultiSprite {
     resetPosition() {
         this._pixelPerfectTool.setTopLeftWorldPosition(
             this,
-            40 + this.renderSizeXY.x / 2,
-            30 + this.renderSizeXY.y / 2
+            40 + this.size.x / 2,
+            30 + this.size.y / 2
         );
     }
 
@@ -38,7 +42,7 @@ class ScoreCounter extends MultiSprite {
             }
         }
 
-        const increment = this.renderSizeXY.x;
+        const increment = this.size.x;
         //Reset base position
         this.getRenderPosition().x = this.getReferencePosition().x + 4 * increment;
 
@@ -63,7 +67,7 @@ class ScoreCounter extends MultiSprite {
         const pos = entityItem.position.clone();
         const scale = 0.4 + score / 75.;
         const scaleVec = new Vec2(scale, scale);
-        const offset = this.renderSizeXY.x * scale;
+        const offset = this.size.x * scale;
         const digits = this.getDigits(score);
         const digitsCount = digits.length;
         const plus = this.createNewInstance();

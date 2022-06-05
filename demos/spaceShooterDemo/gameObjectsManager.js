@@ -11,7 +11,11 @@ class GameObjectsManager {
         this._aliensMissiles = new MultiSprite(renderer, path + "greenMissile.png");
         this._playerMissiles = new MultiSprite(renderer, path + "redMissile.png");
         this._spaceCraft = new SpaceCraft(renderer, path + "actor/", this._pixelPerfectTool);
-        this._aliens = new MultiSprite(renderer, Sprite.generateFileNameList(path + "aliens/", 4, ".png"));
+        const aliPathes = [];
+        for (let i = 0; i < 4; i++) {
+            aliPathes.push(path + "aliens/" + i.toString() + '.png');
+        }
+        this._aliens = new MultiSprite(renderer, aliPathes);
 
         this._scoreCounter = new ScoreCounter(renderer, path + "numbers/", this._pixelPerfectTool);
         this._lifeCounter = new LifeCounter(renderer, path, this._pixelPerfectTool);

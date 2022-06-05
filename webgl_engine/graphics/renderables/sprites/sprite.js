@@ -61,8 +61,7 @@ class Sprite extends Entity {
      */
     imageLoaded() {
         this.setLoaded(true);
-        this.physicSizeXY.copy(this.renderSizeXY);
-        this.radius = this.physicSizeXY.x / 2;
+        this.radius = this.size.x / 2;
     }
 
     draw(renderer) {
@@ -113,7 +112,7 @@ class Sprite extends Entity {
         gl.uniform2fv(this._scaleUniform, [this.scale.x, this.scale.y]);
         gl.uniform2fv(this._positionUniform, [this.position.x, this.position.y]);
         gl.uniform1f(this._rotationUniform, this.rotation);
-        gl.uniform2fv(this._spriteDimensionsUniform, [this.renderSizeXY.x, this.renderSizeXY.y]);
+        gl.uniform2fv(this._spriteDimensionsUniform, [this.size.x, this.size.y]);
         camera.setProjectionUniform(gl, this._canvasDimensionsUniform);
         gl.uniform1i(this._textureLayerUniform, this.textureLayer);
     }
@@ -159,19 +158,6 @@ class Sprite extends Entity {
         });
     }
 
-    /**
-     * @param {number} spriteCount
-     * @param {String} extension
-     * @returns {String[]}
-     */
-    static generateFileNameList(imagePath, spriteCount, extension) {
-        let numberList = [];
-        for (let i = 0; i < spriteCount; i++) {
-            numberList.push(imagePath + i.toString() + extension);
-        }
-        return numberList;
-    }
-
     static getFileName(fileName, extension) {
         return [fileName + extension];
     }
@@ -180,7 +166,7 @@ class Sprite extends Entity {
      * @param {Vec2} imgDim
      */
     setImageDimensions(imgDim) {
-        this.renderSizeXY.copy(imgDim);
+        this.size.copy(imgDim);
     }
 
     /**
@@ -202,6 +188,7 @@ class Sprite extends Entity {
     /**
      * @returns {Vec2}
      */
+    // TODO remove
     getReferencePosition() {
         return this._referencePosition;
     }

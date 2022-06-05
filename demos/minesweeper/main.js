@@ -2,7 +2,7 @@
 
 function main() {
     const canvas = document.getElementById("game_canvas");
-    canvas.style.cursor = 'none';
+    // canvas.style.cursor = 'none';
     let previousTime = 0.0;
 
     const camera = new Camera2D();

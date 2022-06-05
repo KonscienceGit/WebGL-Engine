@@ -29,7 +29,7 @@ class MultiSprite extends Sprite {
      * @param {Entity} instance
      */
     setupInstanceUniforms(gl, instance) {
-        gl.uniform2fv(this._spriteDimensionsUniform, [instance.renderSizeXY.x, instance.renderSizeXY.y]);
+        gl.uniform2fv(this._spriteDimensionsUniform, [instance.size.x, instance.size.y]);
         gl.uniform2fv(this._scaleUniform, [instance.scale.x, instance.scale.y]);
         gl.uniform2fv(this._positionUniform, [instance.position.x, instance.position.y]);
         gl.uniform1f(this._rotationUniform, instance.rotation);

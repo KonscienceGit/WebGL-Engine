@@ -21,13 +21,13 @@ class LifeCounter extends Sprite {
     resetPosition() {
         this._pixelPerfectTool.setTopRightWorldPosition(
             this,
-            40 + this.renderSizeXY.x / 2,
-            30 + this.renderSizeXY.y / 2
+            40 + this.size.x / 2,
+            30 + this.size.y / 2
         );
     }
 
     draw(renderer) {
-        let increment = this.renderSizeXY.x;
+        let increment = this.size.x;
         this.getRenderPosition().x = this.getReferencePosition().x;
         for (let i = 0; i < 3; i++) {
             if (i < this._lifeCount) {

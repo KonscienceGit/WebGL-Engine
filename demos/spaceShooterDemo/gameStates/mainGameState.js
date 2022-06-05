@@ -38,7 +38,7 @@ class MainGameState extends AbstractState {
         this._moveToDestination = 0;
 
         this._gameOver = false;
-        this._XSpawnMargin = 100 + this._aliensSprites.renderSizeXY.x / 2;
+        this._XSpawnMargin = 100 + this._aliensSprites.size.x / 2;
         this._XSpawnRange = this._worldPixelSize.x - 2 * this._XSpawnMargin;
 
         this._spaceCraft.setLifeCount(3);
@@ -176,7 +176,7 @@ class MainGameState extends AbstractState {
 
     setRandomSpawnPosition(entity) {
         entity.position.x = Math.random() * this._XSpawnRange - this._XSpawnRange / 2;
-        entity.position.y = (this._worldPixelSize.y + entity.renderSizeXY.y) / 2;
+        entity.position.y = (this._worldPixelSize.y + entity.size.y) / 2;
     }
 
     consumeMovementEvents() {

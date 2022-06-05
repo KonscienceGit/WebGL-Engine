@@ -17,18 +17,17 @@ class Entity {
         this.rotation = 0.;
         this.position = new Vec2(0, 0);
 
-        // Render properties // TODO Sprite only
-        this.renderSizeXY = new Vec2(1, 1);
+        // Render properties
+        this.size = new Vec2(1, 1);
         this.textureLayer = 0;
 
         // Physics properties
-        this.physicSizeXY = new Vec2(1, 1);
         this.radius = 0;
         this.isRound = true;
         this.translationSpeed = new Vec2(0., 0.);
         this.rotationSpeed = 0.;
         this.density = 1.; // 1 is water density
-        this.relativeSurface = 1.; // 1 is a perfectly smooth round shape, more is more surface = more drag
+        this.relativeSurface = 1.; // 1 is a perfectly smooth round shape, >1 is more surface = more drag
 
         // Misc
         this.animationState = 0;
@@ -45,14 +44,13 @@ class Entity {
         this.rotation = toCopy.rotation;
         this.position.copy(toCopy.position);
 
-        this.renderSizeXY.copy(toCopy.renderSizeXY); // TODO Texture only
+        this.size.copy(toCopy.size);
         this.textureLayer = toCopy.textureLayer;
 
-        this.physicSizeXY.copy(toCopy.physicSizeXY); // TODO create boundingBox
         this.isRound = toCopy.isRound;
         this.radius = toCopy.radius;
         this.translationSpeed.copy(toCopy.translationSpeed);
-        this.rotationSpeed = toCopy.rotationSpeed; // TODO vec3 or quaternion (in units per seconds)
+        this.rotationSpeed = toCopy.rotationSpeed;
         this.density = toCopy.density;
         this.relativeSurface = toCopy.relativeSurface;
 
@@ -90,30 +88,30 @@ class Entity {
     }
 
     intersectRoundWithRect(round, rect) {
-        const sizeRectX = rect.renderSizeXY.x * 0.5;
+        const sizeRectX = rect.size.x * 0.5;
         const distX = Math.abs(round.position.x - rect.position.x);
         if (distX >= (sizeRectX + round.radius)) return false;
-        const sizeRectY = rect.renderSizeXY.y * 0.5;
+        const sizeRectY = rect.size.y * 0.5;
         const distY = Math.abs(round.position.y - rect.position.y);
         if (distY >= (sizeRectY + round.radius)) return false;
         if (round.radius === 0 || distX < sizeRectX || distY < sizeRectY) return true;
         // Compute intersection with corners
         const r2 = round.radius * round.radius;
-        __tmpV2.setValues(rect.position.x + rect.renderSizeXY.x / 2, rect.position.y + rect.renderSizeXY.y / 2);
+        __tmpV2.setValues(rect.position.x + rect.size.x / 2, rect.position.y + rect.size.y / 2);
         if (__tmpV2.distanceSquared(round.position) < r2) return true;
-        __tmpV2.x = rect.position.x - rect.renderSizeXY.x / 2;
+        __tmpV2.x = rect.position.x - rect.size.x / 2;
         if (__tmpV2.distanceSquared(round.position) < r2) return true;
-        __tmpV2.y = rect.position.y - rect.renderSizeXY.y / 2;
+        __tmpV2.y = rect.position.y - rect.size.y / 2;
         if (__tmpV2.distanceSquared(round.position) < r2) return true;
-        __tmpV2.x = rect.position.x + rect.renderSizeXY.x / 2;
+        __tmpV2.x = rect.position.x + rect.size.x / 2;
         return __tmpV2.distanceSquared(round.position) < r2;
     }
 
     intersectRects(r1, r2) {
-        const distX = r1.renderSizeXY.x + r2.renderSizeXY.x;
+        const distX = r1.size.x + r2.size.x;
         const dX = Math.abs(r1.position.x - r2.position.x);
         if (dX >= distX) return false;
-        const distY = r1.renderSizeXY.y + r2.renderSizeXY.y;
+        const distY = r1.size.y + r2.size.y;
         const dY = Math.abs(r1.position.y - r2.position.y);
         return (dY < distY);
     }
@@ -136,7 +134,6 @@ class Entity {
     setLoaded(bool){
         this.loaded = bool;
     }
-
 
     /**
      * Update this entity and all its child entities if they are updatable.

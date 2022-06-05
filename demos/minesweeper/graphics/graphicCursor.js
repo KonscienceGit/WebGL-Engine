@@ -16,13 +16,13 @@ class GraphicCursor extends Entity {
         if (this._initCursorImage && this._body.isLoaded()) {
             this._initCursorImage = false
             const size = renderer.getCamera().getScreenWorldSize().y / 20;
-            this._body.renderSizeXY.setValues(size, size);
+            this._body.size.setValues(size, size);
             this._body.visible = true;
         }
         if (this._cursorProperty.isOutside) return;
         this._body.position.copy(this._cursorProperty.screenWorldPos);
-        this._body.position.x += this._body.renderSizeXY.x / 2;
-        this._body.position.y -= this._body.renderSizeXY.y / 2;
+        this._body.position.x += this._body.size.x / 2;
+        this._body.position.y -= this._body.size.y / 2;
         this._body.draw(renderer);
     }
 

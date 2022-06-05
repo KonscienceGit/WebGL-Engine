@@ -1,6 +1,10 @@
 class SpaceCraft extends Sprite {
     constructor(renderer, resourcePath, pixelPerfectTool) {
-        super(renderer, Sprite.generateFileNameList(resourcePath, 5, ".png"));
+        const imgPathes = [];
+        for (let i = 0; i < 5; i++) {
+            imgPathes.push(resourcePath + i.toString() + '.png');
+        }
+        super(renderer, imgPathes);
         this._pixelPerfectTool = pixelPerfectTool;
         this._movingDir = 0;
         this._animationPos = 0.0;
@@ -86,8 +90,8 @@ class SpaceCraft extends Sprite {
     imageLoaded() {
         super.imageLoaded();
         this._screenLimit = 1.25 * 0.5 * this._pixelPerfectTool.getResolution().x;
-        this._spaceCraftBaseYPosition = 0.5 * (-this._pixelPerfectTool.getResolution().y + this.renderSizeXY.y) + 1;
-        this.radius = 0.6 * this.renderSizeXY.y;
+        this._spaceCraftBaseYPosition = 0.5 * (-this._pixelPerfectTool.getResolution().y + this.size.y) + 1;
+        this.radius = 0.6 * this.size.y;
         this.resetPosition();
     }
 

@@ -8,9 +8,9 @@ class MainGameState extends AbstractState {
 
         // Set animations duration
         this.setAnimateInLength(0.0);
-        this.setAnimateOutLength(0.0);// No animation
+        this.setAnimateOutLength(0.0);
 
-        // Bind closure context
+        // Bind the 'this' context for theses functions (otherwise it's lost when used as callback)
         this.leftClickCallback = this.leftClickCallback.bind(this);
         this.cursorMoveCallback = this.cursorMoveCallback.bind(this);
 
@@ -19,7 +19,7 @@ class MainGameState extends AbstractState {
 
     start(){
         this._gameOver = false;
-        this.createTiles();
+        this._tiles.createTiles();
         this._tiles.setVisible(true);
     }
 
@@ -41,9 +41,7 @@ class MainGameState extends AbstractState {
 
     leftClickCallback(value){
         if (!this._cursorProperties || value < 1) return;
-        const pickedObj = this._cursorProperties.pick(this._tiles.getInstances());
-        if (pickedObj == null) return;
-        pickedObj.textureLayer++;
+        this._tiles.clicTile(this._cursorProperties);
     }
 
     /**
@@ -51,7 +49,6 @@ class MainGameState extends AbstractState {
      */
     cursorMoveCallback(cursorProperties){
         this._cursorProperties = cursorProperties;
-        // TODO create false cursor
     }
 
     registerBindings(gameBindings){
@@ -63,21 +60,5 @@ class MainGameState extends AbstractState {
         leftClick.addActionCallback(self.leftClickCallback);
     }
 
-    createTiles() {
-        const size =  1 / 9;
-        const nbRow = 9;
-        const nbCol = 9;
-        for (let row = 0; row < nbRow; row++) {
-            let y = row / nbRow - 0.5 + size / 2;
-            for (let col = 0; col < nbCol; col++) {
-                let x = col / nbCol - 0.5 + size / 2;
-                const tile = this._tiles.createNewInstance();
-                tile.name = col +'_' + row;
-                tile.position.setValues(x, y);
-                tile.isRound = false;
-                tile.renderSizeXY.setValues(size, size);
-                this._tiles.addInstance(tile);
-            }
-        }
-    }
+
 }
