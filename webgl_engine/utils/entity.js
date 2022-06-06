@@ -21,6 +21,7 @@ class Entity {
         this.size = new Vec2(1, 1);
         this.textureLayer = 0;
         this.color = new Vec4(1,1,1,1);
+        this.alphaOutline = 0.; // Sprite outline/shadow strength, 0 is off.
 
         // Physics properties
         this.radius = 0;
@@ -58,6 +59,7 @@ class Entity {
         this.rotationSpeed = toCopy.rotationSpeed;
         this.density = toCopy.density;
         this.relativeSurface = toCopy.relativeSurface;
+        this.alphaOutline = toCopy.alphaOutline;
 
         this.animationState = toCopy.animationState;
         this.value = toCopy.value; // Value might be an object reference!

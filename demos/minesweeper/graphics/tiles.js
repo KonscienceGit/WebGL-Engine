@@ -10,7 +10,7 @@ class Tiles extends MultiSprite {
         this._numbers = numbersSprites;
 
         // Texture layers
-        this._COVER = 0;
+        // this._COVER = 0;
         this._REVEALED = 1;
         this._MINE = 2;
         this._SECURED = 3;
@@ -56,6 +56,13 @@ class Tiles extends MultiSprite {
             for (let col = 0; col < nbCol; col++) {
                 const tile = array[row][col];
                 tile.nbMine = this.getNbMine(array, row, col, nbRow - 1, nbCol - 1);
+                // TODO DEBUG
+                if (tile.isMine) {
+                    tile.textureLayer = this._MINE;
+                } else {
+                    this.createNumber(tile)
+                    tile.textureLayer = this._REVEALED;
+                }
             }
         }
     }
@@ -107,6 +114,7 @@ class Tiles extends MultiSprite {
         num.position.copy(tile.position);
         num.textureLayer = tile.nbMine;
         num.color.copy(this._numColor[tile.nbMine]);
+        num.alphaOutline = 2;
         this._numbers.addInstance(num);
     }
 }

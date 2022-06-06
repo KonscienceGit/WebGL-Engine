@@ -7,7 +7,7 @@ class GameObjectsManager {
         // this.pixelPerfectTool = new PositionTool(renderer);
         const numbersPath = "../../resources/numbers/";
         const numbersPathes = [];
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < 9; i++) {
             numbersPathes.push(numbersPath + i + ".png");
         }
         this.tilesNumbers = new MultiSprite(renderer, numbersPathes);

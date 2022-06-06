@@ -40,6 +40,7 @@ class Sprite extends Entity {
         this._spriteDimensionsUniform = gl.getUniformLocation(this._shaderProgram, "spriteDimensions");
         this._canvasDimensionsUniform = gl.getUniformLocation(this._shaderProgram, "canvasDimensions");
         this._textureLayerUniform = gl.getUniformLocation(this._shaderProgram, "textureLayer");
+        this._alphaOutlineUniform = gl.getUniformLocation(this._shaderProgram, "alphaOutline");
         this._initTexture = true;
 
         // VAO setup
@@ -153,6 +154,8 @@ class Sprite extends Entity {
         gl.uniform1f(this._rotationUniform, entity.rotation);
         gl.uniform4fv(this._colorUniform, [entity.color.x, entity.color.y, entity.color.z, entity.color.w]);
         gl.uniform1i(this._textureLayerUniform, entity.textureLayer);
+        gl.uniform1f(this._alphaOutlineUniform, entity.alphaOutline);
+
     }
 
     /**

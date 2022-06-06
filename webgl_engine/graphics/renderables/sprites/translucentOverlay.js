@@ -23,8 +23,8 @@ class TranslucentOverlay extends Entity {
         // Shader
         const gl = renderer.getGLContext();
         const shaderUtils = renderer.getShaderUtils();
-        const vertexCode = shaderUtils.GLSL_300_ES + shaderUtils.FP_PRECISION_HIGH + this.getVertexCode();
-        const fragmentCode = shaderUtils.GLSL_300_ES + shaderUtils.FP_PRECISION_HIGH + this.getFragmentCode();
+        const vertexCode = ShadersUtil.SHADER_HEADER + this.getVertexCode();
+        const fragmentCode = ShadersUtil.SHADER_HEADER + this.getFragmentCode();
         this._program = shaderUtils.getOrCreateShader(gl, this._shaderName, vertexCode, fragmentCode, this.constructor.name);
         gl.useProgram(this._program);
         this._coordAttrib = gl.getAttribLocation(this._program, "vertCoords");
