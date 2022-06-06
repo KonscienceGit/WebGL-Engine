@@ -20,6 +20,8 @@ class MainGameState extends AbstractState {
 
     start(){
         this._gameOver = false;
+        this._tiles.nbRow = 9;
+        this._tiles.nbCol = 9;
         this._tiles.createTiles();
         this._tiles.setVisible(true);
         this._tilesNumbers.setVisible(true);
@@ -61,6 +63,4 @@ class MainGameState extends AbstractState {
         const leftClick = gameBindings.getActionByName(GameInputActions.LEFT_CLICK);
         leftClick.addActionCallback(self.leftClickCallback);
     }
-
-
 }

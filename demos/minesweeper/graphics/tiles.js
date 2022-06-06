@@ -1,5 +1,5 @@
 class Tiles extends MultiSprite {
-    constructor(renderer, numbersSprites) {
+    constructor(renderer, numbersSprites, row, col) {
         const path = "../../resources/minesweeper/"
         super(renderer, [
             path + "Tile.png",
@@ -8,6 +8,15 @@ class Tiles extends MultiSprite {
             path + "SecureTile.png"
             ]);
         this._numbers = numbersSprites;
+        this.nbRow = row;
+        this.nbCol = col;
+        this._triggered = false;
+        this._triggeredMine = null;
+        this._fuseStage = 0;
+        this._fuseBlip = 0;
+        this._fuseBlipStage = 0;
+        this._hasWon = false;
+        this._hasLost = false;
 
         // Texture layers
         // this._COVER = 0;
@@ -29,8 +38,8 @@ class Tiles extends MultiSprite {
     }
 
     createTiles() {
-        const nbRow = 9;
-        const nbCol = 9;
+        const nbRow = this.nbRow;
+        const nbCol = this.nbCol;
         const size = 1 / Math.max(nbRow, nbCol);
         const numberHeight = size * 0.6;
         this._numbers.setHeight(numberHeight);
@@ -48,6 +57,8 @@ class Tiles extends MultiSprite {
                 tile.isMine = Math.random() < 0.2;
                 tile.isRevealed = false;
                 tile.isSecured = false;
+                tile.row = row;
+                tile.col = col;
                 array[row][col] = tile;
                 this.addInstance(tile);
             }
@@ -56,15 +67,23 @@ class Tiles extends MultiSprite {
             for (let col = 0; col < nbCol; col++) {
                 const tile = array[row][col];
                 tile.nbMine = this.getNbMine(array, row, col, nbRow - 1, nbCol - 1);
-                // TODO DEBUG
-                if (tile.isMine) {
-                    tile.textureLayer = this._MINE;
-                } else {
-                    this.createNumber(tile)
-                    tile.textureLayer = this._REVEALED;
-                }
+                // TODO DEBUG reveal mines
+                // if (tile.isMine) {
+                //     tile.textureLayer = this._MINE;
+                // } else {
+                //     this.createNumber(tile)
+                //     tile.textureLayer = this._REVEALED;
+                // }
             }
         }
+    }
+
+    hasLost() {
+        return this._hasLost;
+    }
+
+    hasWon() {
+        return this._hasWon;
     }
 
     /**
@@ -91,6 +110,7 @@ class Tiles extends MultiSprite {
      * 2 - fortified
      * 3 - mine triggered
      * @param {CursorProperties} cursorProp
+     * // TODO remove the code?
      * @returns tile code
      */
     clicTile(cursorProp) {
@@ -102,6 +122,7 @@ class Tiles extends MultiSprite {
         tile.isRevealed = true;
         if (tile.isMine) {
             tile.textureLayer = this._MINE;
+            this.triggerMine(tile);
             return 3;
         }
         tile.textureLayer = this._REVEALED;
@@ -116,5 +137,88 @@ class Tiles extends MultiSprite {
         num.color.copy(this._numColor[tile.nbMine]);
         num.alphaOutline = 2;
         this._numbers.addInstance(num);
+    }
+
+    triggerMine(tile) {
+        this._triggered = true;
+        this._triggeredMine = tile;
+        this._fuseStage= 0;
+        this._fuseBlip = 0;
+        this._fuseBlipStage = 0;
+    }
+
+    updateEntity(delta){
+        if (this._triggered) {
+            this.dampenBlip(delta);
+            const maxRadius = 0.5 * Math.max(this.nbCol, this.nbRow);
+            this._fuseBlip += delta;
+            if (this._fuseBlipStage === 0 && this._fuseBlip >= 0) {
+                const radius = 0;
+                this.blipMines(radius, this._fuseBlipStage);
+                this._fuseBlipStage++;
+            }
+            if (this._fuseBlipStage === 1 && this._fuseBlip >= 0.2 && this._fuseStage >= 1) {
+                const radius = 0.5 * maxRadius;
+                this.blipMines(radius, this._fuseBlipStage);
+                this._fuseBlipStage++;
+            }
+            if (this._fuseBlipStage === 2 && this._fuseBlip >= 0.4 && this._fuseStage >= 2) {
+                const radius = maxRadius;
+                this.blipMines(radius, this._fuseBlipStage);
+                this._fuseBlipStage++;
+            }
+            if (this._fuseBlip >= 1.3) {
+                this._fuseStage++;
+                this._fuseBlip = 0;
+                this._fuseBlipStage = 0;
+            }
+            if (this._fuseStage >= 3) {
+                this._fuseStage = 0;
+                this._triggered = false;
+                this._hasLost = true;
+                this._hasWon = false;
+            }
+        }
+    }
+
+    dampenBlip(delta) {
+        const tiles = this.getInstances();
+        for (let i = 0; i < tiles.length; i++) {
+            const tile = tiles[i];
+            if (!tile.isMine) continue;
+            if (tile.color.x >= 2) {
+                tile.color.x -= 5 * delta;
+            } else if (tile.color.x >= 1.5) {
+                tile.color.x -= 3 * delta;
+            } else if (tile.color.x >= 1.0) {
+                tile.color.x -= 2 * delta;
+            } else {
+                tile.color.x = 1.0;
+            }
+        }
+    }
+
+    blipMines(radius, stage) {
+        const row = this._triggeredMine.row;
+        const col = this._triggeredMine.col;
+        const minRow = row - radius;
+        const maxRow = row + radius;
+        const minCol = col - radius;
+        const maxCol = col + radius;
+        const tiles = this.getInstances();
+        for (let i = 0; i < tiles.length; i++) {
+            const tile = tiles[i];
+            if (!tile.isMine) continue;
+            if (tile.row < minRow || tile.row > maxRow || tile.col < minCol || tile.col > maxCol) continue;
+            if (tile.fromStage != null && tile.fromStage !== stage) continue;
+            tile.fromStage = stage;
+            tile.color.x = 4;
+        }
+    }
+
+    reset () {
+        this.setInstances([]);
+        this._hasLost = false;
+        this._hasWon = false;
     }
 }
