@@ -47,7 +47,7 @@ class TranslucentOverlay extends Entity {
         const gl = renderer.getGLContext();
         gl.bindVertexArray(this._vao);
         gl.useProgram(this._program);
-        gl.uniform4fv(this._overlayColorUniform, this.color.getArray(this._uni));
+        gl.uniform4fv(this._overlayColorUniform, this.color.toArray(this._uni));
         gl.uniform1f(this._opacityUniform, this._opacity);
     }
 

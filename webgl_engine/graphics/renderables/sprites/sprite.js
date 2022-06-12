@@ -155,10 +155,10 @@ class Sprite extends Entity {
         gl.uniform1f(this._alphaOutlineUniform, entity.alphaOutline);
 
         const u2 = this._uniFp2;
-        gl.uniform2fv(this._spriteDimensionsUniform, entity.size.getArray(u2));
-        gl.uniform2fv(this._scaleUniform, entity.scale.getArray(u2));
-        gl.uniform2fv(this._positionUniform, entity.position.getArray(u2));
-        gl.uniform4fv(this._colorUniform, entity.color.getArray(this._uniFp4));
+        gl.uniform2fv(this._spriteDimensionsUniform, entity.size.toArray(u2));
+        gl.uniform2fv(this._scaleUniform, entity.scale.toArray(u2));
+        gl.uniform2fv(this._positionUniform, entity.position.toArray(u2));
+        gl.uniform4fv(this._colorUniform, entity.color.toArray(this._uniFp4));
     }
 
     /**

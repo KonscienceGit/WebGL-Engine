@@ -20,7 +20,7 @@ class MainGameState extends AbstractState {
 
     start(){
         this._gameOver = false;
-        this._tiles.createTiles(200, 200);
+        this._tiles.createTiles(9, 9);
         this._tiles.setVisible(true);
         this._tilesNumbers.setVisible(true);
     }

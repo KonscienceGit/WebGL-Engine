@@ -1,3 +1,5 @@
+// noinspection DuplicatedCode
+
 class Vec2 {
     constructor(x, y) {
         this.x = x;
@@ -27,11 +29,6 @@ class Vec2 {
         return (this.x === v.x && this.y === v.y);
     }
 
-    /**
-     * Faster for computing intersections
-     * @param v
-     * @returns {number}
-     */
     distanceSquared(v) {
         const dx = this.x - v.x;
         const dy = this.y - v.y;
@@ -42,7 +39,7 @@ class Vec2 {
         return Math.sqrt(this.distanceSquared(v));
     }
 
-    getArray(a) {
+    toArray(a) {
         a[0] = this.x;
         a[1] = this.y;
         return a;
@@ -62,6 +59,11 @@ class Vec2 {
 
     moveDown(d) {
         this.y -= d;
+    }
+
+    lerp(v1, v2, p) {
+        this.x = v1.x * (1 - p) + v2.x * p;
+        this.y = v1.y * (1 - p) + v2.y * p;
     }
 }
 
@@ -109,11 +111,17 @@ class Vec3 {
         return Math.sqrt(this.distanceSquared(v));
     }
 
-    getArray(a) {
+    toArray(a) {
         a[0] = this.x;
         a[1] = this.y;
         a[2] = this.z;
         return a;
+    }
+
+    lerp(v1, v2, p) {
+        this.x = v1.x * (1 - p) + v2.x * p;
+        this.y = v1.y * (1 - p) + v2.y * p;
+        this.z = v1.z * (1 - p) + v2.z * p;
     }
 }
 
@@ -154,11 +162,18 @@ class Vec4 {
         return (this.x === v.x && this.y === v.y && this.w === v.w);
     }
 
-    getArray(a) {
+    toArray(a) {
         a[0] = this.x;
         a[1] = this.y;
         a[2] = this.z;
         a[3] = this.w;
         return a;
+    }
+
+    lerp(v1, v2, p) {
+        this.x = v1.x * (1 - p) + v2.x * p;
+        this.y = v1.y * (1 - p) + v2.y * p;
+        this.z = v1.z * (1 - p) + v2.z * p;
+        this.w = v1.w * (1 - p) + v2.w * p;
     }
 }
