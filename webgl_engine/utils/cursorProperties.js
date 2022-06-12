@@ -13,14 +13,14 @@ class CursorProperties extends Entity{
     /**
      * Will use boundingBox calculations to seek entities at cursor position.
      * Entities are parsed in the given order (meaning if two entity overlay under the cursor, the first in the list is returned), only one picked entity by picking result.
-     * @param {Entity[]} entities the entitiy array to pick from.
+     * @param {Entity[]|Entity} entities the entity array to pick from.
      * @returns {*|Entity} the entity below this cursor, null if not applicable.
      */
     pick(entities) {
-        if (!entities || !entities.length) {
-            this.pickedObject = null;
-            return null;
-        }
+        console.log('coucou');
+        this.pickedObject = null;
+        if (!entities) return null;
+        if (!entities.length) entities = [entities];
         this.position.copy(this.screenWorldPos);
         for (let i = 0; i < entities.length; i++) {
             if (this.intersect(entities[i])) {

@@ -11,6 +11,7 @@ class GameObjectsManager {
             numbersPathes.push(numbersPath + i + ".png");
         }
         this.tilesNumbers = new MultiSprite(renderer, numbersPathes);
+        this.fullscreenButton = new Sprite(renderer, "../../resources/minesweeper/Fullscreen.png");
         this.tiles = new Tiles(renderer, this.tilesNumbers);
         // this.graphicCursor = new GraphicCursor(renderer, cursorProperties);
         // this.graphicCursor.visible = true;
@@ -19,6 +20,7 @@ class GameObjectsManager {
         this.spriteArray = [];
         this.spriteArray.push(this.tiles);
         this.spriteArray.push(this.tilesNumbers);
+        this.spriteArray.push(this.fullscreenButton);
         // this.spriteArray.push(this.graphicCursor);
     }
 }

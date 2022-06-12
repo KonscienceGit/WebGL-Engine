@@ -5,6 +5,7 @@ class MainGameState extends AbstractState {
         this._escapeState = null;
         this._tiles = objectManager.tiles;
         this._tilesNumbers = objectManager.tilesNumbers;
+        this._fullScreenButton = objectManager.fullscreenButton;
         this._cursorProperties = null;
 
         // Set animations duration
@@ -23,6 +24,13 @@ class MainGameState extends AbstractState {
         this._tiles.createTiles(9, 9);
         this._tiles.setVisible(true);
         this._tilesNumbers.setVisible(true);
+        const fsbSize = 0.15;
+        if (document.fullscreenEnabled) {
+            this._fullScreenButton.position.setValues(-0.5 - fsbSize, 0.);
+            this._fullScreenButton.size.setValues(fsbSize, fsbSize);
+            this._fullScreenButton.setVisible(true);
+            this._fullScreenButton.isRound = false;
+        }
     }
 
     finish() {}
@@ -43,6 +51,15 @@ class MainGameState extends AbstractState {
 
     leftClickCallback(value){
         if (!this._cursorProperties || value < 1) return;
+        if (document.fullscreenEnabled) {
+            if (this._cursorProperties.pick(this._fullScreenButton) === this._fullScreenButton) {
+                if (document.fullscreenElement == null) {
+                    document.documentElement.requestFullscreen().catch();
+                } else {
+                    document.exitFullscreen().catch();
+                }
+            }
+        }
         this._tiles.clicTile(this._cursorProperties);
     }
 

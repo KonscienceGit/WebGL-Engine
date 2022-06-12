@@ -1,9 +1,5 @@
 "use strict";
 
-let _perfFrameSinceLast = 0;
-let _perfTimeSum = 0;
-const _perfInterval = 120;
-
 function main() {
     const canvas = document.getElementById("game_canvas");
     // canvas.style.cursor = 'none';
@@ -12,10 +8,10 @@ function main() {
     const camera = new Camera2D();
     const renderer = new Renderer(canvas, camera);
     const fixedResolution = new Vec2(1100, 800);
-    renderer.setDisplayFixedResolution(fixedResolution);
+    // renderer.setDisplayFixedResolution(fixedResolution);
     const grey = 150/255;
     renderer.setClearColor(new Vec4(grey, grey, grey, 1));
-    // renderer.setDisplayFullscreen();
+    renderer.setDisplayFullscreen();
     camera.setVerticalScreenWorldSize(1.0);
 
     // Inputs
@@ -39,13 +35,6 @@ function main() {
      */
     function renderGameFrame(timeStamp) {
         const deltaTime = computeDelta(timeStamp);
-        _perfTimeSum += deltaTime;
-        _perfFrameSinceLast++;
-        if (_perfFrameSinceLast === _perfInterval) {
-            console.log('frametime: ' + Math.round(1000 * _perfTimeSum / _perfInterval) + 'ms');
-            _perfTimeSum = 0;
-            _perfFrameSinceLast = 0;
-        }
         gameBindings.parseBindings(deltaTime);
         gameStateManager.updateCurrentState(deltaTime);
         updateSprites(renderableArray, deltaTime);

@@ -11,6 +11,8 @@ class Renderer {
         this._windowResolution = new Vec2(1,1);
         this._renderResolution = new Vec2(1,1);
         this._clearColor = new Vec4(1, 0, 1, 1);
+        this.updateScreenSize = this.updateScreenSize.bind(this);
+
         this._gl = this._canvas.getContext('webgl2', {
             antialias: false,
             depth: false,
@@ -41,11 +43,8 @@ class Renderer {
     }
 
     updateScreenSize() {
-        const docBody = document.body;
-        const docElem = document.documentElement;
-        // TODO only one of them is best for mobile, need to find which...
-        this._windowResolution.x = docElem.clientWidth || docBody.clientWidth || window.innerWidth;
-        this._windowResolution.y = docElem.clientHeight || docBody.clientHeight || window.innerHeight;
+        this._windowResolution.x = window.innerWidth;
+        this._windowResolution.y = window.innerHeight;
         switch (this._displayMode) {
             default:
             case Renderer.DISPLAY_MODE.FULLSCREEN:
