@@ -19,7 +19,6 @@ class MultiSprite extends Sprite {
                 gl.drawArrays(gl.TRIANGLES, 0, 6);
             }
         });
-
         super.restoreContext(gl);
     }
 

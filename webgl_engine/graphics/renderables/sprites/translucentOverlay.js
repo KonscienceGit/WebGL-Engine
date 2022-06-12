@@ -7,8 +7,9 @@ class TranslucentOverlay extends Entity {
         super();
         this._program = null;
         this._shaderName = "TranslucentOverlay";
-        this._colorVec4 = colorVec4;
         this._opacity = 1.0;
+        this.color = colorVec4
+        this._uni = new Float32Array(4);
         this.initOverlay(renderer);
     }
 
@@ -38,15 +39,15 @@ class TranslucentOverlay extends Entity {
         gl.bindBuffer(gl.ARRAY_BUFFER, this._vertex_buffer);
         gl.bufferData(gl.ARRAY_BUFFER, this.getVertices(), gl.STATIC_DRAW);
         gl.enableVertexAttribArray(this._coordAttrib);
-        const stride = 2 * 4; // 2 * FP32
-        gl.vertexAttribPointer(this._coordAttrib, 2, gl.FLOAT, false, stride, 0);
+        const stride = 2; // 2 * Byte
+        gl.vertexAttribPointer(this._coordAttrib, 2, gl.BYTE, false, stride, 0);
     }
 
     setupContext(renderer) {
         const gl = renderer.getGLContext();
         gl.bindVertexArray(this._vao);
         gl.useProgram(this._program);
-        gl.uniform4fv(this._overlayColorUniform, [this._colorVec4.x, this._colorVec4.y, this._colorVec4.z, this._colorVec4.w]);
+        gl.uniform4fv(this._overlayColorUniform, this.color.getArray(this._uni));
         gl.uniform1f(this._opacityUniform, this._opacity);
     }
 
@@ -59,7 +60,7 @@ class TranslucentOverlay extends Entity {
 
     /** @param {Vec4} color the color in [0 to 1] RBGA components */
     setColor(color) {
-        this._colorVec4.copy(color);
+        this.color.copy(color);
     }
 
     /** @param {number} opacity */
@@ -77,7 +78,7 @@ class TranslucentOverlay extends Entity {
             'void main(void) {',
             '    color = overlayColor;',
             '    color.w *= opacity;',
-            '    gl_Position = vec4(vertCoords.xy, 0., 1.);',
+            '    gl_Position = vec4(vertCoords, 0., 1.);',
             '}'
         ].join('\n');
     }
@@ -93,13 +94,6 @@ class TranslucentOverlay extends Entity {
     }
 
     getVertices() { // Fullscreen quad
-        return new Float32Array([
-            -1, -1,// T1
-            1, -1,
-            -1, 1,
-            1, 1,// T2
-            -1, 1,
-            1, -1
-        ]);
+        return new Int8Array([-1, -1, 1, -1, -1, 1, 1, 1, -1, 1, 1, -1]);
     }
 }

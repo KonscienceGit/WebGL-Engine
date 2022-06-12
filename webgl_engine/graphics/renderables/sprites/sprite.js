@@ -24,6 +24,8 @@ class Sprite extends Entity {
         for (let i = 0; i < this._imageCount; i++) {
             this.loadImage(i, imagesPaths[i], gl, this._texture);
         }
+        this._uniFp2 = new Float32Array(2);
+        this._uniFp4 = new Float32Array(4);
     }
 
     initGraphics(gl) {
@@ -49,15 +51,15 @@ class Sprite extends Entity {
         gl.bindVertexArray(this._vao);
         gl.bindBuffer(gl.ARRAY_BUFFER, this._vertex_buffer);
         gl.bufferData(gl.ARRAY_BUFFER, this.getVertices(), gl.STATIC_DRAW);
-        const floatBytes = 4;
+        const int8Byte = 1;
         const vertexCoord = 2;
         const textCoord = 2;
-        const stride = (vertexCoord + textCoord) * floatBytes;
-        const textCoordOffset = vertexCoord * floatBytes;
+        const stride = (vertexCoord + textCoord) * int8Byte;
+        const textCoordOffset = vertexCoord * int8Byte;
         gl.enableVertexAttribArray(this._coordAttrib);
-        gl.vertexAttribPointer(this._coordAttrib, 2, gl.FLOAT, false, stride, 0);
+        gl.vertexAttribPointer(this._coordAttrib, 2, gl.BYTE, false, stride, 0);
         gl.enableVertexAttribArray(this._textCoordAttrib);
-        gl.vertexAttribPointer(this._textCoordAttrib, 2, gl.FLOAT, false, stride, textCoordOffset);
+        gl.vertexAttribPointer(this._textCoordAttrib, 2, gl.BYTE, false, stride, textCoordOffset);
     }
 
     /**
@@ -148,14 +150,15 @@ class Sprite extends Entity {
      * @param {Entity} entity
      */
     setupUniforms(gl, entity) {
-        gl.uniform2fv(this._spriteDimensionsUniform, [entity.size.x, entity.size.y]);
-        gl.uniform2fv(this._scaleUniform, [entity.scale.x, entity.scale.y]);
-        gl.uniform2fv(this._positionUniform, [entity.position.x, entity.position.y]);
-        gl.uniform1f(this._rotationUniform, entity.rotation);
-        gl.uniform4fv(this._colorUniform, [entity.color.x, entity.color.y, entity.color.z, entity.color.w]);
         gl.uniform1i(this._textureLayerUniform, entity.textureLayer);
+        gl.uniform1f(this._rotationUniform, entity.rotation);
         gl.uniform1f(this._alphaOutlineUniform, entity.alphaOutline);
 
+        const u2 = this._uniFp2;
+        gl.uniform2fv(this._spriteDimensionsUniform, entity.size.getArray(u2));
+        gl.uniform2fv(this._scaleUniform, entity.scale.getArray(u2));
+        gl.uniform2fv(this._positionUniform, entity.position.getArray(u2));
+        gl.uniform4fv(this._colorUniform, entity.color.getArray(this._uniFp4));
     }
 
     /**
@@ -201,11 +204,13 @@ class Sprite extends Entity {
         });
     }
 
+    static VERTICES = new Int8Array([-1, -1, 0, 1, 1, -1, 1, 1, -1, 1, 0, 0, 1, 1, 1, 0, -1, 1, 0, 0, 1, -1, 1, 1]);
+
     /**
      * @private
-     * @returns {Float32Array}
+     * @returns {Int8Array}
      */
     getVertices() {
-        return new Float32Array([-1, -1, 0, 1, 1, -1, 1, 1, -1, 1, 0, 0, 1, 1, 1, 0, -1, 1, 0, 0, 1, -1, 1, 1]);
+        return Sprite.VERTICES;
     }
 }

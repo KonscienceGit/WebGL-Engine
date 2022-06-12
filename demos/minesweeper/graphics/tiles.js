@@ -1,5 +1,5 @@
 class Tiles extends MultiSprite {
-    constructor(renderer, numbersSprites, row, col) {
+    constructor(renderer, numbersSprites) {
         const path = "../../resources/minesweeper/"
         super(renderer, [
             path + "Tile.png",
@@ -8,8 +8,8 @@ class Tiles extends MultiSprite {
             path + "SecureTile.png"
             ]);
         this._numbers = numbersSprites;
-        this.nbRow = row;
-        this.nbCol = col;
+        this.nbRow = 0;
+        this.nbCol = 0;
         this._triggered = false;
         this._triggeredMine = null;
         this._fuseStage = 0;
@@ -37,9 +37,9 @@ class Tiles extends MultiSprite {
         this._numColor[8] = new Vec4(1, 1, 1, 1);
     }
 
-    createTiles() {
-        const nbRow = this.nbRow;
-        const nbCol = this.nbCol;
+    createTiles(nbRow, nbCol) {
+        this.nbRow = nbRow;
+        this.nbCol = nbCol;
         const size = 1 / Math.max(nbRow, nbCol);
         const numberHeight = size * 0.6;
         this._numbers.setHeight(numberHeight);
@@ -163,8 +163,7 @@ class Tiles extends MultiSprite {
                 this._fuseBlipStage++;
             }
             if (this._fuseBlipStage === 2 && this._fuseBlip >= 0.4 && this._fuseStage >= 2) {
-                const radius = maxRadius;
-                this.blipMines(radius, this._fuseBlipStage);
+                this.blipMines(maxRadius, this._fuseBlipStage);
                 this._fuseBlipStage++;
             }
             if (this._fuseBlip >= 1.3) {

@@ -8,9 +8,9 @@ class Vec2 {
         return new Vec2(this.x, this.y);
     }
 
-    copy(v2) {
-        this.x = v2.x;
-        this.y = v2.y;
+    copy(v) {
+        this.x = v.x;
+        this.y = v.y;
     }
 
     setValues(x, y){
@@ -23,45 +23,52 @@ class Vec2 {
         this.y += v.y;
     }
 
-    equals(v2) {
-        return (this.x === v2.x && this.y === v2.y);
-    }
-
-    distance(v2) {
-        return Math.sqrt(this.distanceSquared(v2));
+    equals(v) {
+        return (this.x === v.x && this.y === v.y);
     }
 
     /**
      * Faster for computing intersections
-     * @param v2
+     * @param v
      * @returns {number}
      */
-    distanceSquared(v2) {
-        const dx = this.x - v2.x;
-        const dy = this.y - v2.y;
+    distanceSquared(v) {
+        const dx = this.x - v.x;
+        const dy = this.y - v.y;
         return dx * dx + dy * dy;
     }
 
-    moveLeft(movement) {
-        this.x -= movement;
+    distance(v) {
+        return Math.sqrt(this.distanceSquared(v));
     }
 
-    moveRight(movement) {
-        this.x += movement;
+    getArray(a) {
+        a[0] = this.x;
+        a[1] = this.y;
+        return a;
     }
 
-    moveUp(movement) {
-        this.y += movement;
+    moveLeft(d) {
+        this.x -= d;
     }
 
-    moveDown(movement) {
-        this.y -= movement;
+    moveRight(d) {
+        this.x += d;
+    }
+
+    moveUp(d) {
+        this.y += d;
+    }
+
+    moveDown(d) {
+        this.y -= d;
     }
 }
 
-class Vec3 extends Vec2 {
+class Vec3 {
     constructor(x, y, z) {
-        super(x, y);
+        this.x = x;
+        this.y = y;
         this.z = z;
     }
 
@@ -69,36 +76,52 @@ class Vec3 extends Vec2 {
         return new Vec3(this.x, this.y, this.z);
     }
 
-    copy(v3) {
-        super.copy(v3);
-        this.z = v3.z;
+    copy(v) {
+        this.x = v.x;
+        this.y = v.y;
+        this.z = v.z;
     }
 
     setValues(x, y, z){
-        super.setValues(x, y);
+        this.x = x;
+        this.y = y;
         this.z = z;
     }
 
     add(v) {
-        super.add(v);
+        this.x += v.x;
+        this.y += v.y;
         this.z += v.z;
     }
 
-    equals(v3) {
-        return (super.equals(v3) && this.z === v3.z);
+    equals(v) {
+        return (this.x === v.x && this.y === v.y && this.z === v.z);
     }
 
-    distance(v3) {
-        let dx = this.x - v3.x;
-        let dy = this.y - v3.y;
-        let dz = this.z - v3.z;
-        return Math.sqrt(dx * dx + dy * dy + dz * dz);
+    distanceSquared(v) {
+        let dx = this.x - v.x;
+        let dy = this.y - v.y;
+        let dz = this.z - v.z;
+        return dx * dx + dy * dy + dz * dz;
+    }
+
+    distance(v) {
+        return Math.sqrt(this.distanceSquared(v));
+    }
+
+    getArray(a) {
+        a[0] = this.x;
+        a[1] = this.y;
+        a[2] = this.z;
+        return a;
     }
 }
 
-class Vec4 extends Vec3 {
+class Vec4 {
     constructor(x, y, z, w) {
-        super(x, y, z);
+        this.x = x;
+        this.y = y;
+        this.z = z;
         this.w = w;
     }
 
@@ -106,22 +129,36 @@ class Vec4 extends Vec3 {
         return new Vec4(this.x, this.y, this.z, this.w);
     }
 
-    copy(v4) {
-        super.copy(v4);
-        this.w = v4.w;
+    copy(v) {
+        this.x = v.x;
+        this.y = v.y;
+        this.z = v.z;
+        this.w = v.w;
     }
 
     setValues(x, y, z, w){
-        super.setValues(x, y, z);
+        this.x = x;
+        this.y = y;
+        this.z = z;
         this.w = w;
     }
 
     add(v) {
-        super.add(v);
+        this.x += v.x;
+        this.y += v.y;
+        this.z += v.z;
         this.w += v.w;
     }
 
-    equals(v4) {
-        return (super.equals(v4) && this.w === v4.w);
+    equals(v) {
+        return (this.x === v.x && this.y === v.y && this.w === v.w);
+    }
+
+    getArray(a) {
+        a[0] = this.x;
+        a[1] = this.y;
+        a[2] = this.z;
+        a[3] = this.w;
+        return a;
     }
 }
