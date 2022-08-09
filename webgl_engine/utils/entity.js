@@ -13,8 +13,8 @@ class Entity {
 
         // import from entityProperties.js
         // SRT (scale, rotation, translation)
-        this.scale = new Vec2(1., 1.);
-        this.rotation = 0.;
+        this.scale = new Vec2(1, 1);
+        this.rotation = 0;
         this.position = new Vec2(0, 0);
 
         // Render properties
@@ -26,9 +26,9 @@ class Entity {
         // Physics properties
         this.radius = 0;
         this.isRound = true;
-        this.translationSpeed = new Vec2(0., 0.);
-        this.rotationSpeed = 0.;
-        this.density = 1.; // 1 is water density
+        this.translationSpeed = new Vec2(0, 0);
+        this.rotationSpeed = 0;
+        this.density = 1; // 1 is water density
         this.relativeSurface = 1.; // 1 is a perfectly smooth round shape, >1 is more surface = more drag
 
         // Misc

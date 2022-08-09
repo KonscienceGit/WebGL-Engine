@@ -1,12 +1,13 @@
 class Tiles extends MultiSprite {
     constructor(renderer, numbersSprites) {
         const path = "../../resources/minesweeper/"
-        super(renderer, [
+        const pathes = [
             path + "Tile.png",
             path + "EmptyTile.png",
             path + "Mine.png",
             path + "SecureTile.png"
-            ]);
+        ];
+        super(renderer, {imagespaths: pathes});
         this._numbers = numbersSprites;
         this.nbRow = 0;
         this.nbCol = 0;

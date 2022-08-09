@@ -4,26 +4,51 @@
 class Sprite extends Entity {
     /**
      * @param {Renderer} renderer
-     * @param {String[]|String} imagesPaths the path (or array of pathes) to the images to loaf in the sprites.
+     * @param {options} options the sprite options.
+     * @param {string[]|string} [options.imagespaths] the path (or array of pathes) to the images to loaf in the sprites.
+     * @param {Vec4} [options.color] the sprite color, if not using an image (or the image is not found.)
      */
-    constructor(renderer, imagesPaths) {
+    constructor(renderer, options) {
         super();
-        this.size.setValues(0, 0);
+        this.setVisible(true);
+        this.size.setValues(null, null);
         this._definedWidth = null;
         this._definedHeight = null;
-        this.textureSize = new Vec2(0, 0);
+        this.textureSize = new Vec2(1, 1);
         this.setLoaded(false);
         let gl = renderer.getGLContext();
-        this._texture = gl.createTexture();
-        this.loadTempTexture(gl, this._texture);
-        this.initGraphics(gl);
-        if (!Array.isArray(imagesPaths)) imagesPaths = [imagesPaths];
-        this._imageCount = imagesPaths.length;
-        this._imageLoadedCount = 0;
 
-        for (let i = 0; i < this._imageCount; i++) {
-            this.loadImage(i, imagesPaths[i], gl, this._texture);
+        let imagesPaths = null;
+        let color = null;
+        if (options) {
+            if (options.color != null) color = options.color;
+            if (Array.isArray(options) || typeof options === 'string' || options instanceof String) {
+                imagesPaths = options;
+                console.log('Sprite: warning, please use options.imagespaths instead of options');
+            } else if (options.imagespaths) {
+                imagesPaths = options.imagespaths;
+            }
+        } else {
+            console.log('Sprite: warning, missing options in constructor');
         }
+
+        this._texture = gl.createTexture();
+        this.loadTempTexture(gl, this._texture, color);
+        this.initGraphics(gl);
+
+        if (imagesPaths != null) {
+            if (!Array.isArray(imagesPaths)) imagesPaths = [imagesPaths];
+            this._imageCount = imagesPaths.length;
+            this._imageLoadedCount = 0;
+
+            for (let i = 0; i < this._imageCount; i++) {
+                this.loadImage(i, imagesPaths[i], gl, this._texture);
+            }
+        } else {
+            this.size.setValues(1, 1);
+            this.setLoaded(true);
+        }
+
         this._uniFp2 = new Float32Array(2);
         this._uniFp4 = new Float32Array(4);
     }
@@ -60,15 +85,6 @@ class Sprite extends Entity {
         gl.vertexAttribPointer(this._coordAttrib, 2, gl.BYTE, false, stride, 0);
         gl.enableVertexAttribArray(this._textCoordAttrib);
         gl.vertexAttribPointer(this._textCoordAttrib, 2, gl.BYTE, false, stride, textCoordOffset);
-    }
-
-    /**
-     * Must be called when this entity has finished loading and initializing (its texture that might be deferred etc).
-     * It is important that this method is called in a finite time, to allow loading managers that depend on it to progress.
-     */
-    imageLoaded() {
-        this.setLoaded(true);
-        this.radius = (this.size.x + this.size.y) / 4;
     }
 
     draw(renderer) {
@@ -164,10 +180,17 @@ class Sprite extends Entity {
     /**
      * @param {WebGL2RenderingContext} gl
      * @param {WebGLTexture} tex
+     * @param {Vec4} color
      */
-    loadTempTexture(gl, tex) {
+    loadTempTexture(gl, tex, color) {
+        let pixelData;
+        if (color) {
+            pixelData = new Uint8Array([color.x * 255, color.y * 255, color.z * 255, color.w * 255]);
+        } else {
+            pixelData = ShadersUtil.getDefaultBluePixelData();
+        }
         gl.bindTexture(gl.TEXTURE_2D_ARRAY, tex);
-        gl.texImage3D(gl.TEXTURE_2D_ARRAY, 0, gl.RGBA, 1, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, ShadersUtil.getDefaultBluePixelData());
+        gl.texImage3D(gl.TEXTURE_2D_ARRAY, 0, gl.RGBA, 1, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, pixelData);
         gl.bindTexture(gl.TEXTURE_2D_ARRAY, null);
     }
 
@@ -199,7 +222,7 @@ class Sprite extends Entity {
             _self._imageLoadedCount++;
             if (_self._imageLoadedCount === _self._imageCount) {
                 _self.updateSize();
-                _self.imageLoaded();
+                _self.setLoaded(true);
             }
         });
     }
