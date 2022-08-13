@@ -2,11 +2,14 @@ class CursorProperties extends Entity{
     constructor() {
         super();
         this.visible = true;
+        // positions/movmeents in pixel coordinates
         this.screenPos = new Vec2(0, 0);
         this.canvasPos = new Vec2(0, 0);
-        this.screenWorldPos = new Vec2(-10, 0);
-        this.lastMovement = new Vec2(0,0);
-        this.isOutside = false;
+        this.lastPixelMovement = new Vec2(0,0);
+
+        // positions/movements in world coordinates
+        this.screenWorldPos = new Vec2(-10, 0); // the position in the screen in world coordinates.
+        this.worldPosOffset = new Vec2(0, 0); // the world position offset. to get the real world coordinates, substract this to screenWorldPos.
         this.pickedObject = null;
     }
 
@@ -21,6 +24,7 @@ class CursorProperties extends Entity{
         if (!entities) return null;
         if (!entities.length) entities = [entities];
         this.position.copy(this.screenWorldPos);
+        this.position.sub(this.worldPosOffset);
         for (let i = 0; i < entities.length; i++) {
             if (this.intersect(entities[i])) {
                 this.pickedObject = entities[i];

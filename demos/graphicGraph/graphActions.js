@@ -1,6 +1,8 @@
-const GameInputActions = Object.freeze({
+const GraphActions = Object.freeze({
     // General / commons
-    CURSOR_AT: "Cursor At",
+    CURSOR_MOVE: "Cursor move",
+    MOUSEWHEEL_MOVE_UP: "Mouse wheel move up",
+    MOUSEWHEEL_MOVE_DOWN: "Mouse wheel move down",
     // Gameplay
     LEFT_CLICK:  "Left click",
     RIGHT_CLICK:  "Right click",

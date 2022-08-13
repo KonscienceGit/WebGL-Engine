@@ -1,4 +1,4 @@
-class KeyboardInputManager extends AbstractInputManager {
+class KeyboardInputManager extends AbstractInputDeviceManager {
     constructor() {
         super();
         this._keyStates = {};
@@ -29,15 +29,19 @@ class KeyboardInputManager extends AbstractInputManager {
     }
 
     /**
-     * @param {KeyboardInputIdentifier} keyboardInputIdentifier
+     * @param {KeyboardInputIdentifiers} keyboardInputIdentifier
      * @param {ActionType} actionType
      * @return {AbstractInput}
      */
-    createControllerInput(keyboardInputIdentifier, actionType){
+    createInput(keyboardInputIdentifier, actionType){
         // Unruly combinations
-        if(actionType === ActionType.POSITION || actionType === ActionType.THROTTLE){ // TODO replace by typed implementation of AbstractInpu (ButtonInput, AxisInput, PositionInput...
+        if (actionType === ActionType.POSITION || actionType === ActionType.THROTTLE) {
             throw new Error('Error: cannot bind a Button to a ' + actionType + ' action!');
         }
         return new KeyboardKeyInput(this, keyboardInputIdentifier.getCode(), keyboardInputIdentifier.getLocalizedValue());
+    }
+
+    postParsingUpdate() {
+        // Do nothing
     }
 }

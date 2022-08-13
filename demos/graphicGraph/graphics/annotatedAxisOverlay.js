@@ -33,6 +33,7 @@ class AnnotatedAxisOverlay extends Entity {
         this._coordAttrib = gl.getAttribLocation(this._program, "vertCoords");
         this._resolutionUniform = gl.getUniformLocation(this._program, "resolution");
         this._screenWorldSizeUniform = gl.getUniformLocation(this._program, "screenWorldSize");
+        this._canvasPositionUniform = gl.getUniformLocation(this._program, "canvasPosition");
         this._overlayColorUniform = gl.getUniformLocation(this._program, "overlayColor");
         this._opacityUniform = gl.getUniformLocation(this._program, "opacity");
 
@@ -53,8 +54,8 @@ class AnnotatedAxisOverlay extends Entity {
         gl.useProgram(this._program);
         gl.uniform4fv(this._overlayColorUniform, this.color.toArray(this._fp4));
         gl.uniform2fv(this._resolutionUniform, renderer.getRenderResolution().toArray(this._fp2));
-        gl.uniform2fv(this._screenWorldSizeUniform, renderer.getCamera().getScreenWorldSize().toArray(this._fp2));
         gl.uniform1f(this._opacityUniform, this._opacity);
+        renderer.getCamera().setViewProjectionUniform(gl, this._screenWorldSizeUniform, this._canvasPositionUniform);
     }
 
     /**
@@ -80,6 +81,7 @@ class AnnotatedAxisOverlay extends Entity {
             'uniform float opacity;',
             'uniform vec2 resolution;',
             'uniform vec2 screenWorldSize;',
+            'uniform vec2 canvasPosition;',
             'in vec2 vertCoords;',
             'out vec4 color;',
             'out vec2 pixelPos;',
@@ -94,8 +96,9 @@ class AnnotatedAxisOverlay extends Entity {
             '    float off = 0.5;',
             '    if (fract(resolution.x / 2.) > 0.1 ) offset.x = off;',
             '    if (fract(resolution.y / 2.) > 0.1 ) offset.y = off;',
-            '    pixelPos = offset + vertCoords * resolution / 2.;',
-            '    worldPos = vertCoords * screenWorldSize / 2.;',
+            '    vec2 adjustedCoord = vertCoords - canvasPosition / screenWorldSize;',
+            '    worldPos = vertCoords * screenWorldSize / 2. - canvasPosition;',
+            '    pixelPos = offset + (worldPos / screenWorldSize) * resolution;',
             '    worldToPixel = resolution / screenWorldSize;',
             '}'
         ].join('\n');
@@ -134,21 +137,43 @@ class AnnotatedAxisOverlay extends Entity {
             '    return (posOrthoAxis < 0. && posOrthoAxis > -length) && keepMarkX && !origin;',
             '}',
 
+            'bool keepLines(bool horizontal, float spacing, float width) {',
+            '    float worldToPix = horizontal ? worldToPixel.x : worldToPixel.y;',
+            '    float worldpos = horizontal ? worldPos.x : worldPos.y;',
+            '    float pixelpos = horizontal ? pixelPos.x : pixelPos.y;',
+            '    float posOrthoAxis = horizontal ? pixelPos.y : pixelPos.x;',
+            '    float markWidth = width / spacing + markEpsilon;',
+            '    float markPos = fract(worldpos / spacing);',
+            '    float pixelMarkpos = worldToPix * markPos;',
+            '    bool keepMarkX = pixelMarkpos > 0. && pixelMarkpos < markWidth;',
+            '    return keepMarkX;',
+            '}',
+
             'void main(void) {',
             '    outColor = color;',
-            '    bool keep = false;',
             //   Axes
-            '    keep = (pixelPos.x > -1. && pixelPos.x < 1.) ? true : keep;',
-            '    keep = (pixelPos.y > -1. && pixelPos.y < 1.) ? true : keep;',
+            '    bool keep_axes = false;',
+            '    keep_axes = (pixelPos.x > -1. && pixelPos.x < 1.) ? true : keep_axes;',
+            '    keep_axes = (pixelPos.y > -1. && pixelPos.y < 1.) ? true : keep_axes;',
 
             //   Small marks
-            '    keep = keepMark(horizontal, smallTickSpacing, smallTickLength, smallTickWidth) ? true : keep;',
-            '    keep = keepMark(vertical, smallTickSpacing, smallTickLength, smallTickWidth) ? true : keep;',
+            '    bool keep_mark = false;',
+            '    keep_mark = keepMark(horizontal, smallTickSpacing, smallTickLength, smallTickWidth) ? true : keep_mark;',
+            '    keep_mark = keepMark(vertical, smallTickSpacing, smallTickLength, smallTickWidth) ? true : keep_mark;',
             //   Big marks
-            '    keep = keepMark(horizontal, bigTickSpacing, bigTickLength, bigTickWidth) ? true : keep;',
-            '    keep = keepMark(vertical, bigTickSpacing, bigTickLength, bigTickWidth) ? true : keep;',
+            '    keep_mark = keepMark(horizontal, bigTickSpacing, bigTickLength, bigTickWidth) ? true : keep_mark;',
+            '    keep_mark = keepMark(vertical, bigTickSpacing, bigTickLength, bigTickWidth) ? true : keep_mark;',
 
-            '    if (!keep) discard;',
+            //   Dim lines for "grid"
+            '    bool keep_gridline = false;',
+            '    keep_gridline = keepLines(horizontal, bigTickSpacing, 1.) ? true : keep_gridline;',
+            '    keep_gridline = keepLines(vertical, bigTickSpacing, 1.) ? true : keep_gridline;',
+            //   Reduce opacity for gridline
+            '    bool is_gridline  = keep_gridline && !keep_mark && !keep_axes;',
+            '    outColor.a *= is_gridline ? 0.33 : 1.;',
+
+            '    bool do_discard = !(keep_axes || keep_mark || keep_gridline);',
+            '    if (do_discard) discard;',
             '}'
         ].join('\n');
     }

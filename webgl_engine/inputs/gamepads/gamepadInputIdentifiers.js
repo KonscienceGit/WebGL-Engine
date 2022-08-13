@@ -2,7 +2,8 @@ const GAMEPAD_BUTTON = "BUTTON";
 const GAMEPAD_AXIS = "AXIS";
 const XBOX_GAMEPAD = "Xbox";
 
-class GamepadInputIdentifier{
+class GamepadInputIdentifier extends AbstractInputIdentifier{
+    static T16000M_STICK = "T.16000M";
     /**
      * @param gamepadType
      * @param inputType
@@ -10,6 +11,7 @@ class GamepadInputIdentifier{
      * @param {number} [axisDirection] 1 if positive part of axis, -1 if negative part.
      */
     constructor(gamepadType, inputType, inputNumber, axisDirection) {
+        super();
         this.gamepadType = gamepadType;
         this.inputType = inputType;
         this.inputNumber = inputNumber;
@@ -57,4 +59,4 @@ const XboxGamePadInputs = Object.freeze({
     AXIS_RIGHTAXIS_DOWN: new GamepadInputIdentifier(XBOX_GAMEPAD, GAMEPAD_AXIS, 3, 1),
 });
 
-const T16000M_STICK = "T.16000M";
+//TODO T16000M flight stick

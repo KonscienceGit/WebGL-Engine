@@ -1,9 +1,17 @@
 "use strict";
 
 function main() {
+    // DEBUG constants
+    const bench = {};
+    bench.enable = false;
+    bench.start = performance.now();
+    bench.frame = 0;
+    bench.sum = 0.0;
+    bench.nbFrame = 3000.;
+    // END DEBUG constants
+
     const canvas = document.getElementById("game_canvas");
     let previousTime = 0.0;
-
     const camera = new Camera2D();
     const renderer = new Renderer(canvas, camera);
     const grey = 150/255;
@@ -13,25 +21,15 @@ function main() {
 
     // Inputs
     const cursorProperties = new CursorProperties();
-    const keyboardManager = new KeyboardInputManager();
-    const gamepadManager = new GamepadInputManager();
-    const mouseManager = new MouseInputManager(canvas, renderer, cursorProperties);
-    const gameBindings = new ActionsBindingsDefinitions(keyboardManager, gamepadManager, mouseManager);
+    const graphInputManager = new GraphInputsManager(renderer);
 
-    const gameObjectManager = new GraphManager(renderer, cursorProperties, gameBindings);
-    const renderableArray = gameObjectManager.spriteArray;
+    const graphManager = new GraphManager(renderer, cursorProperties, graphInputManager);
+    const renderableArray = graphManager.spriteArray;
     LoadingManager.callbackWhenLoaded(renderableArray, init);
 
-//     // init
-//     const bench = {};
-//     bench.start = performance.now();
-//     bench.frame = 0;
-//     bench.sum = 0.0;
-//     bench.nbFrame = 3000.;
-
     function init() {
+        graphManager.init();
         renderGameFrame(0);
-        gameObjectManager.init();
     }
 
     /**
@@ -39,25 +37,30 @@ function main() {
      */
     function renderGameFrame(timeStamp) {
         const deltaTime = computeDelta(timeStamp);
-        gameBindings.parseBindings(deltaTime);
-        updateSprites(renderableArray, deltaTime);
-        renderer.clear();
-        renderer.draw(renderableArray);
-        //Request another animation frame, at a pace that should match monitor refresh rate (or at least the web browser refresh rate)
-        requestAnimationFrame(renderGameFrame);
+        graphInputManager.parseBindings(deltaTime);
+        if (renderer.needRepaint() || graphManager.needsUpdate() || bench.enable){
+            graphManager.update();
+            updateSprites(renderableArray, deltaTime);
+            renderer.clear();
+            renderer.draw(renderableArray);
+        }
 
-        // // each render
-        // bench.now = performance.now();
-        // bench.sum += bench.now - bench.start;
-        // bench.start = bench.now;
-        // bench.frame++;
-        // if (bench.frame >= bench.nbFrame) {
-        //     const oneDecimalResult = Math.round(bench.sum / (bench.nbFrame / 10)) / 10;
-        //     const fps = Math.round(1000 / oneDecimalResult);
-        //     console.log('frametime: ' + oneDecimalResult + ' ms   fps: ' + fps);
-        //     bench.frame = 0;
-        //     bench.sum = 0;
-        // }
+        // DEBUG benchmark code
+        if (bench.enable) {
+            bench.now = performance.now();
+            bench.sum += bench.now - bench.start;
+            bench.start = bench.now;
+            bench.frame++;
+            if (bench.frame >= bench.nbFrame) {
+                const oneDecimalResult = Math.round(bench.sum / (bench.nbFrame / 10)) / 10;
+                const fps = Math.round(1000 / oneDecimalResult);
+                console.log('frametime: ' + oneDecimalResult + ' ms   fps: ' + fps);
+                bench.frame = 0;
+                bench.sum = 0;
+            }
+        }
+        // END DEBUG benchmark code
+        requestAnimationFrame(renderGameFrame);
     }
 
     /**

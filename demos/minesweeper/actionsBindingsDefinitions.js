@@ -9,9 +9,10 @@ class ActionsBindingsDefinitions extends BindingGroup{
     }
 
     initActions() {
+        console.warn('TODO convert to generalInputManager');
         const leftClickAction = new ButtonInputAction(GameInputActions.LEFT_CLICK,true);
-        leftClickAction.addInput(this._gamepadManager.createControllerInput(XboxGamePadInputs.BUTTON_A, leftClickAction.getType()));
-        leftClickAction.addInput(this._keyboardManager.createControllerInput(US_Keyboard.Enter, leftClickAction.getType()));
+        leftClickAction.addInput(this._gamepadManager.createInput(XboxGamePadInputs.BUTTON_A, leftClickAction.getType()));
+        leftClickAction.addInput(this._keyboardManager.createInput(US_Keyboard.Enter, leftClickAction.getType()));
         leftClickAction.addInput(this._mouseManager.createMouseButtonInput(MouseInputIdentifier.BUTTON_LEFT));
         this.addAction(leftClickAction);
 

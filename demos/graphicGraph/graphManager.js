@@ -1,18 +1,27 @@
 class GraphManager {
     /**
      * @param {Renderer} renderer
-     * @param {CursorProperties} cursorProperties used for the grpahic cursor
+     * @param {CursorProperties} cursorProperties used for cursor operations
+     * @param {GeneralInputManager} graphInputManager for bindings
      */
-    constructor(renderer, cursorProperties, gameBindings) {
+    constructor(renderer, cursorProperties, graphInputManager) {
         const whiteColor = new Vec4(1,1,1,1);
         const blackColor = new Vec4(0,0,0,1);
         const darkRedColor = new Vec4(0.8,0,0,1);
+        this._camera = renderer.getCamera();
         this._cursorProperties = null;
+        this._needsUpdate = true;
+        this._isMouseDown = false;
+        this._camMovement = new Vec2(0, 0);
+        this._lastCursorPos = new Vec2(0, 0);
+        this._tmpVec2 = new Vec2(0, 0);
 
         // Bind the 'this' context for theses functions (otherwise it's lost when used as callback)
         this.leftClickCallback = this.leftClickCallback.bind(this);
         this.cursorMoveCallback = this.cursorMoveCallback.bind(this);
-        this.registerBindings(gameBindings);
+        this.mouseWheelUpCallback = this.mouseWheelUpCallback.bind(this);
+        this.mouseWheelDownCallback = this.mouseWheelDownCallback.bind(this);
+        this.registerBindings(graphInputManager);
 
         this.graphPoints = new MultiSprite(renderer, {color: darkRedColor});
         this.axis = new AnnotatedAxisOverlay(renderer, blackColor);
@@ -48,10 +57,24 @@ class GraphManager {
             const interpolated = Interpolator.circleCurve(val, true, false, false);
             this.graphPoints.createNewInstance(true).position.setValues(val, interpolated);
         }
+        this._needsUpdate = true;
+    }
+
+    needsUpdate () {
+        return this._needsUpdate;
+    }
+
+    update(){
+        this._needsUpdate = false;
     }
 
     leftClickCallback(value){
-        if (!this._cursorProperties || value !== 1) return;
+        if (!this._isMouseDown && value === 1) {
+            this._lastCursorPos.copy(this._cursorProperties.screenWorldPos);
+        }
+        this._isMouseDown = value === 1;
+        if (!this._isMouseDown) this._camMovement.setValues(0, 0);
+        if (!this._cursorProperties || !this._isMouseDown) return;
         if (document.fullscreenEnabled) {
             const pickres = this._cursorProperties.pick(this.fullscreenButton);
             if (pickres === this.fullscreenButton) {
@@ -69,14 +92,44 @@ class GraphManager {
      */
     cursorMoveCallback(cursorProperties){
         this._cursorProperties = cursorProperties;
+        if (this._isMouseDown) {
+            const x = this._cursorProperties.screenWorldPos.x - this._lastCursorPos.x;
+            const y = this._cursorProperties.screenWorldPos.y - this._lastCursorPos.y;
+            const camPos = this._camera.getPosition(this._tmpVec2);
+            camPos.x += x;
+            camPos.y += y;
+            this._camera.setPosition(camPos);
+            this._needsUpdate = true;
+            this._lastCursorPos.copy(this._cursorProperties.screenWorldPos);
+        }
+    }
+
+    /**
+     * @param {number} wheelPos
+     */
+    mouseWheelUpCallback(wheelPos){
+        if (wheelPos > 0) {
+            this._tmpVec2 = this._camera.getScreenWorldSize(this._tmpVec2);
+            this._camera.setVerticalScreenWorldSize(this._tmpVec2.y * 0.9);
+            this._needsUpdate = true;
+        }
+
+    }
+
+    mouseWheelDownCallback(wheelPos){
+        if (wheelPos > 0) {
+            this._tmpVec2 = this._camera.getScreenWorldSize(this._tmpVec2);
+            this._camera.setVerticalScreenWorldSize(this._tmpVec2.y * 1.1);
+            this._needsUpdate = true;
+        }
     }
 
     registerBindings(gameBindings){
-        const self = this;
-        const cursorMove = gameBindings.getActionByName(GameInputActions.CURSOR_AT);
-        cursorMove.addActionCallback(self.cursorMoveCallback);
+        gameBindings.addCallbackToAction(GraphActions.CURSOR_MOVE, this.cursorMoveCallback);
 
-        const leftClick = gameBindings.getActionByName(GameInputActions.LEFT_CLICK);
-        leftClick.addActionCallback(self.leftClickCallback);
+        gameBindings.addCallbackToAction(GraphActions.LEFT_CLICK, this.leftClickCallback);
+
+        gameBindings.addCallbackToAction(GraphActions.MOUSEWHEEL_MOVE_UP, this.mouseWheelUpCallback);
+        gameBindings.addCallbackToAction(GraphActions.MOUSEWHEEL_MOVE_DOWN, this.mouseWheelDownCallback);
     }
 }

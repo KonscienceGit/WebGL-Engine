@@ -2,8 +2,8 @@
 
 class Vec2 {
     constructor(x, y) {
-        this.x = x;
-        this.y = y;
+        this.x = x != null ? x : 0;
+        this.y = y != null ? y : 0;
     }
 
     clone() {
@@ -23,6 +23,11 @@ class Vec2 {
     add(v) {
         this.x += v.x;
         this.y += v.y;
+    }
+
+    sub(v) {
+        this.x -= v.x;
+        this.y -= v.y;
     }
 
     equals(v) {
@@ -69,9 +74,9 @@ class Vec2 {
 
 class Vec3 {
     constructor(x, y, z) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
+        this.x = x != null ? x : 0;
+        this.y = y != null ? y : 0;
+        this.z = z != null ? z : 0;
     }
 
     clone() {
@@ -94,6 +99,12 @@ class Vec3 {
         this.x += v.x;
         this.y += v.y;
         this.z += v.z;
+    }
+
+    sub(v) {
+        this.x -= v.x;
+        this.y -= v.y;
+        this.z -= v.z;
     }
 
     equals(v) {
@@ -127,10 +138,10 @@ class Vec3 {
 
 class Vec4 {
     constructor(x, y, z, w) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.w = w;
+        this.x = x != null ? x : 0;
+        this.y = y != null ? y : 0;
+        this.z = z != null ? z : 0;
+        this.w = w != null ? w : 0;
     }
 
     clone() {
@@ -156,6 +167,13 @@ class Vec4 {
         this.y += v.y;
         this.z += v.z;
         this.w += v.w;
+    }
+
+    sub(v) {
+        this.x -= v.x;
+        this.y -= v.y;
+        this.z -= v.z;
+        this.w -= v.w;
     }
 
     equals(v) {

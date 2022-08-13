@@ -11,6 +11,7 @@ class Renderer {
         this._windowResolution = new Vec2(1,1);
         this._renderResolution = new Vec2(1,1);
         this._clearColor = new Vec4(1, 0, 1, 1);
+        this._needRepaint = true;
         this.updateScreenSize = this.updateScreenSize.bind(this);
 
         this._gl = this._canvas.getContext('webgl2', {
@@ -71,6 +72,7 @@ class Renderer {
         this._gl.viewport(0, 0, this._renderResolution.x, this._renderResolution.y);
         this.clear();
         this._camera.setRatio(this._ratio);
+        this._needRepaint = true;
     }
 
     /**
@@ -81,6 +83,7 @@ class Renderer {
         entityArray.forEach(function (entity){
             if (entity.isVisible()) entity.draw(renderer);
         });
+        this._needRepaint = false;
     }
 
     clear() {
@@ -110,6 +113,10 @@ class Renderer {
         this.updateScreenSize();
     }
 
+    getCanvas(){
+        return this._canvas;
+    }
+
     /** @returns {WebGL2RenderingContext} */
     getGLContext() {
         return this._gl;
@@ -128,5 +135,9 @@ class Renderer {
     /** @returns {ShadersUtil} */
     getShaderUtils(){
         return this._shaderUtils;
+    }
+
+    needRepaint(){
+        return this._needRepaint;
     }
 }

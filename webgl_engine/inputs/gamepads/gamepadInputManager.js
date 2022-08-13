@@ -1,6 +1,6 @@
 // see http://luser.github.io/gamepadtest/
 // noinspection JSUnusedGlobalSymbols // broken inspection
-class GamepadInputManager extends AbstractInputManager {
+class GamepadInputManager extends AbstractInputDeviceManager {
     constructor() {
         super();
         this._isSecureContext = window.isSecureContext;
@@ -30,7 +30,7 @@ class GamepadInputManager extends AbstractInputManager {
      * @param {ActionType} actionType
      * @return {AbstractInput}
      */
-    createControllerInput(controllerIdentifier, actionType){
+    createInput(controllerIdentifier, actionType){
         // Unruly combinations
         if(controllerIdentifier.getInputType() === GAMEPAD_BUTTON && (
             actionType === ActionType.POSITION ||
@@ -126,5 +126,9 @@ class GamepadInputManager extends AbstractInputManager {
      */
     disconnectHandler(gamepadEvent) {
         delete this._controllers[gamepadEvent.gamepad.index];
+    }
+
+    postParsingUpdate() {
+        // Do nothing
     }
 }

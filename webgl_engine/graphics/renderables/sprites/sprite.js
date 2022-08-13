@@ -66,6 +66,7 @@ class Sprite extends Entity {
         this._colorUniform = gl.getUniformLocation(this._shaderProgram, "color");
         this._spriteDimensionsUniform = gl.getUniformLocation(this._shaderProgram, "spriteDimensions");
         this._canvasDimensionsUniform = gl.getUniformLocation(this._shaderProgram, "canvasDimensions");
+        this._canvasPositionUniform = gl.getUniformLocation(this._shaderProgram, "canvasPosition");
         this._textureLayerUniform = gl.getUniformLocation(this._shaderProgram, "textureLayer");
         this._alphaOutlineUniform = gl.getUniformLocation(this._shaderProgram, "alphaOutline");
         this._initTexture = true;
@@ -143,7 +144,7 @@ class Sprite extends Entity {
         gl.useProgram(this._shaderProgram);
         gl.bindTexture(gl.TEXTURE_2D_ARRAY, this._texture);
         this.setupUniforms(gl, this);
-        renderer.getCamera().setProjectionUniform(gl, this._canvasDimensionsUniform);
+        renderer.getCamera().setViewProjectionUniform(gl, this._canvasDimensionsUniform, this._canvasPositionUniform);
     }
 
     /**

@@ -26,7 +26,7 @@ class MouseMovedInput extends AbstractInput{
 class MouseButtonInput extends AbstractInput{
     /**
      * @param {MouseInputManager} mouseInputManager
-     * @param {MouseInputIdentifier} buttonID
+     * @param {number} buttonID
      */
     constructor(mouseInputManager, buttonID) {
         super();
@@ -36,5 +36,22 @@ class MouseButtonInput extends AbstractInput{
 
     getInputValue() {
         return this._mouseInputManager.getMouseButton(this._buttonID);
+    }
+}
+
+class MouseWheelInput extends AbstractInput{
+    /**
+     * @param {MouseInputManager} mouseInputManager
+     * @param {number} wheelDirection +1 for forward, -1 for backward
+     */
+    constructor(mouseInputManager, wheelDirection) {
+        super();
+        this._mouseInputManager = mouseInputManager;
+        this._direction = wheelDirection;
+    }
+
+    getInputValue() {
+        const val = this._mouseInputManager.getMouseWheelPos();
+        return (Math.sign(val) === -this._direction) ? Math.abs(val) : 0;
     }
 }

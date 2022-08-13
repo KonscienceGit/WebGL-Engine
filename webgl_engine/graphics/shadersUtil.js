@@ -25,6 +25,7 @@ class ShadersUtil {
         'uniform float rotation;' +
         'uniform vec2 spriteDimensions;' +
         'uniform vec2 canvasDimensions;' +
+        'uniform vec2 canvasPosition;' +
         'in vec2 vertCoords;' +
         'in vec2 textCoordinates;' +
         'out vec2 textCoord;' +
@@ -35,7 +36,7 @@ class ShadersUtil {
         '    vec2 spriteScale = spriteDimensions/canvasDimensions;' +
         '    float r_cos = cos(rotation);' +
         '    float r_sin = sin(rotation);' +
-        '    vec2 screenSpacePosition = 2. * position / canvasDimensions;' +
+        '    vec2 screenSpacePosition = 2. * (position + canvasPosition) / canvasDimensions;' +
 
         '    /*scale*/' +
         '    vec2 pos = vertCoords * spriteScale * scale;' +
