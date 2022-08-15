@@ -3,46 +3,59 @@ class SpaceShooterObjectsManager {
      * @param {Renderer} renderer
      */
     constructor(renderer) {
-        const path = "../../resources/"
-        this._pixelPerfectTool = new PositionTool(renderer);
-        this._background = new Sprite(renderer, {imagespaths: path + "background.png"});
-        this._background.setVisible(true);
-
-        this._aliensMissiles = new MultiSprite(renderer, {imagespaths: path + "greenMissile.png"});
-        this._playerMissiles = new MultiSprite(renderer, {imagespaths: path + "redMissile.png"});
-        this._spaceCraft = new SpaceCraft(renderer, path + "actor/", this._pixelPerfectTool);
+        const path = "../../resources/";
         const aliPathes = [];
         for (let i = 0; i < 4; i++) {
             aliPathes.push(path + "aliens/" + i.toString() + '.png');
         }
-        this._aliens = new MultiSprite(renderer, {imagespaths: aliPathes});
-
-        this._scoreCounter = new ScoreCounter(renderer, path + "numbers/", this._pixelPerfectTool);
-        this._lifeCounter = new LifeCounter(renderer, path, this._pixelPerfectTool);
-
-        this._translucentOverlay = new TranslucentOverlay(renderer, new Vec4(0, 0, 0, 0.6));
-        this._pressToPlayButton = new Sprite(renderer, {imagespaths: path + "pressToPlay.png"});
-        this._logoTitle = new Sprite(renderer, {imagespaths: path + "title_logo.png"});
-
-        this._replayMenuSprite = new Sprite(renderer, {imagespaths: path + "gameOver.png"});
+        this._pixelPerfectTool = new PositionTool(renderer);
 
         //---- Setup the sprite render order from back to front: ----//
         this._spriteArray = [];
+
         //BackGround layer
+        this._background = new Sprite(renderer, {imagespaths: path + "background.png"});
         this._spriteArray.push(this._background);
+
         //SpaceCraft layer
+        this._aliensMissiles = new MultiSprite(renderer, {imagespaths: path + "greenMissile.png"});
+        this._aliensMissiles.visible = false;
         this._spriteArray.push(this._aliensMissiles);
+
+        this._playerMissiles = new MultiSprite(renderer, {imagespaths: path + "redMissile.png"});
+        this._playerMissiles.visible = false;
         this._spriteArray.push(this._playerMissiles);
+
+        this._aliens = new MultiSprite(renderer, {imagespaths: aliPathes});
+        this._aliens.visible = false;
         this._spriteArray.push(this._aliens);
+
+        this._spaceCraft = new SpaceCraft(renderer, path + "actor/", this._pixelPerfectTool);
+        this._spaceCraft.visible = false;
         this._spriteArray.push(this._spaceCraft);
+
         //GUI layer
+        this._scoreCounter = new ScoreCounter(renderer, path + "numbers/", this._pixelPerfectTool);
+        this._scoreCounter.visible = false;
         this._spriteArray.push(this._scoreCounter);
+
+        this._lifeCounter = new LifeCounter(renderer, path, this._pixelPerfectTool);
+        this._lifeCounter.visible = false;
         this._spriteArray.push(this._lifeCounter);
+
         //Transparent overlay
+        this._translucentOverlay = new TranslucentOverlay(renderer, new Vec4(0, 0, 0, 0.6));
         this._spriteArray.push(this._translucentOverlay);
+
         //GUI menu layer
+        this._pressToPlayButton = new Sprite(renderer, {imagespaths: path + "pressToPlay.png"});
         this._spriteArray.push(this._pressToPlayButton);
+
+        this._logoTitle = new Sprite(renderer, {imagespaths: path + "title_logo.png"});
         this._spriteArray.push(this._logoTitle);
+
+        this._replayMenuSprite = new Sprite(renderer, {imagespaths: path + "gameOver.png"});
+        this._replayMenuSprite.visible = false;
         this._spriteArray.push(this._replayMenuSprite);
     }
 

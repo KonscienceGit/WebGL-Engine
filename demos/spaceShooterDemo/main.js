@@ -8,7 +8,6 @@ function main() {
     const renderer = new Renderer(canvas, camera);
     const fixedResolution = new Vec2(1100, 800);
     renderer.setDisplayFixedResolution(fixedResolution);
-    // renderer.setDisplayFixedRatio(11/8);
     // renderer.setDisplayFullscreen();
     camera.setVerticalScreenWorldSize(renderer.getRenderResolution().y);
     const gameObjectManager = new SpaceShooterObjectsManager(renderer);
@@ -16,50 +15,19 @@ function main() {
 
     // Inputs
     const gameBindings = new SpaceShooterInputManager(renderer);
-
     const gameStateManager = new StateManager(gameObjectManager, gameBindings);
-
     LoadingManager.callbackWhenLoaded(renderableArray, init);
 
     function init() {
         renderGameFrame(0);
     }
 
-    // Profiling stuff
-    const benchmarkCodeSection = false;
-    let timeStart = 0;
-    let timeTotal = 0;
-    let frame = 0;
-    let sumOver120Frames = 0;
-
     /**
      * @param {number} timeStamp
      */
     function renderGameFrame(timeStamp) {
         const deltaTime = computeDelta(timeStamp);
-
-        if (benchmarkCodeSection){
-            timeStart = performance.now();
-        }
-
         gameBindings.parseBindings(deltaTime);
-
-        if (benchmarkCodeSection){
-            const timeSpend = performance.now() - timeStart;
-            frame++;
-            sumOver120Frames += timeSpend;
-            timeTotal += timeSpend;
-
-            if (frame >= 120){
-                frame = 0;
-                const average = sumOver120Frames / 120;
-                sumOver120Frames = 0;
-                console.log('average time per frame on inputs: ' + average + ' ms');
-                console.log('total time on inputs: ' + timeTotal + ' ms');
-            }
-        }
-
-
         gameStateManager.updateCurrentState(deltaTime);
         updateSprites(renderableArray, deltaTime);
         renderer.draw(renderableArray);
