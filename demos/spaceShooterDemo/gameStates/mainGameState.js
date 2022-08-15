@@ -1,4 +1,8 @@
 class MainGameState extends AbstractState {
+    /**
+     * @param {SpaceShooterObjectsManager} objectManager
+     * @param {SpaceShooterInputManager} gameBindings
+     */
     constructor(objectManager, gameBindings) {
         super();
         this._gameOverState = null;
@@ -20,14 +24,18 @@ class MainGameState extends AbstractState {
         this.setAnimateInLength(1.0);
         this.setAnimateOutLength(0.0);// No animation
 
-        // Bind closure context
-        this.fireShipCallback = this.fireShipCallback.bind(this);
-        this.moveShipLeftCallback = this.moveShipLeftCallback.bind(this);
-        this.moveShipRightCallback = this.moveShipRightCallback.bind(this);
-        this.moveShipToCursorCallback = this.moveShipToCursorCallback.bind(this);
-        this.returnToMainMenuCallback = this.returnToMainMenuCallback.bind(this);
-
-        this.registerBindings(gameBindings);
+        // Bind context onto callbacks functions
+        const fireShipBindedCallback = this.fireShipCallback.bind(this);
+        const moveShipLeftBindedCallback = this.moveShipLeftCallback.bind(this);
+        const moveShipRightBindedCallback = this.moveShipRightCallback.bind(this);
+        const moveShipToCursorBindedCallback = this.moveShipToCursorCallback.bind(this);
+        const returnToMainMenuBindedCallback = this.returnToMainMenuCallback.bind(this);
+        // Assign callbacks to actions
+        gameBindings.addCallbackToAction(SpaceShooterActions.SHIP_FIRE, fireShipBindedCallback);
+        gameBindings.addCallbackToAction(SpaceShooterActions.SHIP_LEFT, moveShipLeftBindedCallback);
+        gameBindings.addCallbackToAction(SpaceShooterActions.SHIP_RIGHT, moveShipRightBindedCallback);
+        gameBindings.addCallbackToAction(SpaceShooterActions.SHIP_MOVE_TO_CURSOR, moveShipToCursorBindedCallback);
+        gameBindings.addCallbackToAction(SpaceShooterActions.MENU_RETURN_TO_MAIN, returnToMainMenuBindedCallback);
     }
 
     start(){
@@ -146,8 +154,7 @@ class MainGameState extends AbstractState {
         if (relativeThreat < this._difficulty) {
             let alienType = Math.floor(Math.random() * this._aliensSprites.getImageCount());
             if(alienType === this._aliensSprites.getImageCount()) alienType--;
-            const alien = this._aliensSprites.createNewInstance();
-            this._aliensSprites.addInstance(alien);
+            const alien = this._aliensSprites.createNewInstance(true);
             this.setRandomSpawnPosition(alien);
             alien.translationSpeed.y = -100;
             alien.translationSpeed.x =  (Math.random() - 0.5) * 100;
@@ -160,8 +167,7 @@ class MainGameState extends AbstractState {
         if (relativeThreat < this._difficulty &&  this._aliensSprites.getInstances().length > 0) {
             const alien = this.getRandomAlien();
 
-            const missile = this._aliensMissilesSprites.createNewInstance();
-            this._aliensMissilesSprites.addInstance(missile);
+            const missile = this._aliensMissilesSprites.createNewInstance(true);
             missile.position = alien.position.clone();
             missile.radius = 0; //smaller hit chance
             missile.translationSpeed.y = alien.translationSpeed.y -100;
@@ -212,8 +218,7 @@ class MainGameState extends AbstractState {
 
     firePlayerMissile() {
         if (this._timeSinceLastPlayerMissile < this._deltaBetweenPlayerCanFire) return;
-        const missile = this._playerMissilesSprites.createNewInstance();
-        this._playerMissilesSprites.addInstance(missile);
+        const missile = this._playerMissilesSprites.createNewInstance(true);
         missile.position = this._spaceCraft.position.clone();
         missile.radius = 0; //smaller hit chance
         missile.translationSpeed.y = 500;
@@ -250,23 +255,5 @@ class MainGameState extends AbstractState {
         if(this.isInMainLoop() && value > 0){
             this.setReadyForNextState();
         }
-    }
-
-    registerBindings(gameBindings){
-        const self = this;
-        const fireShip = gameBindings.getActionByName(SpaceShooterActions.SHIP_FIRE);
-        fireShip.addActionCallback(self.fireShipCallback);
-
-        const moveLeft = gameBindings.getActionByName(SpaceShooterActions.SHIP_LEFT);
-        moveLeft.addActionCallback(self.moveShipLeftCallback);
-
-        const moveRight = gameBindings.getActionByName(SpaceShooterActions.SHIP_RIGHT);
-        moveRight.addActionCallback(self.moveShipRightCallback);
-
-        const moveToCursor = gameBindings.getActionByName(SpaceShooterActions.SHIP_MOVE_TO_CURSOR);
-        moveToCursor.addActionCallback(self.moveShipToCursorCallback);
-
-        const returnToMainMenu = gameBindings.getActionByName(SpaceShooterActions.MENU_RETURN_TO_MAIN);
-        returnToMainMenu.addActionCallback(self.returnToMainMenuCallback);
     }
 }

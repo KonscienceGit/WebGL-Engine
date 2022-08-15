@@ -1,4 +1,8 @@
 class ReplayMenuState extends AbstractState {
+    /**
+     * @param {SpaceShooterObjectsManager} objectManager
+     * @param {SpaceShooterInputManager} gameBindings
+     */
     constructor(objectManager, gameBindings) {
         super();
         this._nextState = null;
@@ -12,9 +16,10 @@ class ReplayMenuState extends AbstractState {
         this.setAnimateInLength(1.0);
         this.setAnimateOutLength(1.0);
 
-        // Bind closure context
-        this.selectMenuActionCallback = this.selectMenuActionCallback.bind(this);
-        this.registerBindings(gameBindings);
+        // Bind context to callback
+        const selectMenuBindedCallback = this.selectMenuActionCallback.bind(this);
+        // Assign callback to action
+        gameBindings.addCallbackToAction(SpaceShooterActions.MENU_VALID_SELECTION, selectMenuBindedCallback);
     }
 
     start(){
@@ -75,11 +80,5 @@ class ReplayMenuState extends AbstractState {
         if(this.isInMainLoop() && value > 0){
             this.setReadyForNextState();
         }
-    }
-
-    registerBindings(gameBindings){
-        const self = this;
-        const validateMenuAction = gameBindings.getActionByName(SpaceShooterActions.MENU_VALID_SELECTION);
-        validateMenuAction.addActionCallback(self.selectMenuActionCallback);
     }
 }

@@ -50,7 +50,7 @@ class Tiles extends MultiSprite {
             let y = row / nbRow - 0.5 + size / 2;
             for (let col = 0; col < nbCol; col++) {
                 let x = col / nbCol - 0.5 + size / 2;
-                const tile = this.createNewInstance();
+                const tile = this.createNewInstance(true);
                 tile.name = col +'_' + row;
                 tile.position.setValues(x, y);
                 tile.isRound = false;
@@ -61,7 +61,6 @@ class Tiles extends MultiSprite {
                 tile.row = row;
                 tile.col = col;
                 array[row][col] = tile;
-                this.addInstance(tile);
             }
         }
         for (let row = 0; row < nbRow; row++) {
@@ -132,12 +131,11 @@ class Tiles extends MultiSprite {
     }
 
     createNumber(tile) {
-        const num = this._numbers.createNewInstance();
+        const num = this._numbers.createNewInstance(true);
         num.position.copy(tile.position);
         num.textureLayer = tile.nbMine;
         num.color.copy(this._numColor[tile.nbMine]);
         num.alphaOutline = 2;
-        this._numbers.addInstance(num);
     }
 
     triggerMine(tile) {

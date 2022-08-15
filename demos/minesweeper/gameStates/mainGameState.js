@@ -13,10 +13,8 @@ class MainGameState extends AbstractState {
         this.setAnimateOutLength(0.0);
 
         // Bind the 'this' context for theses functions (otherwise it's lost when used as callback)
-        this.leftClickCallback = this.leftClickCallback.bind(this);
-        this.cursorMoveCallback = this.cursorMoveCallback.bind(this);
-
-        this.registerBindings(gameBindings);
+        gameBindings.addCallbackToAction(MinesweeperActions.CURSOR_AT, this.cursorMoveCallback.bind(this));
+        gameBindings.addCallbackToAction(MinesweeperActions.LEFT_CLICK, this.leftClickCallback.bind(this));
     }
 
     start(){
@@ -68,14 +66,5 @@ class MainGameState extends AbstractState {
      */
     cursorMoveCallback(cursorProperties){
         this._cursorProperties = cursorProperties;
-    }
-
-    registerBindings(gameBindings){
-        const self = this;
-        const cursorMove = gameBindings.getActionByName(MinesweeperActions.CURSOR_AT);
-        cursorMove.addActionCallback(self.cursorMoveCallback);
-
-        const leftClick = gameBindings.getActionByName(MinesweeperActions.LEFT_CLICK);
-        leftClick.addActionCallback(self.leftClickCallback);
     }
 }

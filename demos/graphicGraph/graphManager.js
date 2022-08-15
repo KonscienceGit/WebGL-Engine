@@ -5,7 +5,6 @@ class GraphManager {
      * @param {GeneralInputManager} graphInputManager for bindings
      */
     constructor(renderer, cursorProperties, graphInputManager) {
-        const whiteColor = new Vec4(1,1,1,1);
         const blackColor = new Vec4(0,0,0,1);
         const darkRedColor = new Vec4(0.8,0,0,1);
         this._camera = renderer.getCamera();
@@ -17,11 +16,10 @@ class GraphManager {
         this._tmpVec2 = new Vec2(0, 0);
 
         // Bind the 'this' context for theses functions (otherwise it's lost when used as callback)
-        this.leftClickCallback = this.leftClickCallback.bind(this);
-        this.cursorMoveCallback = this.cursorMoveCallback.bind(this);
-        this.mouseWheelUpCallback = this.mouseWheelUpCallback.bind(this);
-        this.mouseWheelDownCallback = this.mouseWheelDownCallback.bind(this);
-        this.registerBindings(graphInputManager);
+        graphInputManager.addCallbackToAction(GraphActions.LEFT_CLICK, this.leftClickCallback.bind(this));
+        graphInputManager.addCallbackToAction(GraphActions.CURSOR_MOVE, this.cursorMoveCallback.bind(this));
+        graphInputManager.addCallbackToAction(GraphActions.MOUSEWHEEL_MOVE_UP, this.mouseWheelUpCallback.bind(this));
+        graphInputManager.addCallbackToAction(GraphActions.MOUSEWHEEL_MOVE_DOWN, this.mouseWheelDownCallback.bind(this));
 
         this.graphPoints = new MultiSprite(renderer, {color: darkRedColor});
         this.axis = new AnnotatedAxisOverlay(renderer, blackColor);
@@ -122,14 +120,5 @@ class GraphManager {
             this._camera.setVerticalScreenWorldSize(this._tmpVec2.y * 1.1);
             this._needsUpdate = true;
         }
-    }
-
-    registerBindings(gameBindings){
-        gameBindings.addCallbackToAction(GraphActions.CURSOR_MOVE, this.cursorMoveCallback);
-
-        gameBindings.addCallbackToAction(GraphActions.LEFT_CLICK, this.leftClickCallback);
-
-        gameBindings.addCallbackToAction(GraphActions.MOUSEWHEEL_MOVE_UP, this.mouseWheelUpCallback);
-        gameBindings.addCallbackToAction(GraphActions.MOUSEWHEEL_MOVE_DOWN, this.mouseWheelDownCallback);
     }
 }

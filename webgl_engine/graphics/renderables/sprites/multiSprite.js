@@ -46,7 +46,7 @@ class MultiSprite extends Sprite {
     }
 
     /**
-     * @param {boolean} addToIntances true to automatically add to this MultiSprite instances.
+     * @param {boolean} [addToIntances] true to automatically add to this MultiSprite instances.
      * @returns {Entity}
      */
     createNewInstance(addToIntances) {

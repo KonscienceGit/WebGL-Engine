@@ -2,7 +2,6 @@
 
 function main() {
     const canvas = document.getElementById("game_canvas");
-    // canvas.style.cursor = 'none';
     let previousTime = 0.0;
 
     const camera = new Camera2D();
@@ -15,7 +14,7 @@ function main() {
     // Inputs
     const minesweeperInputManager = new MinesweeperInputManager(renderer);
     const gameObjectManager = new GameObjectsManager(renderer);
-    const gameStateManager = new StateManager(gameObjectManager, renderer, minesweeperInputManager);
+    const gameStateManager = new MineSweeperStateManager(gameObjectManager, minesweeperInputManager);
     const renderableArray = gameObjectManager.spriteArray;
     LoadingManager.callbackWhenLoaded(renderableArray, init);
 

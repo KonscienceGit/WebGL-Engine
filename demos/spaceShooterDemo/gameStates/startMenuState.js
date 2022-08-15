@@ -13,10 +13,10 @@ class StartMenuState extends AbstractState {
         this._scoreCounter = objectManager.getScoreCounter();
         this._lifeCounter = objectManager.getLifeCounter();
 
-        // Bind the closure context
-        this.selectMenuActionCallback = this.selectMenuActionCallback.bind(this);
-
-        this.registerBindings(gameBindings);
+        // Bind context to callback
+        const selectMenuBindedCallback = this.selectMenuActionCallback.bind(this);
+        // Assign callback to action
+        gameBindings.addCallbackToAction(SpaceShooterActions.MENU_VALID_SELECTION, selectMenuBindedCallback);
 
         // Set animations duration
         this.setAnimateInLength(1.0);
@@ -81,11 +81,5 @@ class StartMenuState extends AbstractState {
         if(this.isInMainLoop() && value > 0){
             this.setReadyForNextState();
         }
-    }
-
-    registerBindings(gameBindings){
-        const self = this;
-        const validateMenuAction = gameBindings.getActionByName(SpaceShooterActions.MENU_VALID_SELECTION);
-        validateMenuAction.addActionCallback(self.selectMenuActionCallback);
     }
 }
