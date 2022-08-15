@@ -79,7 +79,7 @@ class ReplayMenuState extends AbstractState {
 
     registerBindings(gameBindings){
         const self = this;
-        const validateMenuAction = gameBindings.getActionByName(GameInputActions.MENU_VALID_SELECTION);
+        const validateMenuAction = gameBindings.getActionByName(SpaceInvadersActions.MENU_VALID_SELECTION);
         validateMenuAction.addActionCallback(self.selectMenuActionCallback);
     }
 }

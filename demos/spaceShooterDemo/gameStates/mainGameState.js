@@ -254,19 +254,19 @@ class MainGameState extends AbstractState {
 
     registerBindings(gameBindings){
         const self = this;
-        const fireShip = gameBindings.getActionByName(GameInputActions.SHIP_FIRE);
+        const fireShip = gameBindings.getActionByName(SpaceInvadersActions.SHIP_FIRE);
         fireShip.addActionCallback(self.fireShipCallback);
 
-        const moveLeft = gameBindings.getActionByName(GameInputActions.SHIP_LEFT);
+        const moveLeft = gameBindings.getActionByName(SpaceInvadersActions.SHIP_LEFT);
         moveLeft.addActionCallback(self.moveShipLeftCallback);
 
-        const moveRight = gameBindings.getActionByName(GameInputActions.SHIP_RIGHT);
+        const moveRight = gameBindings.getActionByName(SpaceInvadersActions.SHIP_RIGHT);
         moveRight.addActionCallback(self.moveShipRightCallback);
 
-        const moveToCursor = gameBindings.getActionByName(GameInputActions.SHIP_MOVE_TO_CURSOR);
+        const moveToCursor = gameBindings.getActionByName(SpaceInvadersActions.SHIP_MOVE_TO_CURSOR);
         moveToCursor.addActionCallback(self.moveShipToCursorCallback);
 
-        const returnToMainMenu = gameBindings.getActionByName(GameInputActions.MENU_RETURN_TO_MAIN);
+        const returnToMainMenu = gameBindings.getActionByName(SpaceInvadersActions.MENU_RETURN_TO_MAIN);
         returnToMainMenu.addActionCallback(self.returnToMainMenuCallback);
     }
 }

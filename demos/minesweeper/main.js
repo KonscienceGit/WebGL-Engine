@@ -7,22 +7,15 @@ function main() {
 
     const camera = new Camera2D();
     const renderer = new Renderer(canvas, camera);
-    const fixedResolution = new Vec2(1100, 800);
-    // renderer.setDisplayFixedResolution(fixedResolution);
     const grey = 150/255;
     renderer.setClearColor(new Vec4(grey, grey, grey, 1));
     renderer.setDisplayFullscreen();
     camera.setVerticalScreenWorldSize(1.0);
 
     // Inputs
-    const cursorProperties = new CursorProperties();
-    const keyboardManager = new KeyboardInputManager();
-    const gamepadManager = new GamepadInputManager();
-    const mouseManager = new MouseInputManager(canvas, renderer, cursorProperties);
-    const gameBindings = new ActionsBindingsDefinitions(keyboardManager, gamepadManager, mouseManager);
-
-    const gameObjectManager = new GameObjectsManager(renderer, cursorProperties);
-    const gameStateManager = new StateManager(gameObjectManager, renderer, canvas, gameBindings);
+    const minesweeperInputManager = new MinesweeperInputManager(renderer);
+    const gameObjectManager = new GameObjectsManager(renderer);
+    const gameStateManager = new StateManager(gameObjectManager, renderer, minesweeperInputManager);
     const renderableArray = gameObjectManager.spriteArray;
     LoadingManager.callbackWhenLoaded(renderableArray, init);
 
@@ -35,7 +28,7 @@ function main() {
      */
     function renderGameFrame(timeStamp) {
         const deltaTime = computeDelta(timeStamp);
-        gameBindings.parseBindings(deltaTime);
+        minesweeperInputManager.parseBindings(deltaTime);
         gameStateManager.updateCurrentState(deltaTime);
         updateSprites(renderableArray, deltaTime);
         renderer.clear();

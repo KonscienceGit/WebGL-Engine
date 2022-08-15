@@ -1,9 +1,30 @@
-const MouseInputIdentifier = Object.freeze({
-    BUTTON_LEFT: 0,
-    BUTTON_MIDDLE: 1,
-    BUTTON_RIGHT: 2,
-    BUTTON_THUMB_1: 3,
-    BUTTON_THUMB_2: 4
+/**
+ * @enum {number}
+ */
+const MouseInputType = Object.freeze({
+    BUTTON: 0,
+    WHEEL: 1,
+    CURSOR_POSITION: 2
+});
+
+/**
+ * @enum {number}
+ */
+const MouseButton = Object.freeze({
+    LEFT: 0,
+    MIDDLE: 1,
+    RIGHT: 2,
+    THUMB_1: 3,
+    THUMB_2: 4
+});
+
+/**
+ * @enum {number}
+ */
+const MouseWheel = Object.freeze({
+    WHEEL_1_UP: 1,
+    WHEEL_1_DOWN: -1
+    // IDK about usefulness of multiple wheel (or multiple axes? need a mouse that supports this to test)
 });
 
 class MouseMovedInput extends AbstractInput{
@@ -26,7 +47,7 @@ class MouseMovedInput extends AbstractInput{
 class MouseButtonInput extends AbstractInput{
     /**
      * @param {MouseInputManager} mouseInputManager
-     * @param {number} buttonID
+     * @param {MouseButton} buttonID
      */
     constructor(mouseInputManager, buttonID) {
         super();
@@ -42,12 +63,12 @@ class MouseButtonInput extends AbstractInput{
 class MouseWheelInput extends AbstractInput{
     /**
      * @param {MouseInputManager} mouseInputManager
-     * @param {number} wheelDirection +1 for forward, -1 for backward
+     * @param {MouseWheel} wheelID absolute value is the wheel number, sign is the wheel direction (wheel up and down are two separate inputs).
      */
-    constructor(mouseInputManager, wheelDirection) {
+    constructor(mouseInputManager, wheelID) {
         super();
         this._mouseInputManager = mouseInputManager;
-        this._direction = wheelDirection;
+        this._direction = Math.sign(wheelID);
     }
 
     getInputValue() {

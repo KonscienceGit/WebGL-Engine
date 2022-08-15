@@ -22,14 +22,9 @@ class Sprite extends Entity {
         let color = null;
         if (options) {
             if (options.color != null) color = options.color;
-            if (Array.isArray(options) || typeof options === 'string' || options instanceof String) {
-                imagesPaths = options;
-                console.log('Sprite: warning, please use options.imagespaths instead of options');
-            } else if (options.imagespaths) {
-                imagesPaths = options.imagespaths;
-            }
+            if (options.imagespaths) imagesPaths = options.imagespaths;
         } else {
-            console.log('Sprite: warning, missing options in constructor');
+            console.warn('Sprite: warning, missing options in constructor');
         }
 
         this._texture = gl.createTexture();

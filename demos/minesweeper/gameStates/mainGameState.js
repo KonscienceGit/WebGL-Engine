@@ -72,10 +72,10 @@ class MainGameState extends AbstractState {
 
     registerBindings(gameBindings){
         const self = this;
-        const cursorMove = gameBindings.getActionByName(GameInputActions.CURSOR_AT);
+        const cursorMove = gameBindings.getActionByName(MinesweeperActions.CURSOR_AT);
         cursorMove.addActionCallback(self.cursorMoveCallback);
 
-        const leftClick = gameBindings.getActionByName(GameInputActions.LEFT_CLICK);
+        const leftClick = gameBindings.getActionByName(MinesweeperActions.LEFT_CLICK);
         leftClick.addActionCallback(self.leftClickCallback);
     }
 }

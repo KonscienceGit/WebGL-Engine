@@ -43,7 +43,7 @@ class MouseInputManager extends AbstractInputDeviceManager {
     }
 
     /**
-     * @param {number} buttonID
+     * @param {MouseButton} buttonID
      * @returns {boolean}
      */
     getMouseButton(buttonID){
@@ -132,13 +132,13 @@ class MouseInputManager extends AbstractInputDeviceManager {
     createInput(inputId, actionType){
         let input = null;
         switch (inputId.getInputType()) {
-            case MouseInputIdentifiers.INPUT_BUTTON:
+            case MouseInputType.BUTTON:
                 if (actionType === ActionType.POSITION || actionType === ActionType.THROTTLE) {
                     throw new Error('Error: cannot bind a Button to a ' + actionType + ' action!');
                 }
                 input = new MouseButtonInput(this, inputId.getNumber());
                 break;
-            case MouseInputIdentifiers.INPUT_MOVE:
+            case MouseInputType.CURSOR_POSITION:
                 if (actionType === ActionType.BUTTON) {
                     throw new Error('Error: cannot bind a mouse position to a ' + actionType + ' action!');
                 }
@@ -147,7 +147,7 @@ class MouseInputManager extends AbstractInputDeviceManager {
                 }
                 input = new MouseMovedInput(this);
                 break;
-            case MouseInputIdentifiers.INPUT_WHEEL:
+            case MouseInputType.WHEEL:
                 if (actionType === ActionType.POSITION) {
                     throw new Error('Error: cannot bind a mouse wheel to a ' + actionType + ' action!');
                 }
@@ -157,28 +157,6 @@ class MouseInputManager extends AbstractInputDeviceManager {
                 console.error('Error: ' + inputId.getInputType() + ' is not a valid mouse input type.')
         }
         return input;
-    }
-
-    createMouseMoveInput(){
-        console.warn('Deprecated: createMouseMoveInput')
-        return new MouseMovedInput(this);
-    }
-
-    /**
-     * @param buttonID
-     * @returns {MouseButtonInput}
-     */
-    createMouseButtonInput(buttonID){
-        console.warn('Deprecated: createMouseButtonInput')
-        return new MouseButtonInput(this, buttonID);
-    }
-
-    /**
-     * @param {number} wheelDirection +1 for forward, -1 for backward
-     */
-    createMouseWheelInput(wheelDirection){
-        console.warn('Deprecated: createMouseWheelInput')
-        return new MouseWheelInput(this, wheelDirection);
     }
 
     postParsingUpdate() {

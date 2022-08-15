@@ -4,7 +4,7 @@ class ScoreCounter extends MultiSprite {
         for (let i = 0; i < 11; i++) {
             numPathes.push(resourcePath + i + '.png');
         }
-        super(renderer, numPathes);
+        super(renderer, {imagespaths: numPathes});
         this._score = 0;
         this._moveSpeed = 100; // pixel per seconds
         this._scoreFeedbackInstances = [];

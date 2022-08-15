@@ -1,7 +1,7 @@
 class StartMenuState extends AbstractState {
     /**
      * @param {GameObjectsManager} objectManager
-     * @param {ActionsBindingsDefinitions} gameBindings
+     * @param {MinesweeperInputManager} gameBindings
      */
     constructor(objectManager, gameBindings) {
         super();

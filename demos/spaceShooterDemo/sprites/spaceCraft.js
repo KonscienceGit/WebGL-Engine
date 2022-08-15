@@ -4,7 +4,7 @@ class SpaceCraft extends Sprite {
         for (let i = 0; i < 5; i++) {
             imgPathes.push(resourcePath + i.toString() + '.png');
         }
-        super(renderer, imgPathes);
+        super(renderer, {imagespaths: imgPathes});
         this._pixelPerfectTool = pixelPerfectTool;
         this._movingDir = 0;
         this._animationPos = 0.0;

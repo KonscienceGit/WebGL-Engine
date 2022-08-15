@@ -2,12 +2,10 @@ class StateManager extends AbstractStateManager{
     /**
      * The state manager of the space shooter demo.
      * This is an exemple implementation of the game state logic.
-     * @param {GameObjectsManager} gameObjectManager
-     * @param {Renderer} renderer
-     * @param {HTMLCanvasElement} canvas
-     * @param {GameBindingsDefinitions} gameBindings
+     * @param {SpaceInvadersObjectsManager} gameObjectManager
+     * @param {SpaceInvadersInputManager} gameBindings
      */
-    constructor(gameObjectManager, renderer, canvas, gameBindings) {
+    constructor(gameObjectManager, gameBindings) {
         super();
         this._startMenuState = new StartMenuState(gameObjectManager, gameBindings);
         this._gameState = new MainGameState(gameObjectManager, gameBindings);

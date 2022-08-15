@@ -1,6 +1,6 @@
 class LifeCounter extends Sprite {
     constructor(renderer, resourcePath, pixelPerfectTool) {
-        super(renderer, resourcePath + "life.png");
+        super(renderer, {imagespaths: resourcePath + "life.png"});
         this._lifeCount = 3;
         this._pixelPerfectTool = pixelPerfectTool;
         this._xRefPosition = 0;

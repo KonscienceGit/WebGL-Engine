@@ -1,4 +1,4 @@
-const GameInputActions = Object.freeze({
+const MinesweeperActions = Object.freeze({
     // General / commons
     CURSOR_AT: "Cursor At",
     // Gameplay

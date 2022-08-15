@@ -4,10 +4,9 @@ class StateManager extends AbstractStateManager{
      * This is an exemple implementation of the game state logic.
      * @param {GameObjectsManager} gameObjectManager
      * @param {Renderer} renderer
-     * @param {HTMLCanvasElement} canvas
-     * @param {ActionsBindingsDefinitions} gameBindings
+     * @param {MinesweeperInputManager} gameBindings
      */
-    constructor(gameObjectManager, renderer, canvas, gameBindings) {
+    constructor(gameObjectManager, renderer, gameBindings) {
         super();
         // this._startMenuState = new StartMenuState(gameObjectManager, gameBindings);
         this._gameState = new MainGameState(gameObjectManager, gameBindings);

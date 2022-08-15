@@ -1,30 +1,30 @@
-class GameObjectsManager {
+class SpaceInvadersObjectsManager {
     /**
      * @param {Renderer} renderer
      */
     constructor(renderer) {
         const path = "../../resources/"
         this._pixelPerfectTool = new PositionTool(renderer);
-        this._background = new Sprite(renderer, path + "background.png");
+        this._background = new Sprite(renderer, {imagespaths: path + "background.png"});
         this._background.setVisible(true);
 
-        this._aliensMissiles = new MultiSprite(renderer, path + "greenMissile.png");
-        this._playerMissiles = new MultiSprite(renderer, path + "redMissile.png");
+        this._aliensMissiles = new MultiSprite(renderer, {imagespaths: path + "greenMissile.png"});
+        this._playerMissiles = new MultiSprite(renderer, {imagespaths: path + "redMissile.png"});
         this._spaceCraft = new SpaceCraft(renderer, path + "actor/", this._pixelPerfectTool);
         const aliPathes = [];
         for (let i = 0; i < 4; i++) {
             aliPathes.push(path + "aliens/" + i.toString() + '.png');
         }
-        this._aliens = new MultiSprite(renderer, aliPathes);
+        this._aliens = new MultiSprite(renderer, {imagespaths: aliPathes});
 
         this._scoreCounter = new ScoreCounter(renderer, path + "numbers/", this._pixelPerfectTool);
         this._lifeCounter = new LifeCounter(renderer, path, this._pixelPerfectTool);
 
         this._translucentOverlay = new TranslucentOverlay(renderer, new Vec4(0, 0, 0, 0.6));
-        this._pressToPlayButton = new Sprite(renderer, path + "pressToPlay.png");
-        this._logoTitle = new Sprite(renderer, path + "title_logo.png");
+        this._pressToPlayButton = new Sprite(renderer, {imagespaths: path + "pressToPlay.png"});
+        this._logoTitle = new Sprite(renderer, {imagespaths: path + "title_logo.png"});
 
-        this._replayMenuSprite = new Sprite(renderer, path + "gameOver.png");
+        this._replayMenuSprite = new Sprite(renderer, {imagespaths: path + "gameOver.png"});
 
         //---- Setup the sprite render order from back to front: ----//
         this._spriteArray = [];
