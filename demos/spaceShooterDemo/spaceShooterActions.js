@@ -1,4 +1,4 @@
-const SpaceInvadersActions = Object.freeze({
+const SpaceShooterActions = Object.freeze({
     // General / commons
     CURSOR_AT: Symbol("cursorat"),
 

@@ -1,6 +1,6 @@
 class CollisionManager {
     /**
-     * @param {SpaceInvadersObjectsManager} objectManager
+     * @param {SpaceShooterObjectsManager} objectManager
      * @param {MainGameState} gameState
      * @param {Vec2} screenSize
      */

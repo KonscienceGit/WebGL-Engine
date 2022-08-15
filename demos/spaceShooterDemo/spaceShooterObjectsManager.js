@@ -1,4 +1,4 @@
-class SpaceInvadersObjectsManager {
+class SpaceShooterObjectsManager {
     /**
      * @param {Renderer} renderer
      */

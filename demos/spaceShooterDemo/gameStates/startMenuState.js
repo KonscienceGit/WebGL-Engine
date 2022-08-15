@@ -1,7 +1,7 @@
 class StartMenuState extends AbstractState {
     /**
-     * @param {SpaceInvadersObjectsManager} objectManager
-     * @param {SpaceInvadersInputManager} gameBindings
+     * @param {SpaceShooterObjectsManager} objectManager
+     * @param {SpaceShooterInputManager} gameBindings
      */
     constructor(objectManager, gameBindings) {
         super();
@@ -85,7 +85,7 @@ class StartMenuState extends AbstractState {
 
     registerBindings(gameBindings){
         const self = this;
-        const validateMenuAction = gameBindings.getActionByName(SpaceInvadersActions.MENU_VALID_SELECTION);
+        const validateMenuAction = gameBindings.getActionByName(SpaceShooterActions.MENU_VALID_SELECTION);
         validateMenuAction.addActionCallback(self.selectMenuActionCallback);
     }
 }

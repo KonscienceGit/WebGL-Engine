@@ -11,11 +11,11 @@ function main() {
     // renderer.setDisplayFixedRatio(11/8);
     // renderer.setDisplayFullscreen();
     camera.setVerticalScreenWorldSize(renderer.getRenderResolution().y);
-    const gameObjectManager = new SpaceInvadersObjectsManager(renderer);
+    const gameObjectManager = new SpaceShooterObjectsManager(renderer);
     const renderableArray = gameObjectManager.getRenderableArray();
 
     // Inputs
-    const gameBindings = new SpaceInvadersInputManager(renderer);
+    const gameBindings = new SpaceShooterInputManager(renderer);
 
     const gameStateManager = new StateManager(gameObjectManager, gameBindings);
 

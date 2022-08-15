@@ -1,5 +1,5 @@
 # WebGL-Engine
-v0.1 "Space Invaders"
+v0.1 "Space Shooter"
 
 A simple ES6/WebGL2 based game engine, using no external libraries.
 
@@ -24,7 +24,7 @@ Or take a look at a more polished implementation here on the [Dinoboi Appel Gard
   * States have animation capabilities
   * Provide API for setting state change/ending conditions, active state etc
 * Functional demos
-  * [Classic clone "Space Invaders"](https://konsciencegit.github.io/WebGL-Engine/index.html)
+  * [Classic clone "Space Shooter"](https://konsciencegit.github.io/WebGL-Engine/index.html)
   * [Featuring demo: Dinoboi Appel Garden](https://www.dinoboi.space/game) (Epic collaboration with [Ankhaneko](https://www.ankhaneko.art/))
   
 
