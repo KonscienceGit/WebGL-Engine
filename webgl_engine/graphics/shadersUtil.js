@@ -20,6 +20,9 @@ class ShadersUtil {
         this.HIGHP + this.P_SAMPLER2DARRAY;
 
     static VERTEX_SHADER_CODE = ShadersUtil.SHADER_HEADER +
+        'uniform int sizeInDevice;' +
+        'uniform int positionInDevice;' +
+
         'uniform vec2 scale;' +
         'uniform vec2 position;' +
         'uniform float rotation;' +
@@ -33,24 +36,35 @@ class ShadersUtil {
         'void main(void) {' +
         '    textCoord = textCoordinates;' +
         '    float viewRatio = canvasDimensions.x/canvasDimensions.y;' +
-        '    vec2 spriteScale = spriteDimensions/canvasDimensions;' +
-        '    float r_cos = cos(rotation);' +
-        '    float r_sin = sin(rotation);' +
-        '    vec2 screenSpacePosition = 2. * (position + canvasPosition) / canvasDimensions;' +
 
         '    /*scale*/' +
-        '    vec2 pos = vertCoords * spriteScale * scale;' +
+        '    vec2 pos = vertCoords;' +
+        '    if (sizeInDevice == 0) {' +
+        '        vec2 worldScale = spriteDimensions/canvasDimensions;' +
+        '        pos = vertCoords * worldScale * scale;' +
+        '    } else {' +
+        '        pos = vertCoords * spriteDimensions * scale;' +
+        '        pos.x /= viewRatio;' +
+        '    }' +
 
         '    /*screen ratio*/' +
         '    pos.y /= viewRatio;' +
 
         '    /*rotation*/' +
+        '    float r_cos = cos(rotation);' +
+        '    float r_sin = sin(rotation);' +
         '    float x = pos.x * r_cos - pos.y * r_sin;' +
         '    float y = (pos.x * r_sin + pos.y * r_cos) * viewRatio;' +
 
         '    /*translation*/' +
-        '    x += screenSpacePosition.x;' +
-        '    y += screenSpacePosition.y;' +
+        '    vec2 screenSpacePosition = position;' +
+        '    if (positionInDevice == 0) {' +
+        '        screenSpacePosition = (screenSpacePosition + canvasPosition) / canvasDimensions;' +
+        '    } else {' +
+        '        screenSpacePosition.x /= viewRatio;' +
+        '    }' +
+        '    x += 2.* screenSpacePosition.x;' +
+        '    y += 2.* screenSpacePosition.y;' +
 
         '    gl_Position = vec4(x, y, 0.0, 1.0);' +
         '}';

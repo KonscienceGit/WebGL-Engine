@@ -109,6 +109,7 @@ class MouseInputManager extends AbstractInputDeviceManager {
         this.updateCursor(event.changedTouches[0]);
     }
 
+
     updateCursor(event) {
         const rect = this._canvas.getBoundingClientRect();
         // Get difference between previous position and current position
@@ -117,9 +118,17 @@ class MouseInputManager extends AbstractInputDeviceManager {
         // Adjust based on the real position of the current DOM element thingy
         this._cursorProperties.canvasPos.setValues(event.clientX - rect.left, event.clientY - rect.top);
 
-        // Convert to engine space (same dimensions in pixel, but coordinate 0,0 is at the center instead of top left, y axis is inverted)
+
+        // Compute cursor position in pixels, with 0 being center of the viewport.
+        this._cursorProperties.devicePos.setValues(this._cursorProperties.canvasPos.x - rect.width / 2,  rect.height / 2 - this._cursorProperties.canvasPos.y);
+        this._cursorProperties.screenWorldPos.copy(this._cursorProperties.devicePos);
+
+        // Convert pixel pos in device pos [-0.5, 0.5]
+        // noinspection JSSuspiciousNameCombination
+        this._cursorProperties.devicePos.x /= rect.height; // on purpose as we use screen height to define the device size unit. width differ based on screen ratio
+        this._cursorProperties.devicePos.y /= rect.height;
+
         this._renderer.getCamera().getScreenWorldSize(this._tmpVec2);
-        this._cursorProperties.screenWorldPos.setValues(this._cursorProperties.canvasPos.x - rect.width / 2,  rect.height / 2 - this._cursorProperties.canvasPos.y);
         this._cursorProperties.screenWorldPos.x *= this._tmpVec2.x / rect.width;
         this._cursorProperties.screenWorldPos.y *= this._tmpVec2.y / rect.height;
         this._renderer.getCamera().getPosition(this._cursorProperties.worldPosOffset);

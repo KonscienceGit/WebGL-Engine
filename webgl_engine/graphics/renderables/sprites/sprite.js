@@ -7,6 +7,10 @@ class Sprite extends Entity {
      * @param {options} options the sprite options.
      * @param {string[]|string} [options.imagespaths] the path (or array of pathes) to the images to loaf in the sprites.
      * @param {Vec4} [options.color] the sprite color, if not using an image (or the image is not found.)
+     * @param {boolean} [options.sizeindevice=false] If true, make this sprite ignore camera zoom and worldscale.
+     * Sprite size will then be in "vertical screen" unit, meaning a size of 1.0 will be the size of the screen vertical coverage.
+     * @param {boolean} [options.positionindevice=false] If true, make this sprite ignore camera panning and zoom.
+     * Sprite position will then be in "vertical screen" unit, meaning a position of x = 0.5 will put the sprite center at the screen right edge, 0 in the middle and so on.
      */
     constructor(renderer, options) {
         super();
@@ -14,15 +18,19 @@ class Sprite extends Entity {
         this.size.setValues(null, null);
         this._definedWidth = null;
         this._definedHeight = null;
+        this._sizeInDevice = false;
+        this._positionInDevice = false;
         this.textureSize = new Vec2(1, 1);
         this.setLoaded(false);
         let gl = renderer.getGLContext();
 
         let imagesPaths = null;
         let color = null;
-        if (options) {
+        if (options != null) {
             if (options.color != null) color = options.color;
-            if (options.imagespaths) imagesPaths = options.imagespaths;
+            if (options.imagespaths != null) imagesPaths = options.imagespaths;
+            if (options.sizeindevice != null) this._sizeInDevice = options.sizeindevice;
+            if (options.positionindevice != null) this._positionInDevice = options.positionindevice;
         } else {
             console.warn('Sprite: warning, missing options in constructor');
         }
@@ -55,6 +63,8 @@ class Sprite extends Entity {
         this._coordAttrib = gl.getAttribLocation(this._shaderProgram, "vertCoords");
         this._textCoordAttrib = gl.getAttribLocation(this._shaderProgram, "textCoordinates");
 
+        this._isSizeInDeviceUniform = gl.getUniformLocation(this._shaderProgram, "sizeInDevice");
+        this._isPositionInDeviceUniform = gl.getUniformLocation(this._shaderProgram, "positionInDevice");
         this._scaleUniform = gl.getUniformLocation(this._shaderProgram, "scale");
         this._positionUniform = gl.getUniformLocation(this._shaderProgram, "position");
         this._rotationUniform = gl.getUniformLocation(this._shaderProgram, "rotation");
@@ -166,6 +176,9 @@ class Sprite extends Entity {
         gl.uniform1f(this._rotationUniform, entity.rotation);
         gl.uniform1f(this._alphaOutlineUniform, entity.alphaOutline);
 
+        gl.uniform1i(this._isSizeInDeviceUniform, +this._sizeInDevice);
+        gl.uniform1i(this._isPositionInDeviceUniform, +this._positionInDevice);
+
         const u2 = this._uniFp2;
         gl.uniform2fv(this._spriteDimensionsUniform, entity.size.toArray(u2));
         gl.uniform2fv(this._scaleUniform, entity.scale.toArray(u2));
@@ -231,5 +244,9 @@ class Sprite extends Entity {
      */
     getVertices() {
         return Sprite.VERTICES;
+    }
+
+    isPositionInDevice() {
+        return this._positionInDevice;
     }
 }

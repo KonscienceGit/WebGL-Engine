@@ -21,24 +21,24 @@ class GraphManager {
         graphInputManager.addCallbackToAction(GraphActions.MOUSEWHEEL_MOVE_UP, this.mouseWheelUpCallback.bind(this));
         graphInputManager.addCallbackToAction(GraphActions.MOUSEWHEEL_MOVE_DOWN, this.mouseWheelDownCallback.bind(this));
 
-        this.graphPoints = new MultiSprite(renderer, {color: darkRedColor});
+        this.graphPoints = new MultiSprite(renderer, {color: darkRedColor, sizeindevice : true});
         this.axis = new AnnotatedAxisOverlay(renderer, blackColor);
-        this.fullscreenButton = new Sprite(renderer, {imagespaths:'../../resources/minesweeper/Fullscreen.png'});
+        this.fullscreenButton = new Sprite(renderer, {imagespaths:'../../resources/minesweeper/Fullscreen.png', sizeindevice: true, positionindevice: true});
         this.fullscreenButton.visible = false;
 
         //---- Setup the sprite render order from back to front: ----//
         this.spriteArray = [];
-        this.spriteArray.push(this.fullscreenButton);
         this.spriteArray.push(this.axis);
         this.spriteArray.push(this.graphPoints);
+        this.spriteArray.push(this.fullscreenButton);
     }
 
     init() {
         // Init after objects have loaded their textures
-        this.graphPoints.size.setValues(0.01, 0.01);
+        this.graphPoints.size.setValues(0.007, 0.007);
         if (document.fullscreenEnabled) {
-            const fsbSize = 0.15;
-            this.fullscreenButton.position.setValues(-0.5 - fsbSize, -0.5 - fsbSize);
+            const fsbSize = 0.1;
+            this.fullscreenButton.position.setValues(-0.4, -0.4);
             this.fullscreenButton.setHeight(fsbSize);
             this.fullscreenButton.isRound = false;
             this.fullscreenButton.radius = 0;

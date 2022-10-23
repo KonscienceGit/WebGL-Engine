@@ -9,8 +9,11 @@ class CursorProperties extends Entity{
 
         // positions/movements in world coordinates
         this.screenWorldPos = new Vec2(-10, 0); // the position in the screen in world coordinates.
+        this.devicePos = new Vec2(-10, 0); // the position in device coordinates [-0.5 : 0.5].
         this.worldPosOffset = new Vec2(0, 0); // the world position offset. to get the real world coordinates, substract this to screenWorldPos.
         this.pickedObject = null;
+
+        this.screenSpaceCursorPos = new Entity().copy(this);
     }
 
     /**
@@ -21,12 +24,15 @@ class CursorProperties extends Entity{
      */
     pick(entities) {
         this.pickedObject = null;
-        if (!entities) return null;
-        if (!entities.length) entities = [entities];
+        if (entities == null) return null;
+        if (entities.length == null) entities = [entities];
         this.position.copy(this.screenWorldPos);
         this.position.sub(this.worldPosOffset);
+        this.screenSpaceCursorPos.position.copy(this.devicePos);
         for (let i = 0; i < entities.length; i++) {
-            if (this.intersect(entities[i])) {
+            const inDevice = (entities[i] instanceof Sprite && entities[i].isPositionInDevice());
+            const cursor = inDevice ? this.screenSpaceCursorPos : this;
+            if (cursor.intersect(entities[i])) {
                 this.pickedObject = entities[i];
                 break;
             }
