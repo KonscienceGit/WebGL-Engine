@@ -19,6 +19,8 @@ class MainGameState extends AbstractState {
 
         this._deltaBetweenPlayerCanFire = 0.16;
         this._baseDifficulty = 0.7;
+        this._canSpawnAliens = false;
+        this._timeSinceStart = 0;
 
         // Set animations duration
         this.setAnimateInLength(1.0);
@@ -44,6 +46,8 @@ class MainGameState extends AbstractState {
         this._moveToCursor = false;
         this._moveToOrigin = 0;
         this._moveToDestination = 0;
+        this._canSpawnAliens = false;
+        this._timeSinceStart = 0;
 
         this._gameOver = false;
         this._XSpawnMargin = 100 + this._aliensSprites.size.x / 2;
@@ -51,18 +55,25 @@ class MainGameState extends AbstractState {
 
         this._spaceCraft.setLifeCount(3);
         this._spaceCraft.resetPosition();
+        this._spaceCraftPoff = this._spaceCraft.position.clone();
+        this._spaceCraftPin = this._spaceCraftPoff.clone();
+        this._spaceCraftPin.x = 0;
 
         this._timeSinceLastPlayerMissile = 0;
-        this._guiShift = this._worldPixelSize.x / 2;
-
+        this._guiShift = this._worldPixelSize.x / 4;
         this._difficulty = this._baseDifficulty;
+
         this._scoreCounter.setScore(0);
         this._scoreCounter.resetPosition();
+        this._scorePin = this._scoreCounter.position.clone();
         this._scoreCounter.position.moveLeft(this._guiShift);
+        this._scorePoff = this._scoreCounter.position.clone();
 
         this._lifeCounter.resetPosition();
         this._lifeCounter.setLifeCount(this._spaceCraft.getLifeCount());
+        this._lifePin = this._lifeCounter.position.clone();
         this._lifeCounter.position.moveRight(this._guiShift);
+        this._lifePoff = this._lifeCounter.position.clone();
 
         this._aliensSprites.setVisible(true);
         this._aliensMissilesSprites.setVisible(true);
@@ -93,16 +104,17 @@ class MainGameState extends AbstractState {
     }
 
     getNextState() {
-        if(this._gameOver){
-            return this._gameOverState;
-        } else {
-            return this._escapeState;
-        }
+        return this._gameOver ? this._gameOverState : this._escapeState;
     }
 
     mainLoop(delta) {
+        if (this._canSpawnAliens) {
+            this.spawnAliens();
+        } else {
+            this._timeSinceStart += delta;
+            if (this._timeSinceStart > 1.2) this._canSpawnAliens = true;
+        }
         this._timeSinceLastPlayerMissile += delta;
-        this.spawnAliens();
         this.spawnMissiles();
 
         this._physicStuffManager.update(delta);
@@ -137,14 +149,14 @@ class MainGameState extends AbstractState {
 
     //Animate craft and score counter to slide into the game screen
     animateIn(delta, animationState) {
-        if (this._spaceCraft.position.x > 0) {
+        if (animationState < 1 && this._spaceCraft.position.x > 0) {
             this._spaceCraft.moveAndAnimate(delta, -1);
         } else {
+            this._spaceCraft.position.copy(this._spaceCraftPin);
             this._spaceCraft.moveAndAnimate(0, 0);
         }
-        const slideIn = this._guiShift * delta;
-        this._scoreCounter.position.moveRight(slideIn);
-        this._lifeCounter.position.moveLeft(slideIn);
+        this._scoreCounter.position.lerp(this._scorePoff, this._scorePin, animationState);
+        this._lifeCounter.position.lerp(this._lifePoff, this._lifePin, animationState);
     }
 
     animateOut(delta, animationState) {/* Nothing to animate */}
@@ -157,7 +169,7 @@ class MainGameState extends AbstractState {
             const alien = this._aliensSprites.createNewInstance(true);
             this.setRandomSpawnPosition(alien);
             alien.translationSpeed.y = -100;
-            alien.translationSpeed.x =  (Math.random() - 0.5) * 100;
+            alien.translationSpeed.x = (Math.random() - 0.5) * 100;
             alien.textureLayer = alienType;
         }
     }
@@ -193,12 +205,12 @@ class MainGameState extends AbstractState {
     moveCraft(delta) {
         const distance = this._moveToOrigin - this._moveToDestination;
         if (this._moveToCursor) {
-            this._moveLeft = 0.;
-            this._moveRight = 0.;
-            if (distance >= 1.){
-                this._moveLeft = 1.;
-            } else if (distance <= -1.) {
-                this._moveRight = 1.;
+            this._moveLeft = 0;
+            this._moveRight = 0;
+            if (distance >= 1){
+                this._moveLeft = 1;
+            } else if (distance <= -1) {
+                this._moveRight = 1;
             }
         }
 
@@ -209,8 +221,8 @@ class MainGameState extends AbstractState {
             const newDistance = this._moveToOrigin - this._moveToDestination;
             if (Math.abs(newDistance) < 1 || (distance * newDistance) < 0) {
                 this._spaceCraft.position.x = this._moveToDestination;
-                this._moveLeft = 0.;
-                this._moveRight = 0.;
+                this._moveLeft = 0;
+                this._moveRight = 0;
                 this._moveToCursor = false;
             }
         }
@@ -226,33 +238,33 @@ class MainGameState extends AbstractState {
     }
 
     fireShipCallback(value){
-        if(this.isInMainLoop() && value > 0){
+        if (this.isInMainLoop() && value > 0){
             this.firePlayerMissile();
         }
     }
 
     moveShipLeftCallback(value){
-        if(this.isInMainLoop()){
+        if (this.isInMainLoop()){
             this._moveLeft = value;
         }
         this._moveToCursor = false;
     }
 
     moveShipRightCallback(value){
-        if(this.isInMainLoop()){
+        if (this.isInMainLoop()){
             this._moveRight = value;
         }
         this._moveToCursor = false;
     }
 
     moveShipToCursorCallback(cursor){
-        if(this.isInMainLoop()){
+        if (this.isInMainLoop()){
             this.moveTo(cursor.screenWorldPos);
         }
     }
 
     returnToMainMenuCallback(value){
-        if(this.isInMainLoop() && value > 0){
+        if (this.isInMainLoop() && value > 0){
             this.setReadyForNextState();
         }
     }

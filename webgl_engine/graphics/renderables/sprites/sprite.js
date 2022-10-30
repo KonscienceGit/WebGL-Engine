@@ -22,24 +22,27 @@ class Sprite extends Entity {
         this._positionInDevice = false;
         this.textureSize = new Vec2(1, 1);
         this.setLoaded(false);
-        let gl = renderer.getGLContext();
+        const gl = renderer.getGLContext();
 
         let imagesPaths = null;
         let color = null;
-        if (options != null) {
-            if (options.color != null) color = options.color;
-            if (options.imagespaths != null) imagesPaths = options.imagespaths;
-            if (options.sizeindevice != null) this._sizeInDevice = options.sizeindevice;
-            if (options.positionindevice != null) this._positionInDevice = options.positionindevice;
-        } else {
+        if (options == null) {
             console.warn('Sprite: warning, missing options in constructor');
+        } else {
+            if (options.hasOwnProperty('color')) color = options.color;
+            if (options.hasOwnProperty('imagespaths')) imagesPaths = options.imagespaths;
+            if (options.hasOwnProperty('sizeindevice')) this._sizeInDevice = options.sizeindevice;
+            if (options.hasOwnProperty('positionindevice')) this._positionInDevice = options.positionindevice;
         }
 
         this._texture = gl.createTexture();
         this.loadTempTexture(gl, this._texture, color);
         this.initGraphics(gl);
 
-        if (imagesPaths != null) {
+        if (imagesPaths == null) {
+            this.size.setValues(1, 1);
+            this.setLoaded(true);
+        } else {
             if (!Array.isArray(imagesPaths)) imagesPaths = [imagesPaths];
             this._imageCount = imagesPaths.length;
             this._imageLoadedCount = 0;
@@ -47,9 +50,6 @@ class Sprite extends Entity {
             for (let i = 0; i < this._imageCount; i++) {
                 this.loadImage(i, imagesPaths[i], gl, this._texture);
             }
-        } else {
-            this.size.setValues(1, 1);
-            this.setLoaded(true);
         }
 
         this._uniFp2 = new Float32Array(2);
@@ -153,6 +153,14 @@ class Sprite extends Entity {
     }
 
     /**
+     * If this sprite uses texture(s), this method is fired as soon as all texture are loaded.
+     * @protected
+     */
+    onImageLoaded() {
+        this.radius = (this.size.x + this.size.y) / 4;
+    }
+
+    /**
      * @param {WebGL2RenderingContext} gl
      */
     restoreContext(gl) {
@@ -211,7 +219,7 @@ class Sprite extends Entity {
      */
     loadImage(index, url, gl, tex) {
         const _self = this;
-        let image = new Image();
+        const image = new Image();
         image.src = url;
         image.addEventListener('load', function () {
             // Now that the image has loaded make copy it to the texture.
@@ -232,6 +240,7 @@ class Sprite extends Entity {
             if (_self._imageLoadedCount === _self._imageCount) {
                 _self.updateSize();
                 _self.setLoaded(true);
+                _self.onImageLoaded();
             }
         });
     }
@@ -246,6 +255,9 @@ class Sprite extends Entity {
         return Sprite.VERTICES;
     }
 
+    /**
+     * @return {boolean} if this netity position is in device coordinates.
+     */
     isPositionInDevice() {
         return this._positionInDevice;
     }

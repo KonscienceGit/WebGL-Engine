@@ -26,7 +26,9 @@ class ReplayMenuState extends AbstractState {
         this._menuSpriteAnimationState = 0.0;
         this._guiShift = this._worldPixelSize.y;
         this._replaySprite.position.setValues(0, 0);
+        this._replayPin = this._replaySprite.position.clone();
         this._replaySprite.position.moveDown(this._guiShift);
+        this._replayPoff = this._replaySprite.position.clone();
         this._replaySprite.setVisible(true);
         this._translucentOverlay.setVisible(true);
     }
@@ -49,15 +51,13 @@ class ReplayMenuState extends AbstractState {
     }
 
     animateIn(delta, animationState) {
-        const slideIn = this._worldPixelSize.y * delta;
         this._translucentOverlay.setOpacity(animationState);
-        this._replaySprite.position.moveUp(slideIn);
+        this._replaySprite.position.lerp(this._replayPoff, this._replayPin, animationState);
     }
 
     animateOut(delta, animationState) {
         const slideOut = this._worldPixelSize.y * delta;
-        this._replaySprite.position.moveDown(slideOut);
-        this._scoreCounter.position.moveLeft(slideOut);
+        this._replaySprite.position.lerp(this._replayPin, this._replayPoff, animationState);
     }
 
     moveCraftOut(delta) {

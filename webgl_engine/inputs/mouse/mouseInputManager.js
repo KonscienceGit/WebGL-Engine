@@ -114,7 +114,7 @@ class MouseInputManager extends AbstractInputDeviceManager {
         const rect = this._canvas.getBoundingClientRect();
         // Get difference between previous position and current position
         this._cursorProperties.lastPixelMovement.setValues(event.screenX - this._cursorProperties.screenPos.x, event.screenY - this._cursorProperties.screenPos.y);
-        this._cursorProperties.screenPos.setValues(event.screenX, event.screenY)
+        this._cursorProperties.screenPos.setValues(event.screenX, event.screenY);
         // Adjust based on the real position of the current DOM element thingy
         this._cursorProperties.canvasPos.setValues(event.clientX - rect.left, event.clientY - rect.top);
 

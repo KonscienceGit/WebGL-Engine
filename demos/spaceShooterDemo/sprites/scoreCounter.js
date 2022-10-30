@@ -12,7 +12,7 @@ class ScoreCounter extends MultiSprite {
         this._scoreCounterInstances = [];
         this._digitCount = 5;
         this._pixelPerfectTool = pixelPerfectTool;
-        this._xRefPosition = 0;
+        this._tmpPos = new Vec2();
     }
 
     setScore(score) {
@@ -23,8 +23,8 @@ class ScoreCounter extends MultiSprite {
         return this._score;
     }
 
-    imageLoaded() {
-        super.imageLoaded();
+    onImageLoaded() {
+        super.onImageLoaded();
         this.resetPosition();
     }
 
@@ -34,7 +34,7 @@ class ScoreCounter extends MultiSprite {
             40 + this.size.x / 2,
             30 + this.size.y / 2
         );
-        this._xRefPosition = this.position.x;
+        this.position.x += 4 * this.size.x;
     }
 
     draw(renderer) {
@@ -44,15 +44,16 @@ class ScoreCounter extends MultiSprite {
             }
         }
 
+        // TODO need graph node transformations, can't just recompute position manually in each class
         const increment = this.size.x;
         //Reset base position
-        this.position.x = this._xRefPosition + 4 * increment;
+        this._tmpPos.copy(this.position);
 
         const numberToDisplay = this.getDigits(this._score);
         for (let i = 0; i < this._digitCount; i++) {
             this._scoreCounterInstances[i].textureLayer = numberToDisplay[i];
-            this._scoreCounterInstances[i].position.copy(this.position);
-            this.position.moveLeft(increment);
+            this._scoreCounterInstances[i].position.copy(this._tmpPos);
+            this._tmpPos.moveLeft(increment);
         }
 
         //Combine all instances array for drawing.
@@ -90,7 +91,7 @@ class ScoreCounter extends MultiSprite {
 
     updateEntity(delta) {
         super.updateEntity(delta);
-        let instanceToKeep = [];
+        const instanceToKeep = [];
         const now = performance.now();
         this._scoreFeedbackInstances.forEach(entity => {
             entity.position.moveUp(delta * this._moveSpeed);
@@ -103,10 +104,10 @@ class ScoreCounter extends MultiSprite {
 
     getDigits(score) {
         let remainder = score;
-        let digits = [];
+        const digits = [];
         while (remainder >= 1) {
             let ten = Math.floor(remainder / 10);
-            let numberWithoutLastDigit = ten;
+            const numberWithoutLastDigit = ten;
             ten *= 10;
             digits.push(remainder - ten);
             remainder = numberWithoutLastDigit;

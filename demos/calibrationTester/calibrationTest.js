@@ -8,15 +8,21 @@
  */
 const haveEvents = 'GamepadEvent' in window;
 const haveWebkitEvents = 'WebKitGamepadEvent' in window;
-const controllers = {};
+/**
+ * @type {Map<number, Gamepad>}
+ */
+const controllers = new Map();
 const rAF = window.requestAnimationFrame;
 
 function connecthandler(e) {
     addgamepad(e.gamepad);
 }
+
+/**
+ * @param {Gamepad} gamepad
+ */
 function addgamepad(gamepad) {
-    let i;
-    controllers[gamepad.index] = gamepad;
+    controllers.set(gamepad.index, gamepad);
     const controllerDiv = document.createElement("div");
     controllerDiv.setAttribute("id", "controller" + gamepad.index);
     const controllerName = document.createElement("h1");
@@ -24,16 +30,16 @@ function addgamepad(gamepad) {
     controllerDiv.appendChild(controllerName);
     const buttonsBoxDiv = document.createElement("div");
     buttonsBoxDiv.className = "buttons";
-    for (i = 0; i < gamepad.buttons.length; i++) {
+    for (let i = 0; i < gamepad.buttons.length; i++) {
         const button = document.createElement("span");
         button.className = "button";
-        button.innerHTML = i;
+        button.innerHTML = i.toString();
         buttonsBoxDiv.appendChild(button);
     }
     controllerDiv.appendChild(buttonsBoxDiv);
     const axesBoxDiv = document.createElement("div");
     axesBoxDiv.className = "axes";
-    for (i = 0; i < gamepad.axes.length; i++) {
+    for (let i = 0; i < gamepad.axes.length; i++) {
         const axisColumnDiv = document.createElement("div");
         axisColumnDiv.className = "axisColumn";
         axesBoxDiv.appendChild(axisColumnDiv);
@@ -48,7 +54,7 @@ function addgamepad(gamepad) {
         axisMeter.setAttribute("min", "-1");
         axisMeter.setAttribute("max", "1");
         axisMeter.setAttribute("value", "0");
-        axisMeter.innerHTML = i;
+        axisMeter.innerHTML = i.toString();
         axisColumnDiv.appendChild(axisMeter);
 
 
@@ -66,19 +72,18 @@ function disconnecthandler(e) {
 function removegamepad(gamepad) {
     const d = document.getElementById("controller" + gamepad.index);
     document.body.removeChild(d);
-    delete controllers[gamepad.index];
+    controllers.delete(gamepad.index);
 }
 
 function updateStatus() {
     scangamepads();
-    for (j in controllers) {
-        const controller = controllers[j];
-        const d = document.getElementById("controller" + j);
+    controllers.forEach((controller, index) => {
+        const d = document.getElementById("controller" + index);
         const buttons = d.getElementsByClassName("button");
         for (let i = 0; i<controller.buttons.length; i++) {
             const b = buttons[i];
             let val = controller.buttons[i];
-            let pressed = val == 1.0;
+            let pressed = (val === 1.0 || val === true);
             let touched = false;
             if (typeof(val) == "object") {
                 pressed = val.pressed;
@@ -100,22 +105,22 @@ function updateStatus() {
 
         const axes = d.getElementsByClassName("axis");
         const axesValues = d.getElementsByClassName("axisValue");
-        for (let i=0; i<controller.axes.length; i++) {
+        for (let i = 0; i < controller.axes.length; i++) {
             const axis = axes[i];
-            axis.setAttribute("value", controller.axes[i]);
+            axis.setAttribute("value", controller.axes[i].toString());
             const axisValue = axesValues[i];
             const positiveSpace = controller.axes[i] > 0 ? " " : "";
             axisValue.innerHTML = "Axis " + i + ":         " + positiveSpace + controller.axes[i].toFixed(2);
         }
-    }
+    });
     rAF(updateStatus);
 }
 
 function scangamepads() {
     const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
     for (let i = 0; i < gamepads.length; i++) {
-        if (gamepads[i] && (gamepads[i].index in controllers)) {
-            controllers[gamepads[i].index] = gamepads[i];
+        if (gamepads[i] && (controllers.has(gamepads[i].index))) {
+            controllers.set(gamepads[i].index, gamepads[i]);
         }
     }
 }

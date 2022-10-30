@@ -1,6 +1,6 @@
 class Tiles extends MultiSprite {
     constructor(renderer, numbersSprites) {
-        const path = "../../resources/minesweeper/"
+        const path = "../../resources/minesweeper/";
         const pathes = [
             path + "Tile.png",
             path + "EmptyTile.png",
@@ -47,9 +47,9 @@ class Tiles extends MultiSprite {
         const array = [];
         for (let row = 0; row < nbRow; row++) {
             array.push([]);
-            let y = row / nbRow - 0.5 + size / 2;
+            const y = row / nbRow - 0.5 + size / 2;
             for (let col = 0; col < nbCol; col++) {
-                let x = col / nbCol - 0.5 + size / 2;
+                const x = col / nbCol - 0.5 + size / 2;
                 const tile = this.createNewInstance(true);
                 tile.name = col +'_' + row;
                 tile.position.setValues(x, y);

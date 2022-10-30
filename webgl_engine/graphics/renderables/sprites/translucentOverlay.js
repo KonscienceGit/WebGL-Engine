@@ -8,7 +8,7 @@ class TranslucentOverlay extends Entity {
         this._program = null;
         this._shaderName = "TranslucentOverlay";
         this._opacity = 1.0;
-        this.color = colorVec4
+        this.color = colorVec4;
         this._uni = new Float32Array(4);
         this.initOverlay(renderer);
     }

@@ -52,7 +52,7 @@ class GeneralInputManager extends BindingGroup{
             } else if (inputIdentifier instanceof MouseInputIdentifiers) {
                 input = this.getMouseInputManager().createInput(inputIdentifier, action.getType());
             }  else {
-                console.error('Unknown input identifier!');
+                console.error('InputManager: "' + actionName + '": Unknown input identifier!');
                 return;
             }
             action.addInput(input);
@@ -75,7 +75,7 @@ class GeneralInputManager extends BindingGroup{
      * @param {number} delta the time in seconds since the last update.
      */
     parseBindings(delta){
-        super.parseBindings(delta)
+        super.parseBindings(delta);
         if (this._keyboardManager) this._keyboardManager.postParsingUpdate();
         if (this._gamepadManager) this._gamepadManager.postParsingUpdate();
         if (this._mouseManager) this._mouseManager.postParsingUpdate();

@@ -32,7 +32,7 @@ class Renderer {
         const self = this;
         window.onresize = function () {
             self.updateScreenSize();
-        }
+        };
 
         this._shaderUtils = new ShadersUtil(this._gl);
     }
@@ -41,7 +41,7 @@ class Renderer {
         FULLSCREEN: 0,
         FIXED_RATIO: 1,
         FIXED_RESOLUTION: 2
-    }
+    };
 
     updateScreenSize() {
         this._windowResolution.x = window.innerWidth;

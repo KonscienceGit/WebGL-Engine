@@ -17,7 +17,7 @@ class BindingGroup{
      * @returns {AbstractInputAction[]}
      */
     getActionsByName(actionName){
-        let actionsFound = [];
+        const actionsFound = [];
         this._actions.forEach(action => {
             if (action.getName().toLowerCase().includes(actionName.toLowerCase())){
                 actionsFound.push(action);
@@ -33,9 +33,9 @@ class BindingGroup{
     getActionByName(actionName){
         const actions = this.getActionsByName(actionName);
         if(actions.length > 1) {
-            console.log('Warning, action name "' + actionName + '" have several actions registered to it!');
+            console.warn('Warning, action name "' + actionName + '" have several actions registered to it!');
         } else if(actions.length === 0){
-            console.log('Warning, action name "' + actionName + '" have no action registered to it!');
+            console.warn('Warning, action name "' + actionName + '" have no action registered to it!');
             return null;
         }
         return actions[0];

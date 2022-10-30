@@ -25,15 +25,16 @@ class CursorProperties extends Entity{
     pick(entities) {
         this.pickedObject = null;
         if (entities == null) return null;
-        if (entities.length == null) entities = [entities];
+        const entityArray = Array.isArray(entities) ? entities : [entities];
         this.position.copy(this.screenWorldPos);
         this.position.sub(this.worldPosOffset);
         this.screenSpaceCursorPos.position.copy(this.devicePos);
-        for (let i = 0; i < entities.length; i++) {
-            const inDevice = (entities[i] instanceof Sprite && entities[i].isPositionInDevice());
+        for (let i = 0; i < entityArray.length; i++) {
+            const entity = entityArray[i];
+            const inDevice = (entity instanceof Sprite && entity.isPositionInDevice());
             const cursor = inDevice ? this.screenSpaceCursorPos : this;
-            if (cursor.intersect(entities[i])) {
-                this.pickedObject = entities[i];
+            if (cursor.intersect(entity)) {
+                this.pickedObject = entity;
                 break;
             }
         }

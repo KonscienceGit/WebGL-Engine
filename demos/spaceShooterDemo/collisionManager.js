@@ -44,7 +44,7 @@ class CollisionManager {
      * @param {number} delta
      */
     updatePhysics(objects, delta, reachBottomHurt) {
-        let objectStayOnScreen = [];
+        const objectStayOnScreen = [];
         objects.getInstances().forEach(object => {
             this.applyMovement(object, delta);
             const moveDown = object.translationSpeed.y < 0;
@@ -102,7 +102,7 @@ class CollisionManager {
     }
 
     updatePlayerCollisions(objects) {
-        let objectStayOnScreen = [];
+        const objectStayOnScreen = [];
         objects.getInstances().forEach(object => {
             if (this._spaceCraft.intersect(object)) {
                 this._spaceCraft.looseOneLife();
@@ -114,8 +114,8 @@ class CollisionManager {
     }
 
     updatePlayerMissilesCollisions() {
-        let missiles = this._playerMissiles.getInstances().slice();
-        let aliens = this._aliens.getInstances().slice();
+        const missiles = this._playerMissiles.getInstances().slice();
+        const aliens = this._aliens.getInstances().slice();
         for (let m = 0; m < this._playerMissiles.getInstances().length; m++) {
             if (missiles[m] === undefined) continue;
             for (let a = 0; a < this._aliens.getInstances().length; a++) {
@@ -128,11 +128,11 @@ class CollisionManager {
                 }
             }
         }
-        let missilesLeft = [];
+        const missilesLeft = [];
         missiles.forEach(m => {
             if (m !== undefined) missilesLeft.push(m);
         });
-        let aliensLeft = [];
+        const aliensLeft = [];
         aliens.forEach(a => {
             if (a !== undefined) aliensLeft.push(a);
         });

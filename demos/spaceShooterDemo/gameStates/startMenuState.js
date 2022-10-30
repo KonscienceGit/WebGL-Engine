@@ -13,6 +13,14 @@ class StartMenuState extends AbstractState {
         this._scoreCounter = objectManager.getScoreCounter();
         this._lifeCounter = objectManager.getLifeCounter();
 
+        this._logoOuterPos = new Vec2(0, 100);
+        this._logoCenterPos = this._logoOuterPos.clone();
+        this._logoOuterPos.moveUp(this._worldPixelSize.y);
+
+        this._pressPlayOuterPos = new Vec2(0, 0);
+        this._pressPlayCenterPos = this._pressPlayOuterPos.clone();
+        this._pressPlayOuterPos.moveLeft(this._worldPixelSize.x);
+
         // Bind context to callback
         const selectMenuBindedCallback = this.selectMenuActionCallback.bind(this);
         // Assign callback to action
@@ -26,12 +34,8 @@ class StartMenuState extends AbstractState {
     start(){
         this._growingAnimationState = 0.0;
 
-        this._logoTitleSprite.position.setValues(0, 0);
-        this._pressToPlayButton.position.setValues(0, 0);
-
-        // move before slideIn
-        this._pressToPlayButton.position.moveLeft(this._worldPixelSize.y);
-        this._logoTitleSprite.position.moveUp(this._worldPixelSize.y);
+        this._logoTitleSprite.position.copy(this._logoOuterPos);
+        this._pressToPlayButton.position.copy(this._pressPlayOuterPos);
 
         this._pressToPlayButton.setVisible(true);
         this._logoTitleSprite.setVisible(true);
@@ -65,16 +69,14 @@ class StartMenuState extends AbstractState {
     }
 
     animateIn(delta, animationState) {
-        const slideIn = this._worldPixelSize.y * delta;
-        this._pressToPlayButton.position.moveRight(slideIn);
-        this._logoTitleSprite.position.moveDown(slideIn);
+        this._logoTitleSprite.position.lerp(this._logoOuterPos, this._logoCenterPos, animationState);
+        this._pressToPlayButton.position.lerp(this._pressPlayOuterPos, this._pressPlayCenterPos, animationState);
     }
 
     animateOut(delta, animationState) {
-        const slideOut = this._worldPixelSize.y * delta;
         this._translucentOverlay.setOpacity(1 - animationState);
-        this._pressToPlayButton.position.moveLeft(slideOut);
-        this._logoTitleSprite.position.moveUp(slideOut);
+        this._logoTitleSprite.position.lerp(this._logoCenterPos, this._logoOuterPos, animationState);
+        this._pressToPlayButton.position.lerp(this._pressPlayCenterPos, this._pressPlayOuterPos, animationState);
     }
 
     selectMenuActionCallback(value){

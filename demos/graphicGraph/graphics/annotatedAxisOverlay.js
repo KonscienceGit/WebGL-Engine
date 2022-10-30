@@ -9,7 +9,7 @@ class AnnotatedAxisOverlay extends Entity {
         this._program = null;
         this._shaderName = "AnnotatedOverlay";
         this._opacity = 1.0;
-        this.color = colorVec4
+        this.color = colorVec4;
         this._fp4 = new Float32Array(4);
         this._fp2 = new Float32Array(2);
         this.initOverlay(renderer);

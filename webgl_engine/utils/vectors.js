@@ -2,8 +2,8 @@
 
 class Vec2 {
     constructor(x, y) {
-        this.x = x != null ? x : 0;
-        this.y = y != null ? y : 0;
+        this.x = x == null ? 0 : x;
+        this.y = y == null ? 0 : y;
     }
 
     clone() {
@@ -74,9 +74,9 @@ class Vec2 {
 
 class Vec3 {
     constructor(x, y, z) {
-        this.x = x != null ? x : 0;
-        this.y = y != null ? y : 0;
-        this.z = z != null ? z : 0;
+        this.x = x == null ? 0 : x;
+        this.y = y == null ? 0 : y;
+        this.z = z == null ? 0 : z;
     }
 
     clone() {
@@ -112,9 +112,9 @@ class Vec3 {
     }
 
     distanceSquared(v) {
-        let dx = this.x - v.x;
-        let dy = this.y - v.y;
-        let dz = this.z - v.z;
+        const dx = this.x - v.x;
+        const dy = this.y - v.y;
+        const dz = this.z - v.z;
         return dx * dx + dy * dy + dz * dz;
     }
 
@@ -138,10 +138,10 @@ class Vec3 {
 
 class Vec4 {
     constructor(x, y, z, w) {
-        this.x = x != null ? x : 0;
-        this.y = y != null ? y : 0;
-        this.z = z != null ? z : 0;
-        this.w = w != null ? w : 0;
+        this.x = x == null ? 0 : x;
+        this.y = y == null ? 0 : y;
+        this.z = z == null ? 0 : z;
+        this.w = w == null ? 0 : w;
     }
 
     clone() {

@@ -1,5 +1,3 @@
-
-
 class ShadersUtil {
     static GLSL_300_ES = '#version 300 es \n';
     static LOWP = 'precision lowp ';
@@ -100,20 +98,17 @@ class ShadersUtil {
     }
 
     getOrCreateShader(gl, shaderName, vertexCode, fragmentCode, objectName){
-        let exist = false;
         for (let i = 0; i < this._shaderPrograms.length; i++){
             if (this._shaderPrograms[i].isThisMe(shaderName, vertexCode, fragmentCode)){
-                exist = true;
                 this._shaderPrograms[i].registerUser(objectName);
                 return this._shaderPrograms[i].webglShaderProgram;
             }
         }
-        if (!exist){
-            const shaderObj = new ShaderObject(shaderName, vertexCode, fragmentCode, objectName);
-            shaderObj.webglShaderProgram = ShadersUtil.createProgram(vertexCode, fragmentCode, gl);
-            this._shaderPrograms.push(shaderObj);
-            return shaderObj.webglShaderProgram;
-        }
+        // Does not exist, need to create
+        const shaderObj = new ShaderObject(shaderName, vertexCode, fragmentCode, objectName);
+        shaderObj.webglShaderProgram = ShadersUtil.createProgram(vertexCode, fragmentCode, gl);
+        this._shaderPrograms.push(shaderObj);
+        return shaderObj.webglShaderProgram;
     }
 
     /**
@@ -123,15 +118,15 @@ class ShadersUtil {
      * @returns {WebGLProgram}
      */
     static createProgram(vertCode, fragCode, glContext) {
-        let vertShader = glContext.createShader(glContext.VERTEX_SHADER);
+        const vertShader = glContext.createShader(glContext.VERTEX_SHADER);
         glContext.shaderSource(vertShader, vertCode);
         ShadersUtil.compileAndCheck(vertShader, glContext);
 
-        let fragShader = glContext.createShader(glContext.FRAGMENT_SHADER);
+        const fragShader = glContext.createShader(glContext.FRAGMENT_SHADER);
         glContext.shaderSource(fragShader, fragCode);
         ShadersUtil.compileAndCheck(fragShader, glContext);
 
-        let shaderProgram = glContext.createProgram();
+        const shaderProgram = glContext.createProgram();
         glContext.attachShader(shaderProgram, vertShader);
         glContext.attachShader(shaderProgram, fragShader);
         ShadersUtil.linkAndCheck(shaderProgram, glContext);
@@ -145,7 +140,7 @@ class ShadersUtil {
      */
     static compileAndCheck(shader, glContext) {
         glContext.compileShader(shader);
-        let success = glContext.getShaderParameter(shader, glContext.COMPILE_STATUS);
+        const success = glContext.getShaderParameter(shader, glContext.COMPILE_STATUS);
         if (!success) {
             throw "could not compile shader:" + glContext.getShaderInfoLog(shader);
         }
@@ -157,7 +152,7 @@ class ShadersUtil {
      */
     static linkAndCheck(program, glContext) {
         glContext.linkProgram(program);
-        let success = glContext.getProgramParameter(program, glContext.LINK_STATUS);
+        const success = glContext.getProgramParameter(program, glContext.LINK_STATUS);
         if (!success) {
             throw "could not link program:" + glContext.getProgramInfoLog(program);
         }

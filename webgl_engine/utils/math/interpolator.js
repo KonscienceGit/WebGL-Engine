@@ -33,9 +33,8 @@ class Interpolator {
     }
 
     static circleCurve(input, smooth, reverseRamp, inverseInput) {
-        if ((reverseRamp && !inverseInput) || (!reverseRamp && inverseInput)) input = 1 - input;
-
-        const scaledInput = (this.SIN_ARCCOS.length - 1) * input;
+        const editedInput = ((reverseRamp && !inverseInput) || (!reverseRamp && inverseInput)) ? 1 - input : input;
+        const scaledInput = (this.SIN_ARCCOS.length - 1) * editedInput;
         const truncInput = scaledInput | 0;
         let o1 = this.SIN_ARCCOS[truncInput];
         if (smooth && truncInput < this.SIN_ARCCOS.length - 1) {

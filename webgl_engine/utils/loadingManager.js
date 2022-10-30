@@ -5,7 +5,7 @@ class LoadingManager {
      * @param callback the callback function.
      */
     static callbackWhenLoaded(spriteArray, callback) {
-        let nbNode = spriteArray.length;
+        const nbNode = spriteArray.length;
         let loadedCount = 0;
 
         setTimeout(function () {

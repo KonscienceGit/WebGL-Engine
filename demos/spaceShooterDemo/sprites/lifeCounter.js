@@ -3,19 +3,15 @@ class LifeCounter extends Sprite {
         super(renderer, {imagespaths: resourcePath + "life.png"});
         this._lifeCount = 3;
         this._pixelPerfectTool = pixelPerfectTool;
-        this._xRefPosition = 0;
+        this._tmpPos = new Vec2();
     }
 
     setLifeCount(lifes) {
         this._lifeCount = lifes;
     }
 
-    getLifeCount() {
-        return this._lifeCount;
-    }
-
-    imageLoaded() {
-        super.imageLoaded();
+    onImageLoaded() {
+        super.onImageLoaded();
         this.resetPosition();
     }
 
@@ -25,17 +21,17 @@ class LifeCounter extends Sprite {
             40 + this.size.x / 2,
             30 + this.size.y / 2
         );
-        this._xRefPosition = this.position.x;
     }
 
     draw(renderer) {
-        let increment = this.size.x;
-        this.position.x = this._xRefPosition;
+        const increment = this.size.x;
+        this._tmpPos.copy(this.position);
         for (let i = 0; i < 3; i++) {
             if (i < this._lifeCount) {
-                super.draw(renderer); // render each number using parent draw method
+                super.draw(renderer); // render each heart using parent draw method
             }
             this.position.moveLeft(increment);
         }
+        this.position.copy(this._tmpPos);
     }
 }
