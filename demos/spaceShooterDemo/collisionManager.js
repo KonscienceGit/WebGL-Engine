@@ -129,13 +129,9 @@ class CollisionManager {
             }
         }
         const missilesLeft = [];
-        missiles.forEach(m => {
-            if (m !== undefined) missilesLeft.push(m);
-        });
+        missiles.forEach(m => missilesLeft.push(m));
         const aliensLeft = [];
-        aliens.forEach(a => {
-            if (a !== undefined) aliensLeft.push(a);
-        });
+        aliens.forEach(a => aliensLeft.push(a));
 
         this._playerMissiles.setInstances(missilesLeft);
         this._aliens.setInstances(aliensLeft);

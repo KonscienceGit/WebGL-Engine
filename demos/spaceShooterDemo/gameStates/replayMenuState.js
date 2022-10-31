@@ -56,7 +56,6 @@ class ReplayMenuState extends AbstractState {
     }
 
     animateOut(delta, animationState) {
-        const slideOut = this._worldPixelSize.y * delta;
         this._replaySprite.position.lerp(this._replayPin, this._replayPoff, animationState);
     }
 
@@ -77,7 +76,7 @@ class ReplayMenuState extends AbstractState {
     }
 
     selectMenuActionCallback(value){
-        if(this.isInMainLoop() && value > 0){
+        if (this.isInMainLoop() && value > 0){
             this.setReadyForNextState();
         }
     }
