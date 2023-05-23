@@ -11,6 +11,7 @@ class TranslucentOverlay extends Entity {
         this.color = colorVec4;
         this._uni = new Float32Array(4);
         this.initOverlay(renderer);
+        this.setVisible(true);
     }
 
     draw(renderer) {

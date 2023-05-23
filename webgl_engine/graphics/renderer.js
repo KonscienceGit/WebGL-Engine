@@ -1,4 +1,5 @@
 class Renderer {
+
     /**
      * @param {HTMLCanvasElement} canvas
      * @param {Camera2D} camera
@@ -6,6 +7,11 @@ class Renderer {
     constructor(canvas, camera) {
         this._canvas = canvas;
         this._camera = camera;
+        this._righClickEnabled = null;
+        this._disableRightClickFn = function (event) {
+            event.preventDefault();
+        };
+        this.setBrowserRightClickEnabled(false);
 
         this._displayMode = Renderer.DISPLAY_MODE.FULLSCREEN;
         this._windowResolution = new Vec2(1,1);
@@ -139,5 +145,20 @@ class Renderer {
 
     needRepaint(){
         return this._needRepaint;
+    }
+
+    /**
+     * Turn the browser right click contextual menu on or off. Default is false.
+     * Should be left to false to allow theengine Right click mouse events to work properly.
+     * @param {boolean} enabled
+     */
+    setBrowserRightClickEnabled (enabled) {
+        if (this._righClickEnabled === enabled) return;
+        this._righClickEnabled = enabled;
+        if (this._righClickEnabled) {
+            window.removeEventListener("contextmenu", this._disableRightClickFn);
+        } else {
+            window.addEventListener("contextmenu", this._disableRightClickFn);
+        }
     }
 }

@@ -13,21 +13,46 @@ class Vec2 {
     copy(v) {
         this.x = v.x;
         this.y = v.y;
+        return this;
     }
 
     setValues(x, y){
         this.x = x;
         this.y = y;
+        return this;
     }
 
     add(v) {
         this.x += v.x;
         this.y += v.y;
+        return this;
     }
 
     sub(v) {
         this.x -= v.x;
         this.y -= v.y;
+        return this;
+    }
+
+    mul(v) {
+        this.x *= v.x;
+        this.y *= v.y;
+        return this;
+    }
+
+    /**
+     * Divide this vector by the given vector
+     */
+    div(v) {
+        this.x /= v.x;
+        this.y /= v.y;
+        return this;
+    }
+
+    divScalar(s) {
+        this.x /= s;
+        this.y /= s;
+        return this;
     }
 
     equals(v) {
@@ -52,23 +77,28 @@ class Vec2 {
 
     moveLeft(d) {
         this.x -= d;
+        return this;
     }
 
     moveRight(d) {
         this.x += d;
+        return this;
     }
 
     moveUp(d) {
         this.y += d;
+        return this;
     }
 
     moveDown(d) {
         this.y -= d;
+        return this;
     }
 
     lerp(v1, v2, p) {
         this.x = v1.x * (1 - p) + v2.x * p;
         this.y = v1.y * (1 - p) + v2.y * p;
+        return this;
     }
 }
 
@@ -87,24 +117,28 @@ class Vec3 {
         this.x = v.x;
         this.y = v.y;
         this.z = v.z;
+        return this;
     }
 
     setValues(x, y, z){
         this.x = x;
         this.y = y;
         this.z = z;
+        return this;
     }
 
     add(v) {
         this.x += v.x;
         this.y += v.y;
         this.z += v.z;
+        return this;
     }
 
     sub(v) {
         this.x -= v.x;
         this.y -= v.y;
         this.z -= v.z;
+        return this;
     }
 
     equals(v) {
@@ -133,6 +167,7 @@ class Vec3 {
         this.x = v1.x * (1 - p) + v2.x * p;
         this.y = v1.y * (1 - p) + v2.y * p;
         this.z = v1.z * (1 - p) + v2.z * p;
+        return this;
     }
 }
 
@@ -153,6 +188,7 @@ class Vec4 {
         this.y = v.y;
         this.z = v.z;
         this.w = v.w;
+        return this;
     }
 
     setValues(x, y, z, w){
@@ -160,6 +196,7 @@ class Vec4 {
         this.y = y;
         this.z = z;
         this.w = w;
+        return this;
     }
 
     add(v) {
@@ -167,6 +204,7 @@ class Vec4 {
         this.y += v.y;
         this.z += v.z;
         this.w += v.w;
+        return this;
     }
 
     sub(v) {
@@ -174,6 +212,7 @@ class Vec4 {
         this.y -= v.y;
         this.z -= v.z;
         this.w -= v.w;
+        return this;
     }
 
     equals(v) {
@@ -193,5 +232,6 @@ class Vec4 {
         this.y = v1.y * (1 - p) + v2.y * p;
         this.z = v1.z * (1 - p) + v2.z * p;
         this.w = v1.w * (1 - p) + v2.w * p;
+        return this;
     }
 }

@@ -1,5 +1,8 @@
-class BindingGroup{
+class BindingGroup {
     constructor() {
+        /**
+         * @type {AbstractInputAction[]}
+         */
         this._actions = [];
     }
 
@@ -32,17 +35,19 @@ class BindingGroup{
      */
     getActionByName(actionName){
         const actions = this.getActionsByName(actionName);
-        if(actions.length > 1) {
-            console.warn('Warning, action name "' + actionName + '" have several actions registered to it!');
-        } else if(actions.length === 0){
-            console.warn('Warning, action name "' + actionName + '" have no action registered to it!');
+        if (actions.length > 1) {
+            console.warn('Warning, action name "' + actionName + '" have several actions registered to it!' +
+                '\nPlease only assign one action per action name.');
+        } else if (actions.length === 0){
+            console.warn('Warning, action name "' + actionName + '" have no action registered to it!' +
+                '\nPlease assign an action to this BindingGroup action name.');
             return null;
         }
         return actions[0];
     }
 
     /**
-     * Get the actions of this group, but not its subgroups.
+     * Get the actions of this group.
      * @returns {AbstractInputAction[]}
      */
     getActions(){
@@ -54,7 +59,7 @@ class BindingGroup{
      * @param {AbstractInputAction} action the action to add to this group.
      */
     addAction(action){
-        if(this._actions.includes(action)) return;
+        if (this._actions.includes(action)) return;
         this._actions.push(action);
     }
 
@@ -65,7 +70,7 @@ class BindingGroup{
     removeAction(action){
         let deletedAction = false;
         const actionIndex = this._actions.indexOf(action);
-        if(actionIndex !== -1) {
+        if (actionIndex !== -1) {
             this._actions.splice(actionIndex, 1);
             deletedAction = true;
         }

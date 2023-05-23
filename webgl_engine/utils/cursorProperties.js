@@ -1,11 +1,11 @@
-class CursorProperties extends Entity{
+class CursorProperties extends Entity {
     constructor() {
         super();
         this.visible = true;
         // positions/movmeents in pixel coordinates
         this.screenPos = new Vec2(0, 0);
         this.canvasPos = new Vec2(0, 0);
-        this.lastPixelMovement = new Vec2(0,0);
+        this.lastPixelMovement = new Vec2(0, 0);
 
         // positions/movements in world coordinates
         this.screenWorldPos = new Vec2(-10, 0); // the position in the screen in world coordinates.
@@ -31,9 +31,7 @@ class CursorProperties extends Entity{
         this.screenSpaceCursorPos.position.copy(this.devicePos);
         for (let i = 0; i < entityArray.length; i++) {
             const entity = entityArray[i];
-            const inDevice = (entity instanceof Sprite && entity.isPositionInDevice());
-            const cursor = inDevice ? this.screenSpaceCursorPos : this;
-            if (cursor.intersect(entity)) {
+            if (this.intersect(entity)) {
                 this.pickedObject = entity;
                 break;
             }

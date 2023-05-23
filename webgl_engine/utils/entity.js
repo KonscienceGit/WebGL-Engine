@@ -11,11 +11,11 @@ class Entity {
         this.creationTime = performance.now();
         this.childrenNodes = [];
 
-        // import from entityProperties.js
         // SRT (scale, rotation, translation)
         this.scale = new Vec2(1, 1);
         this.rotation = 0;
         this.position = new Vec2(0, 0);
+        this.modelWorldMat = new Matrix3();
 
         // Render properties
         this.size = new Vec2(1, 1);

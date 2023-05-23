@@ -18,53 +18,18 @@ class ShadersUtil {
         this.HIGHP + this.P_SAMPLER2DARRAY;
 
     static VERTEX_SHADER_CODE = ShadersUtil.SHADER_HEADER +
-        'uniform int sizeInDevice;' +
-        'uniform int positionInDevice;' +
-
-        'uniform vec2 scale;' +
-        'uniform vec2 position;' +
-        'uniform float rotation;' +
-        'uniform vec2 spriteDimensions;' +
-        'uniform vec2 canvasDimensions;' +
-        'uniform vec2 canvasPosition;' +
+        'uniform mat3 modelWorld;' +
+        'uniform mat3 viewProj;' +
         'in vec2 vertCoords;' +
         'in vec2 textCoordinates;' +
         'out vec2 textCoord;' +
 
         'void main(void) {' +
         '    textCoord = textCoordinates;' +
-        '    float viewRatio = canvasDimensions.x/canvasDimensions.y;' +
-
-        '    /*scale*/' +
-        '    vec2 pos = vertCoords;' +
-        '    if (sizeInDevice == 0) {' +
-        '        vec2 worldScale = spriteDimensions/canvasDimensions;' +
-        '        pos = vertCoords * worldScale * scale;' +
-        '    } else {' +
-        '        pos = vertCoords * spriteDimensions * scale;' +
-        '        pos.x /= viewRatio;' +
-        '    }' +
-
-        '    /*screen ratio*/' +
-        '    pos.y /= viewRatio;' +
-
-        '    /*rotation*/' +
-        '    float r_cos = cos(rotation);' +
-        '    float r_sin = sin(rotation);' +
-        '    float x = pos.x * r_cos - pos.y * r_sin;' +
-        '    float y = (pos.x * r_sin + pos.y * r_cos) * viewRatio;' +
-
-        '    /*translation*/' +
-        '    vec2 screenSpacePosition = position;' +
-        '    if (positionInDevice == 0) {' +
-        '        screenSpacePosition = (screenSpacePosition + canvasPosition) / canvasDimensions;' +
-        '    } else {' +
-        '        screenSpacePosition.x /= viewRatio;' +
-        '    }' +
-        '    x += 2.* screenSpacePosition.x;' +
-        '    y += 2.* screenSpacePosition.y;' +
-
-        '    gl_Position = vec4(x, y, 0.0, 1.0);' +
+        '    vec3 pos = vec3(vertCoords, 1.);' +
+        // x2 to convert from [-0.5, 0.5] to [-1, 1] space
+        '    pos = pos * modelWorld * viewProj * 2.;' +
+        '    gl_Position = vec4(pos.xy, 0., 1.);' +
         '}';
 
     static SPRITE_FRAGMENT_SHADER_CODE = ShadersUtil.SHADER_HEADER +
@@ -82,7 +47,6 @@ class ShadersUtil {
 
     static DEFAULT_BLUE_PIXEL_DATA = new Uint8Array([0, 0, 255, 255]);
 
-
     /**
      * @param {WebGL2RenderingContext} glContext
      * @returns {ShadersUtil}
@@ -97,9 +61,9 @@ class ShadersUtil {
         return ShadersUtil.instance;
     }
 
-    getOrCreateShader(gl, shaderName, vertexCode, fragmentCode, objectName){
-        for (let i = 0; i < this._shaderPrograms.length; i++){
-            if (this._shaderPrograms[i].isThisMe(shaderName, vertexCode, fragmentCode)){
+    getOrCreateShader(gl, shaderName, vertexCode, fragmentCode, objectName) {
+        for (let i = 0; i < this._shaderPrograms.length; i++) {
+            if (this._shaderPrograms[i].isThisMe(shaderName, vertexCode, fragmentCode)) {
                 this._shaderPrograms[i].registerUser(objectName);
                 return this._shaderPrograms[i].webglShaderProgram;
             }

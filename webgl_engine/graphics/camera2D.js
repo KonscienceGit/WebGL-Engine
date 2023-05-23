@@ -1,38 +1,55 @@
 /**
  * 2D Camera
  */
-class Camera2D extends AbstractCamera{
+class Camera2D extends AbstractCamera {
     constructor() {
         super();
         this._ratio = 1;
-        this._screenWorldSize = new Vec2(1,1);
         this._uniProjArray = new Float32Array(2);
-        this._screenWorldSize.toArray(this._uniProjArray);
-        this._position = new Vec3(0, 0, 0);
         this._uniViewArray = new Float32Array(2);
-        this._tmpVec2 = new Vec2(0, 0); // Cast vec3 to vec2 for uniforms
-        this._tmpVec2.copy(this._position);
-        this._tmpVec2.toArray(this._uniViewArray);
+        this._viewProjMat = new Matrix3();
+        this._screenWorldSize = new Vec2(1, 1);
+        this._position = new Vec3(0, 0, 0);
+        this.updateMatrix();
+    }
+
+    updateMatrix() {
+        // Translation (is affected by scale)
+        this._viewProjMat.makeTranslation(
+            this._position.x / this._screenWorldSize.x,
+            this._position.y / this._screenWorldSize.y
+        );
+        // Scale
+        this._viewProjMat.makeScale(
+            1 / (this._screenWorldSize.x),
+            1 / (this._screenWorldSize.y)
+        );
+        this._screenWorldSize.toArray(this._uniProjArray);
+        this._position.toArray(this._uniViewArray);
     }
 
     setRatio(ratio) {
         this._ratio = ratio;
         this._screenWorldSize.x = this._ratio * this._screenWorldSize.y;
-        this._screenWorldSize.toArray(this._uniProjArray);
+        this.updateMatrix();
     }
 
-    setVerticalScreenWorldSize(verticalScreenWorldSize){
+    setVerticalScreenWorldSize(verticalScreenWorldSize) {
         this._screenWorldSize.y = verticalScreenWorldSize;
         this._screenWorldSize.x = this._ratio * this._screenWorldSize.y;
-        this._screenWorldSize.toArray(this._uniProjArray);
+        this.updateMatrix();
     }
 
-    setViewProjectionUniform(gl, projectionUniform, viewUniform){
+    setViewProjectionUniform(gl, viewProjMatUniform) {
+        gl.uniformMatrix3fv(viewProjMatUniform, false, this._viewProjMat.m);
+    }
+
+    setWorldUniform(gl, projectionUniform, viewUniform) {
         gl.uniform2fv(projectionUniform, this._uniProjArray);
         gl.uniform2fv(viewUniform, this._uniViewArray);
     }
 
-    getScreenWorldSize(target){
+    getScreenWorldSize(target) {
         if (!target) return this._screenWorldSize.clone();
         target.copy(this._screenWorldSize);
         return target;
@@ -50,6 +67,6 @@ class Camera2D extends AbstractCamera{
 
     setPosition(position) {
         this._position.copy(position);
-        this._position.toArray(this._uniViewArray);
+        this.updateMatrix();
     }
 }

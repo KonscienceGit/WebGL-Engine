@@ -8,6 +8,8 @@ class Tiles extends MultiSprite {
             path + "SecureTile.png"
         ];
         super(renderer, {imagespaths: pathes});
+        this._DEBUG_REVEAL_ALL = false;
+        this._firstClick = true;
         this._numbers = numbersSprites;
         this.nbRow = 0;
         this.nbCol = 0;
@@ -18,62 +20,120 @@ class Tiles extends MultiSprite {
         this._fuseBlipStage = 0;
         this._hasWon = false;
         this._hasLost = false;
+        this._mineRowColArray = null;
 
         // Texture layers
-        // this._COVER = 0;
+        this._COVER = 0;
         this._REVEALED = 1;
         this._MINE = 2;
         this._SECURED = 3;
 
         // Numbers Colormap
-        this._numColor = [];
-        this._numColor[0] = new Vec4(1, 1, 1, 1);
-        this._numColor[1] = new Vec4(0, 0, 1, 1);
-        this._numColor[2] = new Vec4(0, 1, 0, 1);
-        this._numColor[3] = new Vec4(1, 0, 0, 1);
-        this._numColor[4] = new Vec4(1, 1, 0, 1);
-        this._numColor[5] = new Vec4(1, 1, 1, 1);
-        this._numColor[6] = new Vec4(1, 1, 1, 1);
-        this._numColor[7] = new Vec4(1, 1, 1, 1);
-        this._numColor[8] = new Vec4(1, 1, 1, 1);
+        this._numColor = [
+            new Vec4(1, 1, 1, 1),
+            new Vec4(0, 0, 1, 1),
+            new Vec4(0, 1, 0, 1),
+            new Vec4(1, 0, 0, 1),
+            new Vec4(1, 1, 0, 1),
+            new Vec4(1, 1, 1, 1),
+            new Vec4(1, 1, 1, 1),
+            new Vec4(1, 1, 1, 1),
+            new Vec4(1, 1, 1, 1)
+        ];
     }
 
-    createTiles(nbRow, nbCol) {
+    createTiles(nbRow, nbCol, mineRatio) {
         this.nbRow = nbRow;
         this.nbCol = nbCol;
         const size = 1 / Math.max(nbRow, nbCol);
         const numberHeight = size * 0.6;
         this._numbers.setHeight(numberHeight);
+
+        const array = this.createTileEntities(nbRow, nbCol, size);
+
+        this.spreadMines(mineRatio);
+
+        this._mineRowColArray = array;
+        if (this._DEBUG_REVEAL_ALL) this.revealAll();
+    }
+
+    /**
+     * Fill tiles from top left to bottom right, row by row.
+     * @param nbRow
+     * @param nbCol
+     * @param size
+     * @returns {TileEntity[][]}
+     */
+    createTileEntities(nbRow, nbCol, size) {
         const array = [];
         for (let row = 0; row < nbRow; row++) {
             array.push([]);
-            const y = row / nbRow - 0.5 + size / 2;
+            const y = 0.5 - (1 + row) / nbRow + size / 2;
             for (let col = 0; col < nbCol; col++) {
                 const x = col / nbCol - 0.5 + size / 2;
-                const tile = this.createNewInstance(true);
-                tile.name = col +'_' + row;
+                const tile = new TileEntity(col, row, size);
                 tile.position.setValues(x, y);
-                tile.isRound = false;
-                tile.size.setValues(size, size);
-                tile.isMine = Math.random() < 0.2;
-                tile.isRevealed = false;
-                tile.isSecured = false;
-                tile.row = row;
-                tile.col = col;
                 array[row][col] = tile;
+                this.addInstance(tile);
             }
         }
+        return array;
+    }
+
+    spreadMines(mineRatio) {
+        let tiles = this.getInstances().slice();
+        const nbTile = tiles.length;
+        let nbMine = Math.round(nbTile * mineRatio) - 1;
+        if (nbMine <= 0) nbMine = 1;
+
+        // Remove top left mine, as in the classic mineSweeper
+        tiles = this.removeTileFromArray(tiles, 0);
+        for (let i = 0; i < nbMine; i++) {
+            const nbTileLeft = tiles.length; // this get updated each loop
+            const tileIndex = Math.floor(Math.random() * nbTileLeft);
+            tiles[tileIndex].isMine = true;
+            tiles = this.removeTileFromArray(tiles, tileIndex);
+        }
+    }
+
+    removeTileFromArray(array, tileIndex) {
+        const newArray = [];
+        for (let i = 0; i < array.length; i++) {
+            if (i !== tileIndex) newArray.push(array[i]);
+        }
+        return newArray;
+    }
+
+    /**
+     * @param {TileEntity} clickedTile
+     */
+    countMinesAndReposition(clickedTile) {
+        const array = this._mineRowColArray;
+        if (clickedTile.isMine) {
+            clickedTile.isMine = false;
+            array[0][0].isMine = true;
+        }
+
+        const nbRow = this.nbRow;
+        const nbCol = this.nbCol;
         for (let row = 0; row < nbRow; row++) {
             for (let col = 0; col < nbCol; col++) {
                 const tile = array[row][col];
                 tile.nbMine = this.getNbMine(array, row, col, nbRow - 1, nbCol - 1);
-                // TODO DEBUG reveal mines
-                // if (tile.isMine) {
-                //     tile.textureLayer = this._MINE;
-                // } else {
-                //     this.createNumber(tile)
-                //     tile.textureLayer = this._REVEALED;
-                // }
+            }
+        }
+    }
+
+    revealAll() {
+        console.warn('Debug: Reveal all tiles');
+        const tiles = this.getInstances();
+        const nbTile = tiles.length;
+        for (let i = 0; i < nbTile; i++) {
+            const tile = tiles[i];
+            if (tile.isMine) {
+                tile.textureLayer = this._MINE;
+            } else {
+                tile.textureLayer = this._REVEALED;
             }
         }
     }
@@ -104,30 +164,37 @@ class Tiles extends MultiSprite {
     }
 
     /**
-     * Returns
-     * 0 - nothing happen
-     * 1 - tile safely revealed
-     * 2 - fortified
-     * 3 - mine triggered
-     * @param {CursorProperties} cursorProp
-     * // TODO remove the code?
-     * @returns tile code
+     * @param {CursorProperties} cursorProp the cursor properties
+     * @param {boolean} leftClick if this is a left click.
      */
-    clicTile(cursorProp) {
+    clicTile(cursorProp, leftClick) {
+        /**
+         * @type {TileEntity|null}
+         */
         const tile = cursorProp.pick(this.getInstances());
-        if (tile == null || tile.isRevealed) return 0;
-        // TODO secure mechanism
-        if (tile.isSecured) return 0;
+        if (tile == null) return;
+        if (this._firstClick) {
+            this._firstClick = false;
+            this.countMinesAndReposition(tile);
+            if (this._DEBUG_REVEAL_ALL) this.revealAll();
+        }
+        if (tile.isRevealed) return;
+        const rightClick = !leftClick;
+        if (leftClick && tile.isSecured) return;
+        if (rightClick) { // Toggle tile secure
+            tile.isSecured = !tile.isSecured;
+            tile.textureLayer = tile.isSecured ? this._SECURED : this._COVER;
+            return;
+        }
         // reveal tile for better or worse
         tile.isRevealed = true;
         if (tile.isMine) {
             tile.textureLayer = this._MINE;
             this.triggerMine(tile);
-            return 3;
+            return;
         }
         tile.textureLayer = this._REVEALED;
         if (tile.nbMine > 0) this.createNumber(tile);
-        return 1;
     }
 
     createNumber(tile) {
@@ -141,12 +208,13 @@ class Tiles extends MultiSprite {
     triggerMine(tile) {
         this._triggered = true;
         this._triggeredMine = tile;
-        this._fuseStage= 0;
+        this._fuseStage = 0;
         this._fuseBlip = 0;
         this._fuseBlipStage = 0;
     }
 
-    updateEntity(delta){
+    updateEntity(delta) {
+        super.updateEntity(delta);
         if (this._triggered) {
             this.dampenBlip(delta);
             const maxRadius = 0.5 * Math.max(this.nbCol, this.nbRow);
@@ -214,9 +282,11 @@ class Tiles extends MultiSprite {
         }
     }
 
-    reset () {
+    reset() {
         this.setInstances([]);
+        this._firstClick = true;
         this._hasLost = false;
         this._hasWon = false;
+        this._mineRowColArray = null;
     }
 }

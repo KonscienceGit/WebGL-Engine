@@ -2,7 +2,7 @@ class MineSweeperStateManager extends AbstractStateManager{
     /**
      * The state manager of the demo.
      * This is an exemple implementation of the game state logic.
-     * @param {GameObjectsManager} gameObjectManager
+     * @param {MineSweeperObjectsManager} gameObjectManager
      * @param {MinesweeperInputManager} gameBindings
      */
     constructor(gameObjectManager, gameBindings) {

@@ -7,10 +7,6 @@ class Sprite extends Entity {
      * @param {options} options the sprite options.
      * @param {string[]|string} [options.imagespaths] the path (or array of pathes) to the images to loaf in the sprites.
      * @param {Vec4} [options.color] the sprite color, if not using an image (or the image is not found.)
-     * @param {boolean} [options.sizeindevice=false] If true, make this sprite ignore camera zoom and worldscale.
-     * Sprite size will then be in "vertical screen" unit, meaning a size of 1.0 will be the size of the screen vertical coverage.
-     * @param {boolean} [options.positionindevice=false] If true, make this sprite ignore camera panning and zoom.
-     * Sprite position will then be in "vertical screen" unit, meaning a position of x = 0.5 will put the sprite center at the screen right edge, 0 in the middle and so on.
      */
     constructor(renderer, options) {
         super();
@@ -18,9 +14,9 @@ class Sprite extends Entity {
         this.size.setValues(null, null);
         this._definedWidth = null;
         this._definedHeight = null;
-        this._sizeInDevice = false;
-        this._positionInDevice = false;
         this.textureSize = new Vec2(1, 1);
+        this._time = 0;
+        this._todoScale = new Vec2(0, 0);
         this.setLoaded(false);
         const gl = renderer.getGLContext();
 
@@ -31,8 +27,6 @@ class Sprite extends Entity {
         } else {
             if (options.hasOwnProperty('color')) color = options.color;
             if (options.hasOwnProperty('imagespaths')) imagesPaths = options.imagespaths;
-            if (options.hasOwnProperty('sizeindevice')) this._sizeInDevice = options.sizeindevice;
-            if (options.hasOwnProperty('positionindevice')) this._positionInDevice = options.positionindevice;
         }
 
         this._texture = gl.createTexture();
@@ -51,9 +45,13 @@ class Sprite extends Entity {
                 this.loadImage(i, imagesPaths[i], gl, this._texture);
             }
         }
-
         this._uniFp2 = new Float32Array(2);
         this._uniFp4 = new Float32Array(4);
+    }
+
+    updateEntity(delta) {
+        super.updateEntity(delta);
+        this._time += delta;
     }
 
     initGraphics(gl) {
@@ -63,14 +61,15 @@ class Sprite extends Entity {
         this._coordAttrib = gl.getAttribLocation(this._shaderProgram, "vertCoords");
         this._textCoordAttrib = gl.getAttribLocation(this._shaderProgram, "textCoordinates");
 
-        this._isSizeInDeviceUniform = gl.getUniformLocation(this._shaderProgram, "sizeInDevice");
-        this._isPositionInDeviceUniform = gl.getUniformLocation(this._shaderProgram, "positionInDevice");
         this._scaleUniform = gl.getUniformLocation(this._shaderProgram, "scale");
         this._positionUniform = gl.getUniformLocation(this._shaderProgram, "position");
         this._rotationUniform = gl.getUniformLocation(this._shaderProgram, "rotation");
         this._colorUniform = gl.getUniformLocation(this._shaderProgram, "color");
+
+        this._modelWorldMatUniform = gl.getUniformLocation(this._shaderProgram, "modelWorld");
+        this._viewProjMatUniform = gl.getUniformLocation(this._shaderProgram, "viewProj");
+
         this._spriteDimensionsUniform = gl.getUniformLocation(this._shaderProgram, "spriteDimensions");
-        this._canvasDimensionsUniform = gl.getUniformLocation(this._shaderProgram, "canvasDimensions");
         this._canvasPositionUniform = gl.getUniformLocation(this._shaderProgram, "canvasPosition");
         this._textureLayerUniform = gl.getUniformLocation(this._shaderProgram, "textureLayer");
         this._alphaOutlineUniform = gl.getUniformLocation(this._shaderProgram, "alphaOutline");
@@ -82,15 +81,15 @@ class Sprite extends Entity {
         gl.bindVertexArray(this._vao);
         gl.bindBuffer(gl.ARRAY_BUFFER, this._vertex_buffer);
         gl.bufferData(gl.ARRAY_BUFFER, this.getVertices(), gl.STATIC_DRAW);
-        const int8Byte = 1;
+        const fp32Bytes = 4;
         const vertexCoord = 2;
         const textCoord = 2;
-        const stride = (vertexCoord + textCoord) * int8Byte;
-        const textCoordOffset = vertexCoord * int8Byte;
+        const stride = (vertexCoord + textCoord) * fp32Bytes;
+        const textCoordOffset = vertexCoord * fp32Bytes;
         gl.enableVertexAttribArray(this._coordAttrib);
-        gl.vertexAttribPointer(this._coordAttrib, 2, gl.BYTE, false, stride, 0);
+        gl.vertexAttribPointer(this._coordAttrib, 2, gl.FLOAT, false, stride, 0);
         gl.enableVertexAttribArray(this._textCoordAttrib);
-        gl.vertexAttribPointer(this._textCoordAttrib, 2, gl.BYTE, false, stride, textCoordOffset);
+        gl.vertexAttribPointer(this._textCoordAttrib, 2, gl.FLOAT, false, stride, textCoordOffset);
     }
 
     draw(renderer) {
@@ -98,6 +97,15 @@ class Sprite extends Entity {
         this.setupContext(renderer);
         gl.drawArrays(gl.TRIANGLES, 0, 6);
         this.restoreContext(gl);
+    }
+
+    /**
+     * @param {Entity} entity
+     */
+    updateLocalMatrix(entity) {
+        // TODO make size instead modify vertices coords, not scale
+        this._todoScale.copy(entity.size).mul(entity.scale);
+        this.modelWorldMat.makeSRT(this._todoScale, entity.rotation, entity.position);
     }
 
     /**
@@ -149,7 +157,7 @@ class Sprite extends Entity {
         gl.useProgram(this._shaderProgram);
         gl.bindTexture(gl.TEXTURE_2D_ARRAY, this._texture);
         this.setupUniforms(gl, this);
-        renderer.getCamera().setViewProjectionUniform(gl, this._canvasDimensionsUniform, this._canvasPositionUniform);
+        renderer.getCamera().setViewProjectionUniform(gl, this._viewProjMatUniform);
     }
 
     /**
@@ -164,7 +172,7 @@ class Sprite extends Entity {
      * @param {WebGL2RenderingContext} gl
      */
     restoreContext(gl) {
-        // gl.bindVertexArray(null);
+        gl.bindVertexArray(null);
     }
 
     /**
@@ -180,12 +188,12 @@ class Sprite extends Entity {
      * @param {Entity} entity
      */
     setupUniforms(gl, entity) {
+        this.updateLocalMatrix(entity);
         gl.uniform1i(this._textureLayerUniform, entity.textureLayer);
         gl.uniform1f(this._rotationUniform, entity.rotation);
         gl.uniform1f(this._alphaOutlineUniform, entity.alphaOutline);
 
-        gl.uniform1i(this._isSizeInDeviceUniform, +this._sizeInDevice);
-        gl.uniform1i(this._isPositionInDeviceUniform, +this._positionInDevice);
+        gl.uniformMatrix3fv(this._modelWorldMatUniform, false, this.modelWorldMat.m);
 
         const u2 = this._uniFp2;
         gl.uniform2fv(this._spriteDimensionsUniform, entity.size.toArray(u2));
@@ -245,20 +253,23 @@ class Sprite extends Entity {
         });
     }
 
-    static VERTICES = new Int8Array([-1, -1, 0, 1, 1, -1, 1, 1, -1, 1, 0, 0, 1, 1, 1, 0, -1, 1, 0, 0, 1, -1, 1, 1]);
+    static VERTICES = new Float32Array([
+        // X, Y, U, V
+        // T1
+        -0.5, -0.5, 0, 1,
+        0.5, -0.5, 1, 1,
+        -0.5, 0.5, 0, 0,
+        // T2
+        0.5, 0.5, 1, 0,
+        -0.5, 0.5, 0, 0,
+        0.5, -0.5, 1, 1
+    ]);
 
     /**
      * @private
-     * @returns {Int8Array}
+     * @returns {Float32Array}
      */
     getVertices() {
         return Sprite.VERTICES;
-    }
-
-    /**
-     * @return {boolean} if this netity position is in device coordinates.
-     */
-    isPositionInDevice() {
-        return this._positionInDevice;
     }
 }

@@ -22,7 +22,7 @@ class AnnotatedAxisOverlay extends Entity {
         this.restoreContext(gl);
     }
 
-    initOverlay(renderer){
+    initOverlay(renderer) {
         // Shader
         const gl = renderer.getGLContext();
         const shaderUtils = renderer.getShaderUtils();
@@ -55,27 +55,17 @@ class AnnotatedAxisOverlay extends Entity {
         gl.uniform4fv(this._overlayColorUniform, this.color.toArray(this._fp4));
         gl.uniform2fv(this._resolutionUniform, renderer.getRenderResolution().toArray(this._fp2));
         gl.uniform1f(this._opacityUniform, this._opacity);
-        renderer.getCamera().setViewProjectionUniform(gl, this._screenWorldSizeUniform, this._canvasPositionUniform);
+        renderer.getCamera().setWorldUniform(gl, this._screenWorldSizeUniform, this._canvasPositionUniform);
     }
 
     /**
      * @param {WebGL2RenderingContext} gl
      */
     restoreContext(gl) {
-        // gl.bindVertexArray(null);
+        gl.bindVertexArray(null);
     }
 
-    /** @param {Vec4} color the color in [0 to 1] RBGA components */
-    setColor(color) {
-        this.color.copy(color);
-    }
-
-    /** @param {number} opacity */
-    setOpacity(opacity) {
-        this._opacity = opacity;
-    }
-
-    getVertexCode(){
+    getVertexCode() {
         return [
             'uniform vec4 overlayColor;',
             'uniform float opacity;',
@@ -96,7 +86,6 @@ class AnnotatedAxisOverlay extends Entity {
             '    float off = 0.5;',
             '    if (fract(resolution.x / 2.) > 0.1 ) offset.x = off;',
             '    if (fract(resolution.y / 2.) > 0.1 ) offset.y = off;',
-            '    vec2 adjustedCoord = vertCoords - canvasPosition / screenWorldSize;',
             '    worldPos = vertCoords * screenWorldSize / 2. - canvasPosition;',
             '    pixelPos = offset + (worldPos / screenWorldSize) * resolution;',
             '    worldToPixel = resolution / screenWorldSize;',
@@ -104,7 +93,7 @@ class AnnotatedAxisOverlay extends Entity {
         ].join('\n');
     }
 
-    getFragmentCode(){
+    getFragmentCode() {
         return [
             'uniform vec2 resolution;',
             'in vec4 color;',

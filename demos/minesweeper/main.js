@@ -6,14 +6,14 @@ function main() {
 
     const camera = new Camera2D();
     const renderer = new Renderer(canvas, camera);
-    const grey = 150/255;
+    const grey = 150 / 255;
     renderer.setClearColor(new Vec4(grey, grey, grey, 1));
     renderer.setDisplayFullscreen();
     camera.setVerticalScreenWorldSize(1.0);
 
     // Inputs
     const minesweeperInputManager = new MinesweeperInputManager(renderer);
-    const gameObjectManager = new GameObjectsManager(renderer);
+    const gameObjectManager = new MineSweeperObjectsManager(renderer);
     const gameStateManager = new MineSweeperStateManager(gameObjectManager, minesweeperInputManager);
     const renderableArray = gameObjectManager.spriteArray;
     LoadingManager.callbackWhenLoaded(renderableArray, init);

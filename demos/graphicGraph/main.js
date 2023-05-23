@@ -14,7 +14,7 @@ function main() {
     let previousTime = 0.0;
     const camera = new Camera2D();
     const renderer = new Renderer(canvas, camera);
-    const grey = 150/255;
+    const grey = 150 / 255;
     renderer.setClearColor(new Vec4(grey, grey, grey, 1));
     renderer.setDisplayFullscreen();
     camera.setVerticalScreenWorldSize(2.5);
@@ -38,7 +38,7 @@ function main() {
     function renderGameFrame(timeStamp) {
         const deltaTime = computeDelta(timeStamp);
         graphInputManager.parseBindings(deltaTime);
-        if (renderer.needRepaint() || graphManager.needsUpdate() || bench.enable){
+        if (renderer.needRepaint() || graphManager.needsUpdate() || bench.enable) {
             graphManager.update();
             updateSprites(renderableArray, deltaTime);
             renderer.clear();
