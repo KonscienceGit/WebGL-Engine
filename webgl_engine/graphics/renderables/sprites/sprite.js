@@ -1,3 +1,16 @@
+const DEFAULT_VERTICES = new Float32Array([
+    // X, Y, U, V
+    // T1
+    -0.5, -0.5, 0, 1,
+    0.5, -0.5, 1, 1,
+    -0.5, 0.5, 0, 0,
+    // T2
+    0.5, 0.5, 1, 0,
+    -0.5, 0.5, 0, 0,
+    0.5, -0.5, 1, 1
+]);
+const DEFAULT_VERTICE_ATTRIBS_COUNT = 4; // X,Y,U,V
+
 /**
  * Can be animated by storing multiple images.
  */
@@ -11,12 +24,13 @@ class Sprite extends Entity {
     constructor(renderer, options) {
         super();
         this.setVisible(true);
+        this.setVertices(DEFAULT_VERTICES);
         this.size.setValues(null, null);
         this._definedWidth = null;
+        this._updateVertices = false;
         this._definedHeight = null;
         this.textureSize = new Vec2(1, 1);
         this._time = 0;
-        this._todoScale = new Vec2(0, 0);
         this.setLoaded(false);
         const gl = renderer.getGLContext();
 
@@ -100,15 +114,6 @@ class Sprite extends Entity {
     }
 
     /**
-     * @param {Entity} entity
-     */
-    updateLocalMatrix(entity) {
-        // TODO make size instead modify vertices coords, not scale
-        this._todoScale.copy(entity.size).mul(entity.scale);
-        this.modelWorldMat.makeSRT(this._todoScale, entity.rotation, entity.position);
-    }
-
-    /**
      * Set the sprite width, the sprite will adapt the height based on the sprite aspect ratio
      * @param {number | null} s size in world coordinates, or null for automatic size based on height and the texture aspect ratio
      */
@@ -145,6 +150,19 @@ class Sprite extends Entity {
         if (this.size.x == null && this.size.y == null) {
             this.size.copy(this.textureSize);
         }
+        // Then update vertices
+        const nbVals = DEFAULT_VERTICES.length;
+        const verts = new Float32Array(nbVals);
+        const x = this.size.x;
+        const y = this.size.y;
+        for (let i = 0; i < nbVals; i += DEFAULT_VERTICE_ATTRIBS_COUNT) {
+            verts[i] = DEFAULT_VERTICES[i] * x;
+            verts[i + 1] = DEFAULT_VERTICES[i + 1] * y;
+            verts[i + 2] = DEFAULT_VERTICES[i + 2];
+            verts[i + 3] = DEFAULT_VERTICES[i + 3];
+        }
+        this.setVertices(verts);
+        this._updateVertices = true;
     }
 
     /**
@@ -154,6 +172,11 @@ class Sprite extends Entity {
     setupContext(renderer) {
         const gl = renderer.getGLContext();
         gl.bindVertexArray(this._vao);
+        if (this._updateVertices) {
+            this._updateVertices = false;
+            gl.bindBuffer(gl.ARRAY_BUFFER, this._vertex_buffer);
+            gl.bufferData(gl.ARRAY_BUFFER, this.getVertices(), gl.STATIC_DRAW);
+        }
         gl.useProgram(this._shaderProgram);
         gl.bindTexture(gl.TEXTURE_2D_ARRAY, this._texture);
         this.setupUniforms(gl, this);
@@ -169,6 +192,7 @@ class Sprite extends Entity {
     }
 
     /**
+     * For debug purpose. Can be disabled if the scene renders correctly without it.
      * @param {WebGL2RenderingContext} gl
      */
     restoreContext(gl) {
@@ -183,18 +207,18 @@ class Sprite extends Entity {
     }
 
     /**
+     * Setup the uniforms for the given entity. Usually a sprite will setup its own uniforms,
+     * but for multi-sprites which render a lot of similar sprites (sharing the same shader and texture)
+     * this can be used to set the uniforms of other entity on this entity render.
      * @protected
      * @param {WebGL2RenderingContext} gl
      * @param {Entity} entity
      */
     setupUniforms(gl, entity) {
-        this.updateLocalMatrix(entity);
         gl.uniform1i(this._textureLayerUniform, entity.textureLayer);
         gl.uniform1f(this._rotationUniform, entity.rotation);
         gl.uniform1f(this._alphaOutlineUniform, entity.alphaOutline);
-
-        gl.uniformMatrix3fv(this._modelWorldMatUniform, false, this.modelWorldMat.m);
-
+        gl.uniformMatrix3fv(this._modelWorldMatUniform, false, entity.modelWorldMat.m);
         const u2 = this._uniFp2;
         gl.uniform2fv(this._spriteDimensionsUniform, entity.size.toArray(u2));
         gl.uniform2fv(this._scaleUniform, entity.scale.toArray(u2));
@@ -253,23 +277,17 @@ class Sprite extends Entity {
         });
     }
 
-    static VERTICES = new Float32Array([
-        // X, Y, U, V
-        // T1
-        -0.5, -0.5, 0, 1,
-        0.5, -0.5, 1, 1,
-        -0.5, 0.5, 0, 0,
-        // T2
-        0.5, 0.5, 1, 0,
-        -0.5, 0.5, 0, 0,
-        0.5, -0.5, 1, 1
-    ]);
-
     /**
-     * @private
      * @returns {Float32Array}
      */
     getVertices() {
-        return Sprite.VERTICES;
+        return this._vertices;
+    }
+
+    /**
+     * @param {Float32Array} verts
+     */
+    setVertices(verts) {
+        this._vertices = verts;
     }
 }

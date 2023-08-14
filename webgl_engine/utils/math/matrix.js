@@ -121,4 +121,66 @@ class Matrix3 {
         const m = this.m;
         for (let i = 0; i < 9; i++) m[i] = o[i];
     }
+
+    //    0 | 1 | 2
+    //    3 | 4 | 5
+    //    6 | 7 | 8
+
+    /**
+     * Set this matrix to be the product of the multiplication of this matrix and the parameter matrix.
+     * This matrix being A, parameter matrix being B, this matrix will become the result matrix C such as:
+     * A . B = C
+     * @param {Matrix3} matB the parameter matrix
+     */
+    multiply(matB) {
+        this.multMat(this, matB, this);
+    }
+
+    preMultiply(matB) {
+        this.multMat(matB, this, this);
+    }
+
+    /**
+     * Multiply matrices such that
+     * A.B = C
+     * Result is stored in C
+     * @param {Matrix3} A
+     * @param {Matrix3} B
+     * @param {Matrix3} C
+     */
+    multMat(A, B, C) {
+        const a = A.m;
+        const b = B.m;
+        const c = C.m;
+        const v11 = a[0] * b[0] + a[1] * b[3] + a[2] * b[6];
+        const v12 = a[0] * b[1] + a[1] * b[4] + a[2] * b[7];
+        const v13 = a[0] * b[2] + a[1] * b[5] + a[2] * b[8];
+        const v21 = a[3] * b[0] + a[4] * b[3] + a[5] * b[6];
+        const v22 = a[3] * b[1] + a[4] * b[4] + a[5] * b[7];
+        const v23 = a[3] * b[2] + a[4] * b[5] + a[5] * b[8];
+        const v31 = a[6] * b[0] + a[7] * b[3] + a[8] * b[6];
+        const v32 = a[6] * b[1] + a[7] * b[4] + a[8] * b[7];
+        const v33 = a[6] * b[2] + a[7] * b[5] + a[8] * b[8];
+        c[0] = v11;
+        c[1] = v12;
+        c[2] = v13;
+        c[3] = v21;
+        c[4] = v22;
+        c[5] = v23;
+        c[6] = v31;
+        c[7] = v32;
+        c[8] = v33;
+    }
+
+    /**
+     * Apply this transformation to a point.
+     * @param {Vec2} pt
+     */
+    applyToPosition(pt) {
+        const m = this.m;
+        const x = pt.x;
+        const y = pt.y;
+        pt.x = x * m[0] + y * m[1] + m[2];
+        pt.y = x * m[3] + y * m[4] + m[5];
+    }
 }

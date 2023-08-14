@@ -31,21 +31,21 @@ class CollisionManager {
 
     release() {
         this._aliens.setVisible(false);
-        this._aliens.setInstances([]);
+        this._aliens.childrenNodes = [];
         this._aliensMissiles.setVisible(false);
-        this._aliensMissiles.setInstances([]);
+        this._aliensMissiles.childrenNodes = [];
         this._playerMissiles.setVisible(false);
-        this._playerMissiles.setInstances([]);
+        this._playerMissiles.childrenNodes = [];
     }
 
     /**
-     * @param {MultiSprite} objects
+     * @param {Entity} objects
      * @param {boolean} reachBottomHurt
      * @param {number} delta
      */
     updatePhysics(objects, delta, reachBottomHurt) {
         const objectStayOnScreen = [];
-        objects.getInstances().forEach(object => {
+        objects.childrenNodes.forEach(object => {
             this.applyMovement(object, delta);
             const moveDown = object.translationSpeed.y < 0;
 
@@ -62,18 +62,18 @@ class CollisionManager {
             }
 
             //touch right
-            if(object.position.x > this._screenLimitX){
+            if (object.position.x > this._screenLimitX) {
                 object.position.x = this._screenLimitX;
                 object.translationSpeed.x *= -1;
             }
 
             //touch left
-            if(object.position.x < -this._screenLimitX){
+            if (object.position.x < -this._screenLimitX) {
                 object.position.x = -this._screenLimitX;
                 object.translationSpeed.x *= -1;
             }
         });
-        objects.setInstances(objectStayOnScreen);
+        objects.childrenNodes = objectStayOnScreen;
     }
 
     applyMovement(entity, delta) {
@@ -103,22 +103,22 @@ class CollisionManager {
 
     updatePlayerCollisions(objects) {
         const objectStayOnScreen = [];
-        objects.getInstances().forEach(object => {
+        objects.childrenNodes.forEach(object => {
             if (this._spaceCraft.intersect(object)) {
                 this._spaceCraft.looseOneLife();
             } else {
                 objectStayOnScreen.push(object);
             }
         });
-        objects.setInstances(objectStayOnScreen);
+        objects.childrenNodes = objectStayOnScreen;
     }
 
     updatePlayerMissilesCollisions() {
-        const missiles = this._playerMissiles.getInstances().slice();
-        const aliens = this._aliens.getInstances().slice();
-        for (let m = 0; m < this._playerMissiles.getInstances().length; m++) {
+        const missiles = this._playerMissiles.childrenNodes.slice();
+        const aliens = this._aliens.childrenNodes.slice();
+        for (let m = 0; m < this._playerMissiles.childrenNodes.length; m++) {
             if (missiles[m] === undefined) continue;
-            for (let a = 0; a < this._aliens.getInstances().length; a++) {
+            for (let a = 0; a < this._aliens.childrenNodes.length; a++) {
                 if (aliens[a] === undefined) continue;
                 if (missiles[m].intersect(aliens[a])) {
                     this._scoreCounter.createScoreFeedbackAt(aliens[a], 10);
@@ -133,7 +133,7 @@ class CollisionManager {
         const aliensLeft = [];
         aliens.forEach(a => aliensLeft.push(a));
 
-        this._playerMissiles.setInstances(missilesLeft);
-        this._aliens.setInstances(aliensLeft);
+        this._playerMissiles.childrenNodes = missilesLeft;
+        this._aliens.childrenNodes = aliensLeft;
     }
 }

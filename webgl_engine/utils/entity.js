@@ -1,13 +1,16 @@
 const __tmpV2 = new Vec2(0, 0);
+const __tmpPosA = new Vec2(0, 0);
+const __tmpPosB = new Vec2(0, 0);
+
 /**
  * Define an object that can be rendered by the Renderer, and loaded by the LoadingManager.
  */
 class Entity {
     constructor() {
-        this.visible = false;
+        this.visible = true;
         this.loaded = true;
         this.hasPhysics = false;
-        this.updatable = false;
+        this.updatable = true;
         this.creationTime = performance.now();
         this.childrenNodes = [];
 
@@ -16,11 +19,12 @@ class Entity {
         this.rotation = 0;
         this.position = new Vec2(0, 0);
         this.modelWorldMat = new Matrix3();
+        this.localMat = new Matrix3();
 
         // Render properties
         this.size = new Vec2(1, 1);
         this.textureLayer = 0;
-        this.color = new Vec4(1,1,1,1);
+        this.color = new Vec4(1, 1, 1, 1);
         this.alphaOutline = 0.; // Sprite outline/shadow strength, 0 is off.
 
         // Physics properties
@@ -67,6 +71,95 @@ class Entity {
     }
 
     /**
+     * Update this entity matrices.
+     * @param patrix the parent entity matrix ot update this entity world matrix.
+     */
+    updateMatrix(patrix) {
+        this.localMat.makeSRT(this.scale, this.rotation, this.position);
+        this.modelWorldMat.copy(this.localMat);
+        // TODO test if this is the correct multiplication order
+        this.modelWorldMat.multiply(patrix);
+    }
+
+    /**
+     * Update this entity, its matrix and all its child entities if they are updatable.
+     * @param {number} delta the time delta (in seconds) since the last frame.
+     * @param {Matrix3} patrix the parent entity matrix ot update this entity world matrix.
+     */
+    update(delta, patrix) {
+        if (!this.isUpdatable()) return;
+        this.updateMatrix(patrix);
+        this.updateEntity(delta);
+        if (this.childrenNodes) {
+            for (let i = 0; i < this.childrenNodes.length; i++) {
+                this.childrenNodes[i].update(delta, this.modelWorldMat);
+            }
+        }
+    }
+
+    /**
+     * Update this entity, to implement by user.
+     * @param {number} delta the time delta (in seconds) since the last frame.
+     */
+    updateEntity(delta) {
+    }
+
+    /**
+     * Draw this entity and all its child entities if they are visible.
+     * @param {Renderer} renderer
+     */
+    draw(renderer) {
+        if (this.childrenNodes) {
+            for (let i = 0; i < this.childrenNodes.length; i++) {
+                const node = this.childrenNodes[i];
+                if (node.isVisible()) node.draw(renderer);
+            }
+        }
+    }
+
+    /**
+     * Return all entities contained in this entity, including nested ones.
+     * @param {Entity[]} [target]
+     */
+    getAllNodes(target) {
+        const t = target == null ? [] : target;
+        t.push(this);
+        this.childrenNodes.forEach((node) => node.getAllNodes(t));
+        return t;
+    }
+
+    /**
+     * Add the given entity as a children to this entity.
+     * @param {Entity} entity
+     */
+    add(entity) {
+        const nodes = this.childrenNodes;
+        const nb = nodes.length;
+        for (let i = 0; i < nb; i++) {
+            if (nodes[i] === entity) return;
+        }
+        nodes.push(entity);
+    }
+
+    /**
+     * Remove the given entity from the children of this entity, if it is present.
+     * @param {Entity} entity
+     */
+    remove(entity) {
+        let pos = -1;
+        const nodes = this.childrenNodes;
+        const nb = nodes.length;
+        for (let i = 0; i < nb; i++) {
+            if (nodes[i] === entity) {
+                pos = i;
+                break;
+            }
+        }
+        if (pos === -1) return;
+        this.childrenNodes = nodes.splice(pos, 1);
+    }
+
+    /**
      * @param {Entity} entity
      * @returns {boolean}
      */
@@ -84,13 +177,21 @@ class Entity {
     }
 
     intersectRounds(r1, r2) {
-        let dist = r1.radius + r2.radius;
+        // Apply transformations, they'll be up to date compared to the previous render (for the parent transformations atleast)
+        __tmpPosA.copy(r1.position);
+        r1.modelWorldMat.applyToPosition(__tmpPosA);
+        __tmpPosB.copy(r2.position);
+        r2.modelWorldMat.applyToPosition(__tmpPosB);
+        let dist = r1.radius * r1.scale.x + r2.radius * r2.scale.x; // only use x since we assume the scale is uniform. For non-uniform sphere (ellipses) collision... well that won't work.
         dist *= dist;
-        let dX = r1.position.x - r2.position.x;
+        let dX = __tmpPosA.x - __tmpPosB.x;
         dX *= dX;
-        if (dX >= dist) return false;
-        let dY = r1.position.y - r2.position.y;
+        // if (dX >= dist) return false;
+        let dY = __tmpPosA.y - __tmpPosB.y;
         dY *= dY;
+        if (dX + dY < 150) {
+            console.log(Math.round(Math.sqrt(dX + dY)));
+        }
         return (dX + dY) < dist;
     }
 
@@ -130,7 +231,7 @@ class Entity {
      * Set this.loaded to false first if your entity must perform asynchronous work after constructor call, before being usable in the game.
      * @returns {boolean}
      */
-    isLoaded(){
+    isLoaded() {
         return this.loaded;
     }
 
@@ -138,33 +239,8 @@ class Entity {
      * Set if this object has been loaded or not.
      * @param {boolean} bool
      */
-    setLoaded(bool){
+    setLoaded(bool) {
         this.loaded = bool;
-    }
-
-    /**
-     * Update this entity and all its child entities if they are updatable.
-     * This method is to be called each frame.
-     * @param {number} delta the time delta (in seconds) since the last frame.
-     */
-    updateEntity(delta){
-        if (this.childrenNodes) {
-            for(let i = 0; i < this.childrenNodes.length; i++) {
-                if (this.childrenNodes[i].isUpdatable()) this.childrenNodes[i].updateEntity(delta);
-            }
-        }
-    }
-
-    /**
-     * Draw this entity and all its child entities if they are visible.
-     * @param {Renderer} renderer
-     */
-    draw(renderer) {
-        if (this.childrenNodes) {
-            for(let i = 0; i < this.childrenNodes.length; i++) {
-                if (this.childrenNodes[i].isVisible()) this.childrenNodes[i].draw(renderer);
-            }
-        }
     }
 
     /**
@@ -172,7 +248,8 @@ class Entity {
      * @param {Renderer} renderer the offscreen renderer which will render this entity for picking.
      * @param {number} id the id to assign to this entity in picking process.
      */
-    drawForPicking(renderer, id){}
+    drawForPicking(renderer, id) {
+    }
 
     /**
      * Return if this entity is visible or not.

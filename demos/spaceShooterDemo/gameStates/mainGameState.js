@@ -40,7 +40,7 @@ class MainGameState extends AbstractState {
         gameBindings.addCallbackToAction(SpaceShooterActions.MENU_RETURN_TO_MAIN, returnToMainMenuBindedCallback);
     }
 
-    start(){
+    start() {
         this._moveLeft = 0.;
         this._moveRight = 0.;
         this._moveToCursor = false;
@@ -95,11 +95,11 @@ class MainGameState extends AbstractState {
         this._scoreCounter.releaseFeedbackInstances();
     }
 
-    setEscapeState(escapeState){
+    setEscapeState(escapeState) {
         this._escapeState = escapeState;
     }
 
-    setGameOverState(gameOverState){
+    setGameOverState(gameOverState) {
         this._gameOverState = gameOverState;
     }
 
@@ -159,14 +159,18 @@ class MainGameState extends AbstractState {
         this._lifeCounter.position.lerp(this._lifePoff, this._lifePin, animationState);
     }
 
-    animateOut(delta, animationState) {/* Nothing to animate */}
+    animateOut(delta, animationState) {/* Nothing to animate */
+    }
 
     spawnAliens() {
-        const relativeThreat = this._aliensSprites.getInstances().length;
+        const relativeThreat = this._aliensSprites.childrenNodes.length;
         if (relativeThreat < this._difficulty) {
             let alienType = Math.floor(Math.random() * this._aliensSprites.getImageCount());
-            if(alienType === this._aliensSprites.getImageCount()) alienType--;
-            const alien = this._aliensSprites.createNewInstance(true);
+            if (alienType === this._aliensSprites.getImageCount()) alienType--;
+            const alien = this._aliensSprites.createSubSprite(true);
+            alien.radius = this._aliensSprites.radius;
+            console.log(alien.radius);
+            alien.isRound = true;
             this.setRandomSpawnPosition(alien);
             alien.translationSpeed.y = -100;
             alien.translationSpeed.x = (Math.random() - 0.5) * 100;
@@ -175,21 +179,22 @@ class MainGameState extends AbstractState {
     }
 
     spawnMissiles() {
-        const relativeThreat = this._aliensMissilesSprites.getInstances().length;
-        if (relativeThreat < this._difficulty &&  this._aliensSprites.getInstances().length > 0) {
+        const relativeThreat = this._aliensMissilesSprites.childrenNodes.length;
+        if (relativeThreat < this._difficulty && this._aliensSprites.childrenNodes.length > 0) {
             const alien = this.getRandomAlien();
 
-            const missile = this._aliensMissilesSprites.createNewInstance(true);
+            const missile = this._aliensMissilesSprites.createSubSprite(true);
             missile.position = alien.position.clone();
-            missile.radius = 0; //smaller hit chance
-            missile.translationSpeed.y = alien.translationSpeed.y -100;
+            missile.radius = 0; // smaller hit chance
+            missile.isRound = true;
+            missile.translationSpeed.y = alien.translationSpeed.y - 100;
         }
     }
 
-    getRandomAlien(){
-        const nbAlien = this._aliensSprites.getInstances().length;
+    getRandomAlien() {
+        const nbAlien = this._aliensSprites.childrenNodes.length;
         const i = Math.round(Math.random() * (nbAlien - 1));
-        return this._aliensSprites.getInstances()[i];
+        return this._aliensSprites.childrenNodes[i];
     }
 
     setRandomSpawnPosition(entity) {
@@ -207,7 +212,7 @@ class MainGameState extends AbstractState {
         if (this._moveToCursor) {
             this._moveLeft = 0;
             this._moveRight = 0;
-            if (distance >= 1){
+            if (distance >= 1) {
                 this._moveLeft = 1;
             } else if (distance <= -1) {
                 this._moveRight = 1;
@@ -230,41 +235,42 @@ class MainGameState extends AbstractState {
 
     firePlayerMissile() {
         if (this._timeSinceLastPlayerMissile < this._deltaBetweenPlayerCanFire) return;
-        const missile = this._playerMissilesSprites.createNewInstance(true);
+        const missile = this._playerMissilesSprites.createSubSprite(true);
         missile.position = this._spaceCraft.position.clone();
         missile.radius = 0; //smaller hit chance
+        missile.isRound = true;
         missile.translationSpeed.y = 500;
         this._timeSinceLastPlayerMissile = 0;
     }
 
-    fireShipCallback(value){
-        if (this.isInMainLoop() && value > 0){
+    fireShipCallback(value) {
+        if (this.isInMainLoop() && value > 0) {
             this.firePlayerMissile();
         }
     }
 
-    moveShipLeftCallback(value){
-        if (this.isInMainLoop()){
+    moveShipLeftCallback(value) {
+        if (this.isInMainLoop()) {
             this._moveLeft = value;
         }
         this._moveToCursor = false;
     }
 
-    moveShipRightCallback(value){
-        if (this.isInMainLoop()){
+    moveShipRightCallback(value) {
+        if (this.isInMainLoop()) {
             this._moveRight = value;
         }
         this._moveToCursor = false;
     }
 
-    moveShipToCursorCallback(cursor){
-        if (this.isInMainLoop()){
+    moveShipToCursorCallback(cursor) {
+        if (this.isInMainLoop()) {
             this.moveTo(cursor.screenWorldPos);
         }
     }
 
-    returnToMainMenuCallback(value){
-        if (this.isInMainLoop() && value > 0){
+    returnToMainMenuCallback(value) {
+        if (this.isInMainLoop() && value > 0) {
             this.setReadyForNextState();
         }
     }

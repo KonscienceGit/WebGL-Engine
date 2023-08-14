@@ -11,12 +11,14 @@ function main() {
     // renderer.setDisplayFullscreen();
     camera.setVerticalScreenWorldSize(renderer.getRenderResolution().y);
     const gameObjectManager = new SpaceShooterObjectsManager(renderer);
-    const renderableArray = gameObjectManager.getRenderableArray();
+    const sceneRoot = gameObjectManager.getRoot();
+    const scene = new Scene2D(sceneRoot, camera);
+    renderer.setScene(scene);
 
     // Inputs
     const gameBindings = new SpaceShooterInputManager(renderer);
     const gameStateManager = new StateManager(gameObjectManager, gameBindings);
-    LoadingManager.callbackWhenLoaded(renderableArray, init);
+    LoadingManager.callbackWhenLoaded(sceneRoot, init);
 
     function init() {
         renderGameFrame(0);
@@ -29,8 +31,7 @@ function main() {
         const deltaTime = computeDelta(timeStamp);
         gameBindings.parseBindings(deltaTime);
         gameStateManager.updateCurrentState(deltaTime);
-        updateSprites(renderableArray, deltaTime);
-        renderer.draw(renderableArray);
+        renderer.render(deltaTime);
 
         //Request another animation frame, at a pace that should match monitor refresh rate (or at least the web browser refresh rate)
         requestAnimationFrame(renderGameFrame);
@@ -44,14 +45,6 @@ function main() {
         const deltaTime = time - previousTime;
         previousTime = time;
         return deltaTime;
-    }
-
-    /**
-     * @param {Sprite[]} spriteArray
-     * @param {number} delta
-     */
-    function updateSprites(spriteArray, delta) {
-        spriteArray.forEach(entity => entity.updateEntity(delta));
     }
 
     return null;

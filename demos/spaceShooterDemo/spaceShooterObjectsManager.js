@@ -11,52 +11,52 @@ class SpaceShooterObjectsManager {
         this._pixelPerfectTool = new PositionTool(renderer);
 
         //---- Setup the sprite render order from back to front: ----//
-        this._spriteArray = [];
+        this._root = new Entity();
 
         //BackGround layer
         this._background = new Sprite(renderer, {imagespaths: path + "background.png"});
-        this._spriteArray.push(this._background);
+        this._root.add(this._background);
 
         //SpaceCraft layer
         this._aliensMissiles = new MultiSprite(renderer, {imagespaths: path + "greenMissile.png"});
         this._aliensMissiles.visible = false;
-        this._spriteArray.push(this._aliensMissiles);
+        this._root.add(this._aliensMissiles);
 
         this._playerMissiles = new MultiSprite(renderer, {imagespaths: path + "redMissile.png"});
         this._playerMissiles.visible = false;
-        this._spriteArray.push(this._playerMissiles);
+        this._root.add(this._playerMissiles);
 
         this._aliens = new MultiSprite(renderer, {imagespaths: aliPathes});
         this._aliens.visible = false;
-        this._spriteArray.push(this._aliens);
+        this._root.add(this._aliens);
 
         this._spaceCraft = new SpaceCraft(renderer, path + "actor/", this._pixelPerfectTool);
         this._spaceCraft.visible = false;
-        this._spriteArray.push(this._spaceCraft);
+        this._root.add(this._spaceCraft);
 
         //GUI layer
         this._scoreCounter = new ScoreCounter(renderer, path + "numbers/", this._pixelPerfectTool);
         this._scoreCounter.visible = false;
-        this._spriteArray.push(this._scoreCounter);
+        this._root.add(this._scoreCounter);
 
         this._lifeCounter = new LifeCounter(renderer, path, this._pixelPerfectTool);
         this._lifeCounter.visible = false;
-        this._spriteArray.push(this._lifeCounter);
+        this._root.add(this._lifeCounter);
 
         //Transparent overlay
         this._translucentOverlay = new TranslucentOverlay(renderer, new Vec4(0, 0, 0, 0.6));
-        this._spriteArray.push(this._translucentOverlay);
+        this._root.add(this._translucentOverlay);
 
         //GUI menu layer
         this._pressToPlayButton = new Sprite(renderer, {imagespaths: path + "pressToPlay.png"});
-        this._spriteArray.push(this._pressToPlayButton);
+        this._root.add(this._pressToPlayButton);
 
         this._logoTitle = new Sprite(renderer, {imagespaths: path + "title_logo.png"});
-        this._spriteArray.push(this._logoTitle);
+        this._root.add(this._logoTitle);
 
         this._replayMenuSprite = new Sprite(renderer, {imagespaths: path + "gameOver.png"});
         this._replayMenuSprite.visible = false;
-        this._spriteArray.push(this._replayMenuSprite);
+        this._root.add(this._replayMenuSprite);
     }
 
     /** @return {PositionTool} */
@@ -114,8 +114,8 @@ class SpaceShooterObjectsManager {
         return this._replayMenuSprite;
     }
 
-    /** @return {Sprite[]} */
-    getRenderableArray() {
-        return this._spriteArray;
+    /** @return {Entity} */
+    getRoot() {
+        return this._root;
     }
 }

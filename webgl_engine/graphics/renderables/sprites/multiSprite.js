@@ -9,13 +9,12 @@ class MultiSprite extends Sprite {
      */
     constructor(renderer, options) {
         super(renderer, options);
-        this._spriteInstances = [];
     }
 
     draw(renderer) {
         const gl = renderer.getGLContext();
         this.setupContext(renderer);
-        this._spriteInstances.forEach(instance => {
+        this.childrenNodes.forEach(instance => {
             if (instance.isVisible()) {
                 this.setupUniforms(gl, instance);
                 gl.drawArrays(gl.TRIANGLES, 0, 6);
@@ -25,34 +24,16 @@ class MultiSprite extends Sprite {
     }
 
     /**
-     * @param {Entity[]} instancesArray
-     */
-    setInstances(instancesArray) {
-        this._spriteInstances = instancesArray;
-    }
-
-    /**
-     * @param {Entity} instance
-     */
-    addInstance(instance) {
-        this._spriteInstances.push(instance);
-    }
-
-    /**
-     * @return {Entity[]}
-     */
-    getInstances() {
-        return this._spriteInstances;
-    }
-
-    /**
-     * @param {boolean} [addToIntances] true to automatically add to this MultiSprite instances.
+     * Create a sub sprite to render.
+     * By default, the created subsprite entity is added to the multsprite childs to render, set to false to allow for custom behaviors.
+     * A subsprite is basically a regular entity and can be created manually.
+     * @param {boolean} [addToChildren=true] true to automatically add the subsprite to this MultiSprite childs for render.
      * @returns {Entity}
      */
-    createNewInstance(addToIntances) {
-        const newInstance = new Entity().copy(this);
-        newInstance.visible = true;
-        if (addToIntances) this.addInstance(newInstance);
-        return newInstance;
+    createSubSprite(addToChildren) {
+        const add = (addToChildren == null) ? true : addToChildren;
+        const newChild = new Entity();
+        if (add) this.add(newChild);
+        return newChild;
     }
 }

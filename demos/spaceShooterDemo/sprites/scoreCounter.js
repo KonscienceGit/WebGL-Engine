@@ -40,7 +40,7 @@ class ScoreCounter extends MultiSprite {
     draw(renderer) {
         if (this._scoreCounterInstances.length === 0) {
             for (let i = 0; i < this._digitCount; i++) {
-                this._scoreCounterInstances.push(this.createNewInstance(false));
+                this._scoreCounterInstances.push(this.createSubSprite(false));
             }
         }
 
@@ -57,7 +57,7 @@ class ScoreCounter extends MultiSprite {
         }
 
         //Combine all instances array for drawing.
-        this.setInstances(this._scoreCounterInstances.concat(this._scoreFeedbackInstances));
+        this.childrenNodes = this._scoreCounterInstances.concat(this._scoreFeedbackInstances);
         super.draw(renderer);
     }
 
@@ -73,12 +73,12 @@ class ScoreCounter extends MultiSprite {
         const offset = this.size.x * scale;
         const digits = this.getDigits(score);
         const digitsCount = digits.length;
-        const plus = this.createNewInstance(false);
+        const plus = this.createSubSprite(false);
         plus.textureLayer = 10; // plus sign
         plus.scale.copy(scaleVec);
         pos.moveRight(digitsCount * offset / 2);
         for (let i = 0; i < digitsCount; i++) {
-            const nextDigit = this.createNewInstance(false);
+            const nextDigit = this.createSubSprite(false);
             nextDigit.textureLayer = digits[i];
             nextDigit.position.copy(pos);
             nextDigit.scale.copy(scaleVec);

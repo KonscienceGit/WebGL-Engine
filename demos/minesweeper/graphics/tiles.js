@@ -198,7 +198,7 @@ class Tiles extends MultiSprite {
     }
 
     createNumber(tile) {
-        const num = this._numbers.createNewInstance(true);
+        const num = this._numbers.createSubSprite(true);
         num.position.copy(tile.position);
         num.textureLayer = tile.nbMine;
         num.color.copy(this._numColor[tile.nbMine]);
