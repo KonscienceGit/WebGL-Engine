@@ -25,8 +25,7 @@ class GraphManager {
         this.axis = new AnnotatedAxisOverlay(renderer, blackColor);
         this.fullscreenButton = new Sprite(renderer, {
             imagespaths: '../../resources/minesweeper/Fullscreen.png',
-            sizeindevice: true,
-            positionindevice: true
+            sizeindevice: true
         });
         this.fullscreenButton.visible = false;
 
@@ -43,7 +42,7 @@ class GraphManager {
         if (document.fullscreenEnabled) {
             const fsbSize = 0.1;
             this.fullscreenButton.position.setValues(-0.4, -0.4);
-            this.fullscreenButton.setHeight(fsbSize);
+            this.fullscreenButton.scale.setValues(fsbSize, fsbSize);
             this.fullscreenButton.isRound = false;
             this.fullscreenButton.radius = 0;
             this.fullscreenButton.visible = true;
@@ -53,7 +52,7 @@ class GraphManager {
 
     updateGraph() {
         const nbPoints = 30;
-        this.graphPoints.setInstances([]);
+        this.graphPoints.childrenNodes = [];
         for (let i = 0; i < nbPoints; i++) {
             const val = i / (nbPoints - 1);
             const interpolated = Interpolator.circleCurve(val, true, false, false);

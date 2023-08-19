@@ -8,15 +8,22 @@ function main() {
     const renderer = new Renderer(canvas, camera);
     const grey = 150 / 255;
     renderer.setClearColor(new Vec4(grey, grey, grey, 1));
+    renderer.setClearColor(new Vec4(0, 0, 0, 1));
     renderer.setDisplayFullscreen();
-    camera.setVerticalScreenWorldSize(1.0);
+    camera.setVerticalScreenWorldSize(1);
 
     // Inputs
     const minesweeperInputManager = new MinesweeperInputManager(renderer);
     const gameObjectManager = new MineSweeperObjectsManager(renderer);
+    const root = gameObjectManager.getRoot();
+    // root.scale.setValues(0.01, 0.01);
+    const scene = new Scene2D(root, camera);
+    renderer.setScene(scene);
     const gameStateManager = new MineSweeperStateManager(gameObjectManager, minesweeperInputManager);
-    const renderableArray = gameObjectManager.spriteArray;
-    LoadingManager.callbackWhenLoaded(renderableArray, init);
+
+    // const onProgress = (l, t) => console.log('Loading: ', l, 'out of', t);
+    // LoadingManager.callbackWhenLoaded(root, init, onProgress);
+    LoadingManager.callbackWhenLoaded(root, init);
 
     function init() {
         renderGameFrame(0);
@@ -29,9 +36,8 @@ function main() {
         const deltaTime = computeDelta(timeStamp);
         minesweeperInputManager.parseBindings(deltaTime);
         gameStateManager.updateCurrentState(deltaTime);
-        updateSprites(renderableArray, deltaTime);
         renderer.clear();
-        renderer.draw(renderableArray);
+        renderer.render(deltaTime);
         //Request another animation frame, at a pace that should match monitor refresh rate (or at least the web browser refresh rate)
         requestAnimationFrame(renderGameFrame);
     }
@@ -45,14 +51,6 @@ function main() {
         const deltaTime = time - previousTime;
         previousTime = time;
         return deltaTime;
-    }
-
-    /**
-     * @param {Sprite[]} spriteArray
-     * @param {number} delta in seconds
-     */
-    function updateSprites(spriteArray, delta) {
-        spriteArray.forEach(entity => entity.updateEntity(delta));
     }
 
     return null;

@@ -9,14 +9,14 @@ class LoadingManager {
         let entitiesArray;
         if (scene instanceof Entity) {
             entitiesArray = scene.getAllNodes();
+        } else if (scene instanceof Scene2D) {
+            entitiesArray = scene.getRoot().getAllNodes();
         } else if (Array.isArray(scene)) {
             entitiesArray = scene;
         } else {
             console.warn('Error: ' + scene + ' is not an netity, array of entity or a Scene.');
             return;
         }
-        // TODO if scene instanceof Scene
-
         this.#checkLoading(entitiesArray, callback, 0, onProgress);
     }
 
@@ -38,11 +38,12 @@ class LoadingManager {
 
             if (loadedCount === nbNode) {
                 callback();
-            } else if (loadedCount > previousLoaded && onProgress != null) {
-                onProgress();
-            } else {
-                LoadingManager.#checkLoading(entities, callback, loadedCount, onProgress);
+                return;
             }
+            if (loadedCount > previousLoaded && onProgress != null) {
+                onProgress(loadedCount, nbNode);
+            }
+            LoadingManager.#checkLoading(entities, callback, loadedCount, onProgress);
         }, 10);
     }
 }

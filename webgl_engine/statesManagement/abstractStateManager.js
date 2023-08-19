@@ -16,7 +16,7 @@ class AbstractStateManager {
 
     /**
      * @public
-     * @param {number} delta, in seconds.
+     * @param {number} delta time since the previous frame, in seconds.
      */
     updateCurrentState(delta) {
         this._activeState.updateState(delta);

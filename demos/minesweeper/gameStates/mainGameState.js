@@ -44,7 +44,7 @@ class MainGameState extends AbstractState {
         const fsbSize = 0.15;
         if (document.fullscreenEnabled) {
             this._fullScreenButton.position.setValues(-0.5 + fsbSize, 0);
-            this._fullScreenButton.size.setValues(fsbSize, fsbSize);
+            this._fullScreenButton.scale.setValues(fsbSize, fsbSize);
             this._fullScreenButton.setVisible(true);
             this._fullScreenButton.isRound = false;
         }
@@ -66,6 +66,7 @@ class MainGameState extends AbstractState {
     }
 
     updateGUI() {
+        // TODO update all these to the new scenegraph way
         if (this._mainUiBlock == null) {
             // Create UI blocks
             this._mainUiBlock = new UIBlock(new Vec2(1, 1));
@@ -97,7 +98,6 @@ class MainGameState extends AbstractState {
         // Update as view size changed
         this._screenSize.copy(this._tmpV2);
         this._mainUiBlock.update(this._tmpV2, this._origin);
-        console.log('update GUI');
     }
 
     animateIn(delta, animationState) {

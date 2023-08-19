@@ -20,18 +20,19 @@ class Sprite extends Entity {
      * @param {options} options the sprite options.
      * @param {string[]|string} [options.imagespaths] the path (or array of pathes) to the images to loaf in the sprites.
      * @param {Vec4} [options.color] the sprite color, if not using an image (or the image is not found.)
+     * @param {Sprite.AutoSizeMode} [options.autosizemode] The sprite resizing logic after loading its image. Default is UNIT_VERTICAL.
      */
     constructor(renderer, options) {
         super();
+        this._autoSizeMode = Sprite.AutoSizeMode.UNIT_VERTICAL;
         this.setVisible(true);
         this.setVertices(DEFAULT_VERTICES);
-        this.size.setValues(null, null);
+        this.size.setValues(1, 1);
         this._definedWidth = null;
         this._updateVertices = false;
         this._definedHeight = null;
         this.textureSize = new Vec2(1, 1);
         this._time = 0;
-        this.setLoaded(false);
         const gl = renderer.getGLContext();
 
         let imagesPaths = null;
@@ -41,16 +42,15 @@ class Sprite extends Entity {
         } else {
             if (options.hasOwnProperty('color')) color = options.color;
             if (options.hasOwnProperty('imagespaths')) imagesPaths = options.imagespaths;
+            if (options.hasOwnProperty('autosizemode')) this._autoSizeMode = options.autosizemode;
         }
 
         this._texture = gl.createTexture();
         this.loadTempTexture(gl, this._texture, color);
         this.initGraphics(gl);
 
-        if (imagesPaths == null) {
-            this.size.setValues(1, 1);
-            this.setLoaded(true);
-        } else {
+        if (imagesPaths != null) {
+            this.setLoaded(false);
             if (!Array.isArray(imagesPaths)) imagesPaths = [imagesPaths];
             this._imageCount = imagesPaths.length;
             this._imageLoadedCount = 0;
@@ -62,6 +62,36 @@ class Sprite extends Entity {
         this._uniFp2 = new Float32Array(2);
         this._uniFp4 = new Float32Array(4);
     }
+
+    /**
+     * Define the auto resizing behavior of the Sprite once the image has been loaded.
+     * In all case, the sprite center remain at the sprite center,
+     * so sprite position might need an update after the image has been loaded, depending on needs.
+     * @enum
+     */
+    static AutoSizeMode = {
+        /**
+         * The Sprite size will match the image pixel size.
+         * (ie: a 50x80px image will then set the SPrite size to 50 width and 80 height.)
+         * Main use is with pixel art.
+         */
+        PIXEL_SIZE: 0,
+        /**
+         * The Sprite size will be unit (1) vertically, and the horizontal size will depend on the image aspect ratio.
+         * (ie: a 100x200 px image will have a size of 0.5 width and 1 height, since the image is 2x taller than large).
+         */
+        UNIT_VERTICAL: 1,
+        /**
+         * The Sprite size will be unit (1) horizontally, and the vertical size will depend on the image aspect ratio.
+         * (ie: a 100x200 px image will have a size of 1 width and 2 height, since the image is 2x taller than large).
+         */
+        UNIT_HORIZONTAL: 2,
+        /**
+         * The Sprite size will remain at the size defined by the user before loading the image.
+         * By default (if not changed) this will be x:1, y:1.
+         */
+        OFF: 3
+    };
 
     updateEntity(delta) {
         super.updateEntity(delta);
@@ -114,43 +144,67 @@ class Sprite extends Entity {
     }
 
     /**
-     * Set the sprite width, the sprite will adapt the height based on the sprite aspect ratio
-     * @param {number | null} s size in world coordinates, or null for automatic size based on height and the texture aspect ratio
+     * Set this Sprite size. Only change the quad size, this sprite children are not affected.
+     * This has the side effect of setting the autoSizeMode to OFF, enforcing the given size.
+     * To keep the aspect ratio of the loaded image, please instead use .setSizeKeepAspectRatio().
+     * This internally update the Sprite vertices and will be slower than updating the Sprite scale.
+     * If performance is a concern, please consider using .scale instead.
+     * @param {number} x
+     * @param {number} y
      */
-    setWidth(s) {
-        this._definedWidth = s;
-        if (this.isLoaded()) this.updateSize();
+    setSize(x, y) {
+        this.size.setValues(x, y);
+        this._autoSizeMode = Sprite.AutoSizeMode.OFF;
+        this.updateSize();
     }
 
     /**
-     * Set the sprite height, the sprite will adapt the width based on the sprite aspect ratio
-     * @param {number | null} s size in world coordinates, or null for automatic size based on width and the texture aspect ratio
+     * Set this Sprite size, keeping the original image aspect ration.
+     * Please make sure this sprite.autoSizeMode is set either to UNIT_VERTICAL or UNIT_HORIZONTAL to avoid side effects.
+     * Only change the quad size, this sprite children are not affected.
+     * This internally update the Sprite vertices and will be slower than updating the Sprite scale.
+     * If performance is a concern, please consider using .scale instead.
+     * @param {number} size
      */
-    setHeight(s) {
-        this._definedHeight = s;
-        if (this.isLoaded()) this.updateSize();
+    setSizeKeepAspectRatio(size) {
+        const backupAutosize = this._autoSizeMode;
+        switch (this._autoSizeMode) {
+            default:
+            case Sprite.AutoSizeMode.UNIT_VERTICAL:
+                this.size.x = size * this.textureSize.x / this.textureSize.y;
+                this.size.y = size;
+                break;
+            case Sprite.AutoSizeMode.UNIT_HORIZONTAL:
+                this.size.x = size;
+                this.size.y = size * this.textureSize.y / this.textureSize.x;
+                break;
+        }
+        this._autoSizeMode = Sprite.AutoSizeMode.OFF;
+        this.updateSize();
+        this._autoSizeMode = backupAutosize;
     }
 
     /**
      * @private
      */
     updateSize() {
-        const ratio = this.textureSize.x / this.textureSize.y;
-        this.size.x = this._definedWidth;
-        this.size.y = this._definedHeight;
-        // case 1: width defined, but not height
-        if (this.size.x == null && this.size.y != null) {
-            this.size.x = this.size.y * ratio;
+        switch (this._autoSizeMode) {
+            default:
+            case Sprite.AutoSizeMode.OFF:
+                break;
+            case Sprite.AutoSizeMode.PIXEL_SIZE:
+                this.size.copy(this.textureSize);
+                break;
+            case Sprite.AutoSizeMode.UNIT_VERTICAL:
+                this.size.x = this.textureSize.x / this.textureSize.y;
+                this.size.y = 1;
+                break;
+            case Sprite.AutoSizeMode.UNIT_HORIZONTAL:
+                this.size.x = 1;
+                this.size.y = this.textureSize.y / this.textureSize.x;
+                break;
         }
-        // case 2: height defined, but not width
-        if (this.size.x != null && this.size.y == null) {
-            this.size.y = this.size.x / ratio;
-        }
-        // case 3: both undefined
-        if (this.size.x == null && this.size.y == null) {
-            this.size.copy(this.textureSize);
-        }
-        // Then update vertices
+        // Update vertices
         const nbVals = DEFAULT_VERTICES.length;
         const verts = new Float32Array(nbVals);
         const x = this.size.x;
@@ -253,6 +307,8 @@ class Sprite extends Entity {
         const _self = this;
         const image = new Image();
         image.src = url;
+
+        // TODO use () => function and remove _self
         image.addEventListener('load', function () {
             // Now that the image has loaded make copy it to the texture.
             const tsize = _self.textureSize;

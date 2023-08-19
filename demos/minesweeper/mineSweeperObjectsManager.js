@@ -1,5 +1,6 @@
 class MineSweeperObjectsManager {
     /**
+     * MineSweeperObjectsManager's constructor
      * @param {Renderer} renderer
      */
     constructor(renderer) {
@@ -8,8 +9,14 @@ class MineSweeperObjectsManager {
         for (let i = 0; i < 9; i++) {
             numbersPathes.push(numbersPath + i + ".png");
         }
+        this._root = new Entity();
         this.renderer = renderer;
-        this.tilesNumbers = new MultiSprite(renderer, {imagespaths: numbersPathes});
+
+        this.tilesNumbers = new MultiSprite(renderer,
+            {
+                imagespaths: numbersPathes,
+                autosizemode: Sprite.AutoSizeMode.OFF
+            });
         this.fullscreenButton = new Sprite(renderer, {imagespaths: '../../resources/minesweeper/Fullscreen.png'});
         this.tiles = new Tiles(renderer, this.tilesNumbers);
 
@@ -18,13 +25,16 @@ class MineSweeperObjectsManager {
         this.blueBlock = new Sprite(renderer, {color: new Vec4(0, 0, 1, 0.3)}); // debug green overlay for right side
 
         //---- Setup the sprite render order from back to front: ----//
-        this.spriteArray = [];
-        this.spriteArray.push(this.tiles);
-        this.spriteArray.push(this.tilesNumbers);
-        this.spriteArray.push(this.fullscreenButton);
+        this._root.add(this.tiles);
+        this._root.add(this.tilesNumbers);
+        this._root.add(this.fullscreenButton);
 
-        // this.spriteArray.push(this.redBlock);
-        // this.spriteArray.push(this.greenBlock);
-        // this.spriteArray.push(this.blueBlock);
+        // this._root.add(this.redBlock);
+        // this._root.add(this.greenBlock);
+        // this._root.add(this.blueBlock);
+    }
+
+    getRoot() {
+        return this._root;
     }
 }

@@ -104,8 +104,12 @@ class Renderer {
      * @param {number} detlaTime in seconds
      */
     render(detlaTime) {
-        const root = this.getScene().getRoot();
-        const camera = this.getScene().getCamera();
+        const scene = this.getScene();
+        if (scene == null) {
+            console.warn('Cannot render, Scene has not been defined');
+        }
+        const root = scene.getRoot();
+        const camera = scene.getCamera();
         if (root == null || camera == null) {
             console.warn('Cannot render, root or camera is not defined');
         }

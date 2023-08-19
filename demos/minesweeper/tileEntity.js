@@ -4,10 +4,10 @@
 class TileEntity extends Entity {
     constructor(col, row, size) {
         super();
-        this.name = col +'_' + row;
+        this.name = col + '_' + row;
         this.visible = true;
         this.isRound = false;
-        this.size.setValues(size, size);
+        this.scale.setValues(size, size);
         this.isMine = false;
         this.isRevealed = false;
         this.isSecured = false;

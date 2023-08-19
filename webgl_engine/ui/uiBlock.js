@@ -17,46 +17,44 @@ class UIBlock {
         this._tmpPos = new Vec2();
     }
 
-    addBlock (block) {
+    addBlock(block) {
         this._children.add(block);
     }
 
-    removeBlock (block) {
+    removeBlock(block) {
         this._children.delete(block);
     }
 
-    setMarginLeft (margin) {
+    setMarginLeft(margin) {
         this._relativePosition.x = -0.5 + margin + this._relativeSize.x / 2;
     }
 
-    setMarginRight (margin) {
+    setMarginRight(margin) {
         this._relativePosition.x = 0.5 - margin - this._relativeSize.x / 2;
     }
 
-    setHorizontalPos (pos) {
+    setHorizontalPos(pos) {
         this._relativePosition.x = pos;
     }
 
-    setMarginTop (margin) {
+    setMarginTop(margin) {
         this._relativePosition.y = 0.5 - margin - this._relativeSize.y / 2;
     }
 
-    setMarginBottom (margin) {
+    setMarginBottom(margin) {
         this._relativePosition.y = -0.5 + margin + this._relativeSize.y / 2;
     }
 
-    setVerticalPos (pos) {
+    setVerticalPos(pos) {
         this._relativePosition.y = pos;
     }
 
-    update (parentSize, parentPosition, args) {
+    update(parentSize, parentPosition, args) {
         const size = this._tmpSize;
         size.copy(parentSize).mul(this._relativeSize);
         const pos = this._tmpPos;
         pos.copy(parentSize).mul(this._relativePosition).add(parentPosition);
         if (this._onUpdate != null) this._onUpdate(size, pos, args);
-        if (this._onUpdate != null) console.log('on update');
-
         if (this._children.size > 0) {
             this._children.forEach((block) => {
                 block.update(size, pos, args);

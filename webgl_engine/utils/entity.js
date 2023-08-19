@@ -12,6 +12,9 @@ class Entity {
         this.hasPhysics = false;
         this.updatable = true;
         this.creationTime = performance.now();
+        /**
+         * @type {Entity[]}
+         */
         this.childrenNodes = [];
 
         // SRT (scale, rotation, translation)
@@ -38,6 +41,10 @@ class Entity {
         // Misc
         this.animationState = 0;
         this.value = null;
+        /**
+         * @type {Record<string, any>}
+         */
+        this.customData = {};
     }
 
     /**

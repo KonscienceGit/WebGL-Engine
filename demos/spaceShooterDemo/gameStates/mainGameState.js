@@ -185,7 +185,7 @@ class MainGameState extends AbstractState {
 
             const missile = this._aliensMissilesSprites.createSubSprite(true);
             missile.position = alien.position.clone();
-            missile.radius = 0; // smaller hit chance
+            missile.radius = 0.5; // smaller hit chance
             missile.isRound = true;
             missile.translationSpeed.y = alien.translationSpeed.y - 100;
         }
@@ -237,7 +237,7 @@ class MainGameState extends AbstractState {
         if (this._timeSinceLastPlayerMissile < this._deltaBetweenPlayerCanFire) return;
         const missile = this._playerMissilesSprites.createSubSprite(true);
         missile.position = this._spaceCraft.position.clone();
-        missile.radius = 0; //smaller hit chance
+        missile.radius = 1; //smaller hit chance
         missile.isRound = true;
         missile.translationSpeed.y = 500;
         this._timeSinceLastPlayerMissile = 0;

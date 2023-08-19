@@ -1,4 +1,9 @@
 class Tiles extends MultiSprite {
+    /**
+     * Minesweeper Tiles constructor
+     * @param {Renderer} renderer
+     * @param {MultiSprite} numbersSprites
+     */
     constructor(renderer, numbersSprites) {
         const path = "../../resources/minesweeper/";
         const pathes = [
@@ -46,8 +51,8 @@ class Tiles extends MultiSprite {
         this.nbRow = nbRow;
         this.nbCol = nbCol;
         const size = 1 / Math.max(nbRow, nbCol);
-        const numberHeight = size * 0.6;
-        this._numbers.setHeight(numberHeight);
+        const numberSize = size * 0.6;
+        this._numbers.setSizeKeepAspectRatio(numberSize);
 
         const array = this.createTileEntities(nbRow, nbCol, size);
 
@@ -74,14 +79,14 @@ class Tiles extends MultiSprite {
                 const tile = new TileEntity(col, row, size);
                 tile.position.setValues(x, y);
                 array[row][col] = tile;
-                this.addInstance(tile);
+                this.add(tile);
             }
         }
         return array;
     }
 
     spreadMines(mineRatio) {
-        let tiles = this.getInstances().slice();
+        let tiles = this.childrenNodes.slice();
         const nbTile = tiles.length;
         let nbMine = Math.round(nbTile * mineRatio) - 1;
         if (nbMine <= 0) nbMine = 1;
@@ -91,7 +96,7 @@ class Tiles extends MultiSprite {
         for (let i = 0; i < nbMine; i++) {
             const nbTileLeft = tiles.length; // this get updated each loop
             const tileIndex = Math.floor(Math.random() * nbTileLeft);
-            tiles[tileIndex].isMine = true;
+            tiles[tileIndex].customData.isMine = true;
             tiles = this.removeTileFromArray(tiles, tileIndex);
         }
     }
@@ -109,9 +114,9 @@ class Tiles extends MultiSprite {
      */
     countMinesAndReposition(clickedTile) {
         const array = this._mineRowColArray;
-        if (clickedTile.isMine) {
-            clickedTile.isMine = false;
-            array[0][0].isMine = true;
+        if (clickedTile.customData.isMine) {
+            clickedTile.customData.isMine = false;
+            array[0][0].customData.isMine = true;
         }
 
         const nbRow = this.nbRow;
@@ -124,13 +129,19 @@ class Tiles extends MultiSprite {
         }
     }
 
+    // update(delta, patrix) {
+    //     super.update(delta, patrix);
+    //     const tile = this.childrenNodes[0];
+    //     console.log('mat', tile.position.x);
+    // }
+
     revealAll() {
         console.warn('Debug: Reveal all tiles');
-        const tiles = this.getInstances();
+        const tiles = this.childrenNodes;
         const nbTile = tiles.length;
         for (let i = 0; i < nbTile; i++) {
             const tile = tiles[i];
-            if (tile.isMine) {
+            if (tile.customData.isMine) {
                 tile.textureLayer = this._MINE;
             } else {
                 tile.textureLayer = this._REVEALED;
@@ -148,18 +159,18 @@ class Tiles extends MultiSprite {
 
     /**
      * @private
-     * @returns the number of adjacent mines
+     * @returns {number} the number of adjacent mines
      */
     getNbMine(array, row, col, maxRow, maxCol) {
         let nbMine = 0;
-        if (row > 0 && col > 0 && array[row - 1][col - 1].isMine) nbMine++;
-        if (row > 0 && array[row - 1][col].isMine) nbMine++;
-        if (row > 0 && col < maxCol && array[row - 1][col + 1].isMine) nbMine++;
-        if (col < maxCol && array[row][col + 1].isMine) nbMine++;
-        if (row < maxRow && col < maxCol && array[row + 1][col + 1].isMine) nbMine++;
-        if (row < maxRow && array[row + 1][col].isMine) nbMine++;
-        if (row < maxRow && col > 0 && array[row + 1][col - 1].isMine) nbMine++;
-        if (col > 0 && array[row][col - 1].isMine) nbMine++;
+        if (row > 0 && col > 0 && array[row - 1][col - 1].customData.isMine) nbMine++;
+        if (row > 0 && array[row - 1][col].customData.isMine) nbMine++;
+        if (row > 0 && col < maxCol && array[row - 1][col + 1].customData.isMine) nbMine++;
+        if (col < maxCol && array[row][col + 1].customData.isMine) nbMine++;
+        if (row < maxRow && col < maxCol && array[row + 1][col + 1].customData.isMine) nbMine++;
+        if (row < maxRow && array[row + 1][col].customData.isMine) nbMine++;
+        if (row < maxRow && col > 0 && array[row + 1][col - 1].customData.isMine) nbMine++;
+        if (col > 0 && array[row][col - 1].customData.isMine) nbMine++;
         return nbMine;
     }
 
@@ -171,7 +182,7 @@ class Tiles extends MultiSprite {
         /**
          * @type {TileEntity|null}
          */
-        const tile = cursorProp.pick(this.getInstances());
+        const tile = cursorProp.pick(this.childrenNodes);
         if (tile == null) return;
         if (this._firstClick) {
             this._firstClick = false;
@@ -188,7 +199,7 @@ class Tiles extends MultiSprite {
         }
         // reveal tile for better or worse
         tile.isRevealed = true;
-        if (tile.isMine) {
+        if (tile.customData.isMine) {
             tile.textureLayer = this._MINE;
             this.triggerMine(tile);
             return;
@@ -248,10 +259,10 @@ class Tiles extends MultiSprite {
     }
 
     dampenBlip(delta) {
-        const tiles = this.getInstances();
+        const tiles = this.childrenNodes;
         for (let i = 0; i < tiles.length; i++) {
             const tile = tiles[i];
-            if (!tile.isMine) continue;
+            if (!tile.customData.isMine) continue;
             if (tile.color.x >= 2) {
                 tile.color.x -= 5 * delta;
             } else if (tile.color.x >= 1.5) {
@@ -265,17 +276,17 @@ class Tiles extends MultiSprite {
     }
 
     blipMines(radius, stage) {
-        const row = this._triggeredMine.row;
-        const col = this._triggeredMine.col;
+        const row = this._triggeredMine.customData.row;
+        const col = this._triggeredMine.customData.col;
         const minRow = row - radius;
         const maxRow = row + radius;
         const minCol = col - radius;
         const maxCol = col + radius;
-        const tiles = this.getInstances();
+        const tiles = this.childrenNodes;
         for (let i = 0; i < tiles.length; i++) {
             const tile = tiles[i];
-            if (!tile.isMine) continue;
-            if (tile.row < minRow || tile.row > maxRow || tile.col < minCol || tile.col > maxCol) continue;
+            if (!tile.customData.isMine) continue;
+            if (tile.customData.row < minRow || tile.customData.row > maxRow || tile.customData.col < minCol || tile.customData.col > maxCol) continue;
             if (tile.fromStage != null && tile.fromStage !== stage) continue;
             tile.fromStage = stage;
             tile.color.x = 4;
@@ -283,7 +294,7 @@ class Tiles extends MultiSprite {
     }
 
     reset() {
-        this.setInstances([]);
+        this.childrenNodes = [];
         this._firstClick = true;
         this._hasLost = false;
         this._hasWon = false;
