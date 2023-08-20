@@ -8,7 +8,7 @@ function main() {
     const renderer = new Renderer(canvas, camera);
     renderer.setClearColor(new Vec4(0, 0, 0, 1));
     renderer.setDisplayFullscreen();
-    camera.setVerticalScreenWorldSize(1);
+    camera.setVerticalScreenWorldSize(5);
 
     // Inputs
     const inputManager = new Orrery2DInputManager(renderer);

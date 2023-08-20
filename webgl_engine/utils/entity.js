@@ -84,8 +84,7 @@ class Entity {
     updateMatrix(patrix) {
         this.localMat.makeSRT(this.scale, this.rotation, this.position);
         this.modelWorldMat.copy(this.localMat);
-        // TODO test if this is the correct multiplication order
-        this.modelWorldMat.multiply(patrix);
+        this.modelWorldMat.preMultiply(patrix);
     }
 
     /**

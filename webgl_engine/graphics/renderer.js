@@ -42,9 +42,11 @@ class Renderer {
 
         this.updateScreenSize();
 
-        const self = this;
-        window.onresize = function () {
-            self.updateScreenSize();
+        window.onresize = () => {
+            this.updateScreenSize();
+            if (this._onResizeCallback != null) {
+                this._onResizeCallback();
+            }
         };
 
         this._shaderUtils = new ShadersUtil(this._gl);
@@ -55,6 +57,10 @@ class Renderer {
         FIXED_RATIO: 1,
         FIXED_RESOLUTION: 2
     };
+
+    setOnResizeCallback(callback) {
+        this._onResizeCallback = callback;
+    }
 
     /**
      * @param {Scene2D} scene

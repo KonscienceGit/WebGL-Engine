@@ -8,16 +8,21 @@ class Orrery2DObjectsManager {
 
         this.fullscreenButton = new Sprite(renderer, {imagespaths: '../../resources/minesweeper/Fullscreen.png'});
 
-        this.redBlock = new Sprite(renderer, {color: new Vec4(1, 0, 0, 0.3)}); // debug red overlay for left side
-        this.greenBlock = new Sprite(renderer, {color: new Vec4(0, 1, 0, 0.3)}); // debug green overlay for right side
-        this.blueBlock = new Sprite(renderer, {color: new Vec4(0, 0, 1, 0.3)}); // debug green overlay for right side
+        const sun = new Planet(renderer, 0.5, new Vec4(1, 1, 0, 1));
+        const earth = new Planet(renderer, 0.1, new Vec4(0, 0, 1, 1));
 
-        //---- Setup the sprite render order from back to front: ----//
+        earth.position.setValues(1.5, 0);
+        sun.add(earth);
+
+        const moon = new Planet(renderer, 0.04, new Vec4(0.5, 0.5, 0.5, 1));
+        moon.position.x = 0.25;
+        earth.add(moon);
+
+        this._root.add(sun);
         this._root.add(this.fullscreenButton);
 
-        // this._root.add(this.redBlock);
-        // this._root.add(this.greenBlock);
-        // this._root.add(this.blueBlock);
+        this.sun = sun;
+        this.earth = earth;
     }
 
     getRoot() {

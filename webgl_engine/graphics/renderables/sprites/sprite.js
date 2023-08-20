@@ -1,13 +1,16 @@
 const DEFAULT_VERTICES = new Float32Array([
+    // 0---1
+    // | / |
+    // 2-- 3
     // X, Y, U, V
-    // T1
     -0.5, -0.5, 0, 1,
     0.5, -0.5, 1, 1,
     -0.5, 0.5, 0, 0,
-    // T2
-    0.5, 0.5, 1, 0,
-    -0.5, 0.5, 0, 0,
-    0.5, -0.5, 1, 1
+    0.5, 0.5, 1, 0
+]);
+
+const DEFAULT_INDICES = new Uint8Array([
+    0, 1, 2, 2, 1, 3
 ]);
 const DEFAULT_VERTICE_ATTRIBS_COUNT = 4; // X,Y,U,V
 
@@ -17,7 +20,7 @@ const DEFAULT_VERTICE_ATTRIBS_COUNT = 4; // X,Y,U,V
 class Sprite extends Entity {
     /**
      * @param {Renderer} renderer
-     * @param {options} options the sprite options.
+     * @param {options} [options] the sprite options.
      * @param {string[]|string} [options.imagespaths] the path (or array of pathes) to the images to loaf in the sprites.
      * @param {Vec4} [options.color] the sprite color, if not using an image (or the image is not found.)
      * @param {Sprite.AutoSizeMode} [options.autosizemode] The sprite resizing logic after loading its image. Default is UNIT_VERTICAL.
@@ -27,10 +30,9 @@ class Sprite extends Entity {
         this._autoSizeMode = Sprite.AutoSizeMode.UNIT_VERTICAL;
         this.setVisible(true);
         this.setVertices(DEFAULT_VERTICES);
+        this.setIndices(DEFAULT_INDICES);
         this.size.setValues(1, 1);
-        this._definedWidth = null;
-        this._updateVertices = false;
-        this._definedHeight = null;
+        this._updateVBO = false;
         this.textureSize = new Vec2(1, 1);
         this._time = 0;
         const gl = renderer.getGLContext();
@@ -120,11 +122,13 @@ class Sprite extends Entity {
         this._initTexture = true;
 
         // VAO setup
-        this._vertex_buffer = gl.createBuffer();
         this._vao = gl.createVertexArray();
         gl.bindVertexArray(this._vao);
-        gl.bindBuffer(gl.ARRAY_BUFFER, this._vertex_buffer);
-        gl.bufferData(gl.ARRAY_BUFFER, this.getVertices(), gl.STATIC_DRAW);
+
+        this._vertex_buffer = gl.createBuffer();
+        this._index_buffer = gl.createBuffer();
+        this.updateVBO(gl);
+
         const fp32Bytes = 4;
         const vertexCoord = 2;
         const textCoord = 2;
@@ -139,8 +143,10 @@ class Sprite extends Entity {
     draw(renderer) {
         const gl = renderer.getGLContext();
         this.setupContext(renderer);
-        gl.drawArrays(gl.TRIANGLES, 0, 6);
+        const nbIndices = this.getIndices().length;
+        gl.drawElements(gl.TRIANGLES, nbIndices, gl.UNSIGNED_BYTE, 0);
         this.restoreContext(gl);
+        super.draw(renderer);
     }
 
     /**
@@ -204,19 +210,7 @@ class Sprite extends Entity {
                 this.size.y = this.textureSize.y / this.textureSize.x;
                 break;
         }
-        // Update vertices
-        const nbVals = DEFAULT_VERTICES.length;
-        const verts = new Float32Array(nbVals);
-        const x = this.size.x;
-        const y = this.size.y;
-        for (let i = 0; i < nbVals; i += DEFAULT_VERTICE_ATTRIBS_COUNT) {
-            verts[i] = DEFAULT_VERTICES[i] * x;
-            verts[i + 1] = DEFAULT_VERTICES[i + 1] * y;
-            verts[i + 2] = DEFAULT_VERTICES[i + 2];
-            verts[i + 3] = DEFAULT_VERTICES[i + 3];
-        }
-        this.setVertices(verts);
-        this._updateVertices = true;
+        this.generateVertices(this.size);
     }
 
     /**
@@ -226,15 +220,25 @@ class Sprite extends Entity {
     setupContext(renderer) {
         const gl = renderer.getGLContext();
         gl.bindVertexArray(this._vao);
-        if (this._updateVertices) {
-            this._updateVertices = false;
-            gl.bindBuffer(gl.ARRAY_BUFFER, this._vertex_buffer);
-            gl.bufferData(gl.ARRAY_BUFFER, this.getVertices(), gl.STATIC_DRAW);
+        if (this._updateVBO) {
+            this.updateVBO(gl);
         }
         gl.useProgram(this._shaderProgram);
         gl.bindTexture(gl.TEXTURE_2D_ARRAY, this._texture);
         this.setupUniforms(gl, this);
         renderer.getCamera().setViewProjectionUniform(gl, this._viewProjMatUniform);
+    }
+
+    /**
+     *
+     * @param {WebGL2RenderingContext} gl
+     */
+    updateVBO(gl) {
+        this._updateVBO = false;
+        gl.bindBuffer(gl.ARRAY_BUFFER, this._vertex_buffer);
+        gl.bufferData(gl.ARRAY_BUFFER, this.getVertices(), gl.STATIC_DRAW);
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._index_buffer);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this.getIndices(), gl.STATIC_DRAW);
     }
 
     /**
@@ -334,6 +338,24 @@ class Sprite extends Entity {
     }
 
     /**
+     * Default implementation, generate vertice data for a quad with UV properties.
+     * @param {any} size Vector 2 for the Quad size, but the type can be customized by overriding in inherited classes.
+     */
+    generateVertices(size) {
+        const nbVals = DEFAULT_VERTICES.length;
+        const verts = new Float32Array(nbVals);
+        const x = this.size.x;
+        const y = this.size.y;
+        for (let i = 0; i < nbVals; i += DEFAULT_VERTICE_ATTRIBS_COUNT) {
+            verts[i] = DEFAULT_VERTICES[i] * x;
+            verts[i + 1] = DEFAULT_VERTICES[i + 1] * y;
+            verts[i + 2] = DEFAULT_VERTICES[i + 2];
+            verts[i + 3] = DEFAULT_VERTICES[i + 3];
+        }
+        this.setVertices(verts);
+    }
+
+    /**
      * @returns {Float32Array}
      */
     getVertices() {
@@ -345,5 +367,21 @@ class Sprite extends Entity {
      */
     setVertices(verts) {
         this._vertices = verts;
+        this._updateVBO = true;
+    }
+
+    /**
+     * @returns {Uint8Array}
+     */
+    getIndices() {
+        return this._indices;
+    }
+
+    /**
+     * @param {Uint8Array} indices
+     */
+    setIndices(indices) {
+        this._indices = indices;
+        this._updateVBO = true;
     }
 }

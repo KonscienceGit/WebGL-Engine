@@ -5,17 +5,12 @@ class MainGameState extends AbstractState {
      */
     constructor(objectManager, gameBindings) {
         super();
+        this._om = objectManager; // TODO remove?
         this._gameOverState = null;
         this._escapeState = null;
         this._fullScreenButton = objectManager.fullscreenButton;
         this._renderer = objectManager.renderer;
         this._cursorProperties = null;
-        this._screenSize = new Vec2(0, 0);
-        this._tmpV2 = new Vec2();
-        this._origin = new Vec2(0, 0);
-
-        this._redBlock = objectManager.redBlock;
-        this._greenBlock = objectManager.greenBlock;
 
         /**
          * @type {UIBlock}
@@ -35,13 +30,12 @@ class MainGameState extends AbstractState {
     start() {
         // Create GUI
         this._gameOver = false;
-        if (document.fullscreenEnabled) {
-            const fsbSize = 0.15;
-            this._fullScreenButton.position.setValues(-0.5 + fsbSize, 0);
-            this._fullScreenButton.scale.setValues(fsbSize, fsbSize);
+        if (document.fullscreenEnabled && this._fullScreenButton) {
+            this.updateFullScreenPos();
             this._fullScreenButton.setVisible(true);
             this._fullScreenButton.isRound = false;
         }
+        this._renderer.setOnResizeCallback(this.updateFullScreenPos.bind(this));
     }
 
     finish() {
@@ -56,6 +50,8 @@ class MainGameState extends AbstractState {
     }
 
     mainLoop(delta) {
+        this._om.sun.rotation += delta / 4;
+        this._om.earth.rotation += delta;
     }
 
     animateIn(delta, animationState) {
@@ -90,5 +86,15 @@ class MainGameState extends AbstractState {
      */
     cursorMoveCallback(cursorProperties) {
         this._cursorProperties = cursorProperties;
+    }
+
+    updateFullScreenPos() {
+        const worldSize = this._renderer.getScene().getCamera().getScreenWorldSize();
+        const fsbSize = 0.1 * worldSize.y;
+        const offset = fsbSize * 0.75;
+        const posX = -0.5 * worldSize.x + offset;
+        const posY = -0.5 * worldSize.y + offset;
+        this._fullScreenButton.position.setValues(posX, posY);
+        this._fullScreenButton.scale.setValues(fsbSize, fsbSize);
     }
 }

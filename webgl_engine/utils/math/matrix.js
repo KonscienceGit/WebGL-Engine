@@ -27,34 +27,26 @@ class Matrix3 {
 
     /**
      * Compute the SRT (Scale Rotation Translation) matrix (previous matrix transformations will not be taken into account).
+     * Make sure the matrix last row is 0, 0, 1 if using this manually, they are ignored to save on operations.
      * @param {Vec2} s scale
      * @param {number} r rotation
      * @param {Vec2} t translation
      */
     makeSRT(s, r, t) {
         const m = this.m;
-        // Identity + scale
-        m[0] = s.x;
-        m[1] = 0;
-        m[2] = 0;
-        m[3] = 0;
-        m[4] = s.y;
-        m[5] = 0;
-        m[6] = 0;
-        m[7] = 0;
-        m[8] = 1;
-
-        // Rotation
         const cos = Math.cos(r);
         const sin = Math.sin(r);
-        m[0] *= cos;
-        m[1] *= -sin;
-        m[3] *= sin;
-        m[4] *= cos;
-        //
-        // Translation
-        m[2] += t.x;
-        m[5] += t.y;
+        // Manually premultiply scale before rotation to save operations
+        m[0] = s.x * cos;
+        m[1] = s.y * -sin;
+        m[2] = t.x; // translation
+        m[3] = s.x * sin;
+        m[4] = s.y * cos;
+        m[5] = t.y; // translation
+        // Save on (generally) unsed calculations
+        // m[6] = 0;
+        // m[7] = 0;
+        // m[8] = 1;
     }
 
     /**
@@ -63,9 +55,9 @@ class Matrix3 {
      * @param {number} r rotation angle in radian, rotate counter-clockwise.
      */
     makeRotation(r) {
-        // cos * x | -sin * y |    0
-        // sin * x |  cos * y |    0
-        //    0    |     0    |    1
+        // cos  | -sin  |   0
+        // sin  |  cos  |   0
+        //  0   |   0   |   1
         const cos = Math.cos(r);
         const sin = Math.sin(r);
         const m = this.m;
