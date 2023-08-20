@@ -1,4 +1,4 @@
-class MinesweeperInputManager extends GeneralInputManager{
+class MinesweeperInputManager extends GeneralInputManager {
     constructor(renderer) {
         super(renderer);
         this.initActions();
