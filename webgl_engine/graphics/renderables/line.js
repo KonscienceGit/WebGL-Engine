@@ -4,9 +4,9 @@ const LINE_VERTEX_SHADER = ShadersUtil.SHADER_HEADER +
     'in vec2 vertCoords;' +
 
     'void main(void) {' +
-    '    vec3 pos = vec3(vertCoords, 1.);' +
-    // x2 to convert from [-0.5, 0.5] to [-1, 1] space
-    '    pos = pos * modelWorld * viewProj * 2.;' +
+    // Transform Vec2 to Vec3, then
+    // convert from [-0.5, 0.5] to [-1, 1] space
+    '    vec3 pos = vec3(vertCoords, 1.) * modelWorld * viewProj * 2.;' +
     '    gl_Position = vec4(pos.xy, 0., 1.);' +
     '}';
 
@@ -23,14 +23,14 @@ const LINE_FRAGMENT_SHADER = ShadersUtil.SHADER_HEADER +
  */
 class Line extends Entity {
     /**
-     * @param {Renderer} renderer
      * @param {number[]} x positions
      * @param {number[]} y positions
      * @param {Vec4} colorVec4
      */
-    constructor(renderer, x, y, colorVec4) {
+    constructor(x, y, colorVec4) {
         super();
         this._shaderName = 'Line';
+        this._initialized = false;
         this.setVisible(true);
         this._updateVBO = false;
         const pts = [];
@@ -40,7 +40,6 @@ class Line extends Entity {
         this._vertices = new Float32Array(pts);
         this._nbPts = this._vertices.length / 2;
 
-        this.initGraphics(renderer);
         this.color.copy(colorVec4);
 
         this._uniFp2 = new Float32Array(2);
@@ -79,6 +78,10 @@ class Line extends Entity {
     }
 
     draw(renderer) {
+        if (!this._initialized) {
+            this._initialized = true;
+            this.initGraphics(renderer);
+        }
         const gl = renderer.getGLContext();
         this.setupContext(renderer);
         gl.drawArrays(gl.LINE_STRIP, 0, this._nbPts);

@@ -53,9 +53,11 @@ class Sprite extends Entity {
      * @param {Vec4} [options.color] the sprite color, if not using an image (or the image is not found.)
      * @param {Sprite.AutoSizeMode} [options.autosizemode] The sprite resizing logic after loading its image. Default is UNIT_VERTICAL.
      */
+    // TODO remove renderer arg in all implementations, after making init asyncrhonous
     constructor(renderer, options) {
         super();
         this._shaderName = 'Sprite';
+        this._initialized = false;
         this._autoSizeMode = Sprite.AutoSizeMode.UNIT_VERTICAL;
         this.setVisible(true);
         this.setVertices(DEFAULT_VERTICES);
@@ -76,6 +78,7 @@ class Sprite extends Entity {
             if (options.hasOwnProperty('autosizemode')) this._autoSizeMode = options.autosizemode;
         }
 
+        // TODO move to asynchronous
         this._texture = gl.createTexture();
         this.loadTempTexture(gl, this._texture, color);
         this.initGraphics(renderer);
@@ -173,6 +176,12 @@ class Sprite extends Entity {
 
     draw(renderer) {
         const gl = renderer.getGLContext();
+        // if (!this._initialized) {
+        //     this._initialized = true;
+        //     this._texture = gl.createTexture();
+        //     this.loadTempTexture(gl, this._texture, color);
+        //     this.initGraphics(renderer);
+        // }
         this.setupContext(renderer);
         const nbIndices = this.getIndices().length;
         gl.drawElements(gl.TRIANGLES, nbIndices, gl.UNSIGNED_BYTE, 0);
@@ -339,31 +348,27 @@ class Sprite extends Entity {
      * @param {WebGLTexture} tex
      */
     loadImage(index, url, gl, tex) {
-        const _self = this;
         const image = new Image();
         image.src = url;
-
-        // TODO use () => function and remove _self
-        image.addEventListener('load', function () {
-            // Now that the image has loaded make copy it to the texture.
-            const tsize = _self.textureSize;
+        image.addEventListener('load', () => {
+            const tsize = this.textureSize;
             const target = gl.TEXTURE_2D_ARRAY;
             gl.bindTexture(target, tex);
-            if (_self._initTexture) {
-                _self._initTexture = false;
+            if (this._initTexture) {
+                this._initTexture = false;
                 tsize.setValues(image.width, image.height);
-                gl.texStorage3D(target, 1, gl.RGBA8, tsize.x, tsize.y, _self._imageCount);
+                gl.texStorage3D(target, 1, gl.RGBA8, tsize.x, tsize.y, this._imageCount);
                 gl.texParameteri(target, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
                 gl.texParameteri(target, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
                 gl.texParameteri(target, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
                 gl.texParameteri(target, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
             }
             gl.texSubImage3D(target, 0, 0, 0, index, tsize.x, tsize.y, 1, gl.RGBA, gl.UNSIGNED_BYTE, image);
-            _self._imageLoadedCount++;
-            if (_self._imageLoadedCount === _self._imageCount) {
-                _self.updateSize();
-                _self.setLoaded(true);
-                _self.onImageLoaded();
+            this._imageLoadedCount++;
+            if (this._imageLoadedCount === this._imageCount) {
+                this.updateSize();
+                this.setLoaded(true);
+                this.onImageLoaded();
             }
         });
     }

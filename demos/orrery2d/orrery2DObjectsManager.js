@@ -52,7 +52,7 @@ class Orrery2DObjectsManager {
             x.push(Math.cos(a));
             y.push(Math.sin(a));
         }
-        return new Line(renderer, x, y, new Vec4(1, 0, 0, 1));
+        return new Line(x, y, new Vec4(1, 0, 0, 1));
     }
 
     orbitCalculus(radius, eccentricity, nbPts, renderer) {
@@ -63,7 +63,7 @@ class Orrery2DObjectsManager {
             x.push(radius * (Math.cos(angle) - eccentricity));
             y.push(radius * Math.sqrt(1 - eccentricity * eccentricity) * Math.sin(angle));
         }
-        return new Line(renderer, x, y, new Vec4(0, 1, 0, 1));
+        return new Line(x, y, new Vec4(0, 1, 0, 1));
     }
 
     keplerOrbit(radius, eccentricity, nbPts, renderer) {
@@ -78,7 +78,7 @@ class Orrery2DObjectsManager {
             x.push(trueRadius * cos);
             y.push(trueRadius * Math.sin(angle));
         }
-        return new Line(renderer, x, y, new Vec4(0, 0, 1, 1));
+        return new Line(x, y, new Vec4(0, 0, 1, 1));
     }
 
     /**
