@@ -17,33 +17,6 @@ class ShadersUtil {
         this.HIGHP + this.P_SAMPLERCUBE +
         this.HIGHP + this.P_SAMPLER2DARRAY;
 
-    static VERTEX_SHADER_CODE = ShadersUtil.SHADER_HEADER +
-        'uniform mat3 modelWorld;' +
-        'uniform mat3 viewProj;' +
-        'in vec2 vertCoords;' +
-        'in vec2 textCoordinates;' +
-        'out vec2 textCoord;' +
-
-        'void main(void) {' +
-        '    textCoord = textCoordinates;' +
-        '    vec3 pos = vec3(vertCoords, 1.);' +
-        // x2 to convert from [-0.5, 0.5] to [-1, 1] space
-        '    pos = pos * modelWorld * viewProj * 2.;' +
-        '    gl_Position = vec4(pos.xy, 0., 1.);' +
-        '}';
-
-    static SPRITE_FRAGMENT_SHADER_CODE = ShadersUtil.SHADER_HEADER +
-        'uniform int textureLayer;' +
-        'uniform vec4 color;' +
-        'uniform sampler2DArray textureSample;' +
-        'uniform float alphaOutline;' +
-        'in vec2 textCoord;' +
-        'out vec4 outColor;' +
-
-        'void main(void) {' +
-        '    outColor = color * texture(textureSample, vec3(textCoord, textureLayer));' +
-        '    outColor.rgb = outColor.rgb * pow(outColor.a, alphaOutline);' +
-        '}';
 
     static DEFAULT_BLUE_PIXEL_DATA = new Uint8Array([0, 0, 255, 255]);
 
@@ -54,7 +27,6 @@ class ShadersUtil {
     constructor(glContext) {
         //Singleton!//
         if (!ShadersUtil.instance) {
-            this._spriteShaderProgram = ShadersUtil.createProgram(ShadersUtil.VERTEX_SHADER_CODE, ShadersUtil.SPRITE_FRAGMENT_SHADER_CODE, glContext);
             ShadersUtil.instance = this;
             this._shaderPrograms = [];
         }
@@ -127,12 +99,5 @@ class ShadersUtil {
      */
     static getDefaultBluePixelData() {
         return ShadersUtil.DEFAULT_BLUE_PIXEL_DATA;
-    }
-
-    /**
-     * @returns {WebGLProgram}
-     */
-    getSpriteShaderProgram() {
-        return this._spriteShaderProgram;
     }
 }

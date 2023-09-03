@@ -21,12 +21,12 @@ class TranslucentOverlay extends Entity {
         this.restoreContext(gl);
     }
 
-    initOverlay(renderer){
+    initOverlay(renderer) {
         // Shader
         const gl = renderer.getGLContext();
         const shaderUtils = renderer.getShaderUtils();
-        const vertexCode = ShadersUtil.SHADER_HEADER + this.getVertexCode();
-        const fragmentCode = ShadersUtil.SHADER_HEADER + this.getFragmentCode();
+        const vertexCode = this.getVertexCode();
+        const fragmentCode = this.getFragmentCode();
         this._program = shaderUtils.getOrCreateShader(gl, this._shaderName, vertexCode, fragmentCode, this.constructor.name);
         gl.useProgram(this._program);
         this._coordAttrib = gl.getAttribLocation(this._program, "vertCoords");
@@ -69,8 +69,9 @@ class TranslucentOverlay extends Entity {
         this._opacity = opacity;
     }
 
-    getVertexCode(){
+    getVertexCode() {
         return [
+            ShadersUtil.SHADER_HEADER,
             'uniform vec4 overlayColor;',
             'uniform float opacity;',
             'in vec2 vertCoords;',
@@ -84,8 +85,9 @@ class TranslucentOverlay extends Entity {
         ].join('\n');
     }
 
-    getFragmentCode(){
+    getFragmentCode() {
         return [
+            ShadersUtil.SHADER_HEADER,
             'in vec4 color;',
             'out vec4 outColor;',
             'void main(void) {',

@@ -22,7 +22,7 @@ function makeIndices() {
 
 const PLANET_INDICES = makeIndices();
 
-class Planet extends Sprite {
+class PlanetShape extends Sprite {
     /**
      * @param {Renderer} renderer
      * @param {number} radius

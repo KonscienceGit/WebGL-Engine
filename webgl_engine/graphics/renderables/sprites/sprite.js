@@ -14,6 +14,34 @@ const DEFAULT_INDICES = new Uint8Array([
 ]);
 const DEFAULT_VERTICE_ATTRIBS_COUNT = 4; // X,Y,U,V
 
+const VERTEX_SHADER = ShadersUtil.SHADER_HEADER +
+    'uniform mat3 modelWorld;' +
+    'uniform mat3 viewProj;' +
+    'in vec2 vertCoords;' +
+    'in vec2 textCoordinates;' +
+    'out vec2 textCoord;' +
+
+    'void main(void) {' +
+    '    textCoord = textCoordinates;' +
+    '    vec3 pos = vec3(vertCoords, 1.);' +
+    // x2 to convert from [-0.5, 0.5] to [-1, 1] space
+    '    pos = pos * modelWorld * viewProj * 2.;' +
+    '    gl_Position = vec4(pos.xy, 0., 1.);' +
+    '}';
+
+const FRAGMENT_SHADER = ShadersUtil.SHADER_HEADER +
+    'uniform int textureLayer;' +
+    'uniform vec4 color;' +
+    'uniform sampler2DArray textureSample;' +
+    'uniform float alphaOutline;' +
+    'in vec2 textCoord;' +
+    'out vec4 outColor;' +
+
+    'void main(void) {' +
+    '    outColor = color * texture(textureSample, vec3(textCoord, textureLayer));' +
+    '    outColor.rgb = outColor.rgb * pow(outColor.a, alphaOutline);' +
+    '}';
+
 /**
  * Can be animated by storing multiple images.
  */
@@ -27,6 +55,7 @@ class Sprite extends Entity {
      */
     constructor(renderer, options) {
         super();
+        this._shaderName = 'Sprite';
         this._autoSizeMode = Sprite.AutoSizeMode.UNIT_VERTICAL;
         this.setVisible(true);
         this.setVertices(DEFAULT_VERTICES);
@@ -49,7 +78,7 @@ class Sprite extends Entity {
 
         this._texture = gl.createTexture();
         this.loadTempTexture(gl, this._texture, color);
-        this.initGraphics(gl);
+        this.initGraphics(renderer);
 
         if (imagesPaths != null) {
             this.setLoaded(false);
@@ -100,25 +129,27 @@ class Sprite extends Entity {
         this._time += delta;
     }
 
-    initGraphics(gl) {
+    initGraphics(renderer) {
         // Shaders, get attributes and uniforms handles
-        this._shaderProgram = new ShadersUtil(gl).getSpriteShaderProgram();
-        gl.useProgram(this._shaderProgram);
-        this._coordAttrib = gl.getAttribLocation(this._shaderProgram, "vertCoords");
-        this._textCoordAttrib = gl.getAttribLocation(this._shaderProgram, "textCoordinates");
+        const gl = renderer.getGLContext();
+        const shaderUtils = renderer.getShaderUtils();
+        this._program = shaderUtils.getOrCreateShader(gl, this._shaderName, VERTEX_SHADER, FRAGMENT_SHADER, this.constructor.name);
+        gl.useProgram(this._program);
+        this._coordAttrib = gl.getAttribLocation(this._program, "vertCoords");
+        this._textCoordAttrib = gl.getAttribLocation(this._program, "textCoordinates");
 
-        this._scaleUniform = gl.getUniformLocation(this._shaderProgram, "scale");
-        this._positionUniform = gl.getUniformLocation(this._shaderProgram, "position");
-        this._rotationUniform = gl.getUniformLocation(this._shaderProgram, "rotation");
-        this._colorUniform = gl.getUniformLocation(this._shaderProgram, "color");
+        this._scaleUniform = gl.getUniformLocation(this._program, "scale");
+        this._positionUniform = gl.getUniformLocation(this._program, "position");
+        this._rotationUniform = gl.getUniformLocation(this._program, "rotation");
+        this._colorUniform = gl.getUniformLocation(this._program, "color");
 
-        this._modelWorldMatUniform = gl.getUniformLocation(this._shaderProgram, "modelWorld");
-        this._viewProjMatUniform = gl.getUniformLocation(this._shaderProgram, "viewProj");
+        this._modelWorldMatUniform = gl.getUniformLocation(this._program, "modelWorld");
+        this._viewProjMatUniform = gl.getUniformLocation(this._program, "viewProj");
 
-        this._spriteDimensionsUniform = gl.getUniformLocation(this._shaderProgram, "spriteDimensions");
-        this._canvasPositionUniform = gl.getUniformLocation(this._shaderProgram, "canvasPosition");
-        this._textureLayerUniform = gl.getUniformLocation(this._shaderProgram, "textureLayer");
-        this._alphaOutlineUniform = gl.getUniformLocation(this._shaderProgram, "alphaOutline");
+        this._spriteDimensionsUniform = gl.getUniformLocation(this._program, "spriteDimensions");
+        this._canvasPositionUniform = gl.getUniformLocation(this._program, "canvasPosition");
+        this._textureLayerUniform = gl.getUniformLocation(this._program, "textureLayer");
+        this._alphaOutlineUniform = gl.getUniformLocation(this._program, "alphaOutline");
         this._initTexture = true;
 
         // VAO setup
@@ -223,7 +254,7 @@ class Sprite extends Entity {
         if (this._updateVBO) {
             this.updateVBO(gl);
         }
-        gl.useProgram(this._shaderProgram);
+        gl.useProgram(this._program);
         gl.bindTexture(gl.TEXTURE_2D_ARRAY, this._texture);
         this.setupUniforms(gl, this);
         renderer.getCamera().setViewProjectionUniform(gl, this._viewProjMatUniform);

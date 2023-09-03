@@ -94,8 +94,8 @@ class Entity {
      */
     update(delta, patrix) {
         if (!this.isUpdatable()) return;
-        this.updateMatrix(patrix);
         this.updateEntity(delta);
+        this.updateMatrix(patrix);
         if (this.childrenNodes) {
             for (let i = 0; i < this.childrenNodes.length; i++) {
                 this.childrenNodes[i].update(delta, this.modelWorldMat);
