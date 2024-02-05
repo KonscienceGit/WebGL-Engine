@@ -28,7 +28,7 @@ class MouseInputManager extends AbstractInputDeviceManager {
         this._canvas.addEventListener("mouseup", self.mouseUp);
         this._canvas.addEventListener("mouseenter", self.mouseEnter);
         this._canvas.addEventListener("mouseleave", self.mouseLeave);
-        this._canvas.addEventListener("wheel", self.mouseWheelMove);
+        this._canvas.addEventListener("wheel", self.mouseWheelMove, {'passive': false});
 
         this._canvas.addEventListener("touchmove", self.touchMoved, {'passive': false});
         this._canvas.addEventListener("touchstart", self.touchStart, {'passive': false});
@@ -38,7 +38,7 @@ class MouseInputManager extends AbstractInputDeviceManager {
     /**
      * @returns {CursorProperties}
      */
-    getCursorProperties(){
+    getCursorProperties() {
         return this._cursorProperties;
     }
 
@@ -46,11 +46,11 @@ class MouseInputManager extends AbstractInputDeviceManager {
      * @param {MouseButton} buttonID
      * @returns {boolean}
      */
-    getMouseButton(buttonID){
+    getMouseButton(buttonID) {
         return this._mouseBtn[buttonID];
     }
 
-    getMouseWheelPos(){
+    getMouseWheelPos() {
         return this._wheelPos;
     }
 
@@ -89,14 +89,14 @@ class MouseInputManager extends AbstractInputDeviceManager {
     /**
      * @param {TouchEvent} event
      */
-    touchMoved(event){
+    touchMoved(event) {
         this.updateCursor(event.touches[0]);
     }
 
     /**
      * @param {TouchEvent} event
      */
-    touchStart(event){
+    touchStart(event) {
         this._mouseBtn[0] = true;
         this.updateCursor(event.touches[0]);
     }
@@ -104,7 +104,7 @@ class MouseInputManager extends AbstractInputDeviceManager {
     /**
      * @param {TouchEvent} event
      */
-    touchEnd(event){
+    touchEnd(event) {
         this._mouseBtn[0] = false;
         this.updateCursor(event.changedTouches[0]);
     }
@@ -120,7 +120,7 @@ class MouseInputManager extends AbstractInputDeviceManager {
 
 
         // Compute cursor position in pixels, with 0 being center of the viewport.
-        this._cursorProperties.devicePos.setValues(this._cursorProperties.canvasPos.x - rect.width / 2,  rect.height / 2 - this._cursorProperties.canvasPos.y);
+        this._cursorProperties.devicePos.setValues(this._cursorProperties.canvasPos.x - rect.width / 2, rect.height / 2 - this._cursorProperties.canvasPos.y);
         this._cursorProperties.screenWorldPos.copy(this._cursorProperties.devicePos);
 
         // Convert pixel pos in device pos [-0.5, 0.5]
@@ -138,7 +138,7 @@ class MouseInputManager extends AbstractInputDeviceManager {
      * @param {MouseInputIdentifiers} inputId
      * @param {ActionType} actionType
      */
-    createInput(inputId, actionType){
+    createInput(inputId, actionType) {
         let input = null;
         switch (inputId.getInputType()) {
             case MouseInputType.BUTTON:

@@ -47,50 +47,45 @@ const FRAGMENT_SHADER = ShadersUtil.SHADER_HEADER +
  */
 class Sprite extends Entity {
     /**
-     * @param {Renderer} renderer
      * @param {options} [options] the sprite options.
      * @param {string[]|string} [options.imagespaths] the path (or array of pathes) to the images to loaf in the sprites.
      * @param {Vec4} [options.color] the sprite color, if not using an image (or the image is not found.)
      * @param {Sprite.AutoSizeMode} [options.autosizemode] The sprite resizing logic after loading its image. Default is UNIT_VERTICAL.
+     * @param {string} [options.name] The sprite name.
      */
-    // TODO remove renderer arg in all implementations, after making init asyncrhonous
-    constructor(renderer, options) {
+    constructor(options) {
         super();
         this._shaderName = 'Sprite';
+        this._imageCount = 0;
         this._initialized = false;
+        this._imgsToUpload = [];
+        this._readyToUpload = false;
+        this._tmpTextureLoaded = false;
         this._autoSizeMode = Sprite.AutoSizeMode.UNIT_VERTICAL;
+        this.name = options && options.name != null ? options.name : "Sprite";
         this.setVisible(true);
         this.setVertices(DEFAULT_VERTICES);
         this.setIndices(DEFAULT_INDICES);
         this.size.setValues(1, 1);
         this._updateVBO = false;
         this.textureSize = new Vec2(1, 1);
-        this._time = 0;
-        const gl = renderer.getGLContext();
 
         let imagesPaths = null;
-        let color = null;
         if (options == null) {
             console.warn('Sprite: warning, missing options in constructor');
         } else {
-            if (options.hasOwnProperty('color')) color = options.color;
+            if (options.hasOwnProperty('color')) this._colorVec4 = options.color;
             if (options.hasOwnProperty('imagespaths')) imagesPaths = options.imagespaths;
             if (options.hasOwnProperty('autosizemode')) this._autoSizeMode = options.autosizemode;
         }
-
-        // TODO move to asynchronous
-        this._texture = gl.createTexture();
-        this.loadTempTexture(gl, this._texture, color);
-        this.initGraphics(renderer);
 
         if (imagesPaths != null) {
             this.setLoaded(false);
             if (!Array.isArray(imagesPaths)) imagesPaths = [imagesPaths];
             this._imageCount = imagesPaths.length;
             this._imageLoadedCount = 0;
-
             for (let i = 0; i < this._imageCount; i++) {
-                this.loadImage(i, imagesPaths[i], gl, this._texture);
+                this.loadImage(imagesPaths[i]);
             }
         }
         this._uniFp2 = new Float32Array(2);
@@ -129,12 +124,29 @@ class Sprite extends Entity {
 
     updateEntity(delta) {
         super.updateEntity(delta);
-        this._time += delta;
     }
 
     initGraphics(renderer) {
-        // Shaders, get attributes and uniforms handles
+        if (this._initialized) return;
         const gl = renderer.getGLContext();
+        if (!this._tmpTextureLoaded) {
+            this._texture = gl.createTexture();
+            this.loadTempTexture(gl, this._texture, this._colorVec4);
+            this.initShaderAndUniforms(renderer);
+            this._tmpTextureLoaded = true;
+            if (this._imageCount === 0) {
+                this._initialized = true;
+            }
+        }
+        if (this._readyToUpload) {
+            this.uploadImages(gl);
+            this._initialized = true;
+        }
+    }
+
+    initShaderAndUniforms(renderer) {
+        const gl = renderer.getGLContext();
+        // Shaders, get attributes and uniforms handles
         const shaderUtils = renderer.getShaderUtils();
         this._program = shaderUtils.getOrCreateShader(gl, this._shaderName, VERTEX_SHADER, FRAGMENT_SHADER, this.constructor.name);
         gl.useProgram(this._program);
@@ -153,7 +165,7 @@ class Sprite extends Entity {
         this._canvasPositionUniform = gl.getUniformLocation(this._program, "canvasPosition");
         this._textureLayerUniform = gl.getUniformLocation(this._program, "textureLayer");
         this._alphaOutlineUniform = gl.getUniformLocation(this._program, "alphaOutline");
-        this._initTexture = true;
+        this._initTextureSize = true;
 
         // VAO setup
         this._vao = gl.createVertexArray();
@@ -175,15 +187,10 @@ class Sprite extends Entity {
     }
 
     draw(renderer) {
-        const gl = renderer.getGLContext();
-        // if (!this._initialized) {
-        //     this._initialized = true;
-        //     this._texture = gl.createTexture();
-        //     this.loadTempTexture(gl, this._texture, color);
-        //     this.initGraphics(renderer);
-        // }
+        this.initGraphics(renderer);
         this.setupContext(renderer);
         const nbIndices = this.getIndices().length;
+        const gl = renderer.getGLContext();
         gl.drawElements(gl.TRIANGLES, nbIndices, gl.UNSIGNED_BYTE, 0);
         this.restoreContext(gl);
         super.draw(renderer);
@@ -342,35 +349,46 @@ class Sprite extends Entity {
     }
 
     /**
-     * @param {number} index
+     * Load the image data from the given URL.
      * @param {String} url
-     * @param {WebGL2RenderingContext} gl
-     * @param {WebGLTexture} tex
      */
-    loadImage(index, url, gl, tex) {
+    loadImage(url) {
         const image = new Image();
         image.src = url;
         image.addEventListener('load', () => {
+            this._imgsToUpload.push(image);
             const tsize = this.textureSize;
-            const target = gl.TEXTURE_2D_ARRAY;
-            gl.bindTexture(target, tex);
-            if (this._initTexture) {
-                this._initTexture = false;
+            if (this._initTextureSize) {
+                this._initTextureSize = false;
                 tsize.setValues(image.width, image.height);
-                gl.texStorage3D(target, 1, gl.RGBA8, tsize.x, tsize.y, this._imageCount);
-                gl.texParameteri(target, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-                gl.texParameteri(target, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-                gl.texParameteri(target, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-                gl.texParameteri(target, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+                this.updateSize();
             }
-            gl.texSubImage3D(target, 0, 0, 0, index, tsize.x, tsize.y, 1, gl.RGBA, gl.UNSIGNED_BYTE, image);
             this._imageLoadedCount++;
             if (this._imageLoadedCount === this._imageCount) {
-                this.updateSize();
-                this.setLoaded(true);
+                this._readyToUpload = true;
                 this.onImageLoaded();
+                this.setLoaded(true);
             }
         });
+    }
+
+    /**
+     * Upload images from RAM to GPU VRAM
+     * @param {WebGL2RenderingContext} gl the rendering context.
+     */
+    uploadImages(gl) {
+        const target = gl.TEXTURE_2D_ARRAY;
+        const tsize = this.textureSize;
+        gl.bindTexture(target, this._texture);
+        gl.texStorage3D(target, 1, gl.RGBA8, tsize.x, tsize.y, this._imageCount);
+        gl.texParameteri(target, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(target, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(target, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(target, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        for (let i = 0; i < this._imgsToUpload.length; i++) {
+            const img = this._imgsToUpload[i];
+            gl.texSubImage3D(target, 0, 0, 0, i, tsize.x, tsize.y, 1, gl.RGBA, gl.UNSIGNED_BYTE, img);
+        }
     }
 
     /**

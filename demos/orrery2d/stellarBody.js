@@ -1,9 +1,8 @@
 class StellarBody extends Entity {
     /**
-     * @param {Renderer} renderer
      * @param {object} data
      */
-    constructor(renderer, data) {
+    constructor(data) {
         super();
         /** @type {string} */
         this._indexName = data.indexName;
@@ -38,7 +37,7 @@ class StellarBody extends Entity {
 
         this._orbit = 0;
         const color = new Vec4(this._color[0], this._color[1], this._color[2], 1);
-        this._body = new PlanetShape(renderer, this._bodyRadius, color);
+        this._body = new PlanetShape(this._bodyRadius, color, this._formattedName);
 
         this.add(this._body);
         this.updateOrbit();

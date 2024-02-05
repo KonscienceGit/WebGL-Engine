@@ -30,7 +30,7 @@ class MainGameState extends AbstractState {
     start() {
         // Create GUI
         this._gameOver = false;
-        if (document.fullscreenEnabled && this._fullScreenButton) {
+        if (document.fullscreenEnabled && this._fullScreenButton != null) {
             this.updateFullScreenPos();
             this._fullScreenButton.setVisible(true);
             this._fullScreenButton.isRound = false;

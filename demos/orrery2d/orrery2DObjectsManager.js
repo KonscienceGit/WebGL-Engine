@@ -14,71 +14,28 @@ class Orrery2DObjectsManager {
         const gravityCenter = new Entity();
         this.createSystemParse(systemMap, gravityCenter, systemData);
 
-        this.fullscreenButton = new Sprite(renderer, {imagespaths: '../../resources/minesweeper/Fullscreen.png'});
+        this.fullscreenButton = new Sprite({imagespaths: '../../resources/minesweeper/Fullscreen.png'});
+        this.fullscreenButton.name = "FSButton";
 
-        const sun = new PlanetShape(renderer, 0.01, new Vec4(1, 1, 0, 1));
-        const earth = new PlanetShape(renderer, 0.1, new Vec4(0, 0, 1, 1));
+        const sun = new PlanetShape(0.01, new Vec4(1, 1, 0, 1), 'sun');
+        const earth = new PlanetShape(0.1, new Vec4(0, 0, 1, 1), 'earth');
 
         const testData = SolarSystem.getTest();
-        const testBody = new StellarBody(renderer, testData);
-        // const testOrbitLine = this.orbitCalculus(testData.semiMajorAxis, testData.eccentricity, 10, renderer);
+        const testBody = new StellarBody(testData);
         this._root.add(testBody);
-        // this._root.add(testOrbitLine);
-
-        const nbPts = 100;
-        // this._root.add(this.orbitCalculus(1, 0.8244, nbPts, renderer));
-        // this._root.add(this.makeunitCircle(renderer, nbPts));
-        // this._root.add(this.keplerOrbit(1, 0.8244, nbPts, renderer));
 
         earth.position.setValues(1.5, 0);
-        // sun.add(earth);
+        sun.add(earth);
 
-        const moon = new PlanetShape(renderer, 0.04, new Vec4(0.5, 0.5, 0.5, 1));
+        const moon = new PlanetShape(0.04, new Vec4(0.5, 0.5, 0.5, 1), 'moon');
         moon.position.x = 0.25;
-        // earth.add(moon);
+        earth.add(moon);
 
         this._root.add(sun);
         this._root.add(this.fullscreenButton);
 
         this.sun = sun;
         this.earth = earth;
-    }
-
-    makeunitCircle(renderer, nbPts) {
-        const x = [];
-        const y = [];
-        for (let i = 0; i <= nbPts; i++) {
-            const a = i * 2 * Math.PI / nbPts;
-            x.push(Math.cos(a));
-            y.push(Math.sin(a));
-        }
-        return new Line(x, y, new Vec4(1, 0, 0, 1));
-    }
-
-    orbitCalculus(radius, eccentricity, nbPts, renderer) {
-        const x = [];
-        const y = [];
-        for (let i = 0; i <= nbPts; i++) {
-            const angle = i * 2 * Math.PI / nbPts;
-            x.push(radius * (Math.cos(angle) - eccentricity));
-            y.push(radius * Math.sqrt(1 - eccentricity * eccentricity) * Math.sin(angle));
-        }
-        return new Line(x, y, new Vec4(0, 1, 0, 1));
-    }
-
-    keplerOrbit(radius, eccentricity, nbPts, renderer) {
-        const x = [];
-        const y = [];
-        const numerator = radius * (1 - eccentricity * eccentricity);
-        for (let i = 0; i <= nbPts; i++) {
-            const angle = i * 2 * Math.PI / nbPts;
-            const cos = Math.cos(angle);
-            const denominator = 1 + eccentricity * cos;
-            const trueRadius = numerator / denominator;
-            x.push(trueRadius * cos);
-            y.push(trueRadius * Math.sin(angle));
-        }
-        return new Line(x, y, new Vec4(0, 0, 1, 1));
     }
 
     /**

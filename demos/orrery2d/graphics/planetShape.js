@@ -24,13 +24,14 @@ const PLANET_INDICES = makeIndices();
 
 class PlanetShape extends Sprite {
     /**
-     * @param {Renderer} renderer
      * @param {number} radius
      * @param {Vec4} color
+     * @param {string} name
      */
-    constructor(renderer, radius, color) {
-        super(renderer, {
-            color: color
+    constructor(radius, color, name) {
+        super({
+            color: color,
+            name: name
         });
         this.setIndices(PLANET_INDICES);
         this.generateVertices(radius);

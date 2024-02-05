@@ -7,6 +7,7 @@ const __tmpPosB = new Vec2(0, 0);
  */
 class Entity {
     constructor() {
+        this.name = null;
         this.visible = true;
         this.loaded = true;
         this.hasPhysics = false;

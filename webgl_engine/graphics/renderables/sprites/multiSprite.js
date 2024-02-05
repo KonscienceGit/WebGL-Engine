@@ -2,16 +2,16 @@ class MultiSprite extends Sprite {
     /**
      * Can render multiple similar sprites (of same image size) with reduced overhead. Useful for particles.
      * Currently achieved by updating the basic uniforms between each render but only setting/binding a texture2D_array once for all sprites.
-     * @param {Renderer} renderer
      * @param {options} options the sprite options.
      * @param {string[]|string} [options.imagespaths] the path (or array of pathes) to the images to loaf in the sprites.
      * @param {Vec4} [options.color] the sprite color, if not using an image (or the image is not found.)
      */
-    constructor(renderer, options) {
-        super(renderer, options);
+    constructor(options) {
+        super(options);
     }
 
     draw(renderer) {
+        this.initGraphics(renderer);
         const gl = renderer.getGLContext();
         this.setupContext(renderer);
         this.childrenNodes.forEach(instance => {
@@ -31,9 +31,8 @@ class MultiSprite extends Sprite {
      * @returns {Entity}
      */
     createSubSprite(addToChildren) {
-        const add = (addToChildren == null) ? true : addToChildren;
         const newChild = new Entity();
-        if (add) this.add(newChild);
+        if (addToChildren) this.add(newChild);
         return newChild;
     }
 }

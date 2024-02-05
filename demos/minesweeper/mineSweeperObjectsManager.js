@@ -12,17 +12,16 @@ class MineSweeperObjectsManager {
         this._root = new Entity();
         this.renderer = renderer;
 
-        this.tilesNumbers = new MultiSprite(renderer,
-            {
-                imagespaths: numbersPathes,
-                autosizemode: Sprite.AutoSizeMode.OFF
-            });
-        this.fullscreenButton = new Sprite(renderer, {imagespaths: '../../resources/minesweeper/Fullscreen.png'});
-        this.tiles = new Tiles(renderer, this.tilesNumbers);
+        this.tilesNumbers = new MultiSprite({
+            imagespaths: numbersPathes,
+            autosizemode: Sprite.AutoSizeMode.OFF
+        });
+        this.fullscreenButton = new Sprite({imagespaths: '../../resources/minesweeper/Fullscreen.png'});
+        this.tiles = new Tiles(this.tilesNumbers);
 
-        this.redBlock = new Sprite(renderer, {color: new Vec4(1, 0, 0, 0.3)}); // debug red overlay for left side
-        this.greenBlock = new Sprite(renderer, {color: new Vec4(0, 1, 0, 0.3)}); // debug green overlay for right side
-        this.blueBlock = new Sprite(renderer, {color: new Vec4(0, 0, 1, 0.3)}); // debug green overlay for right side
+        this.redBlock = new Sprite({color: new Vec4(1, 0, 0, 0.3)}); // debug red overlay for left side
+        this.greenBlock = new Sprite({color: new Vec4(0, 1, 0, 0.3)}); // debug green overlay for right side
+        this.blueBlock = new Sprite({color: new Vec4(0, 0, 1, 0.3)}); // debug green overlay for right side
 
         //---- Setup the sprite render order from back to front: ----//
         this._root.add(this.tiles);
