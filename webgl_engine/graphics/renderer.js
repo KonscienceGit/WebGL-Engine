@@ -6,7 +6,6 @@ const UNIT_MATRIX = new Matrix3();
 //  Potentially, a Scene can depend on sub-scenes (ex: render a camera monitor in-game, or simply a virtual computer screen in-game)
 //  of which the result is an offscreen image used as a texture in the parent scene.
 class Renderer {
-
     /**
      * @param {HTMLCanvasElement} canvas
      * @param {Camera2D} camera
@@ -45,7 +44,7 @@ class Renderer {
         window.onresize = () => {
             this.updateScreenSize();
             if (this._onResizeCallback != null) {
-                this._onResizeCallback();
+                this._onResizeCallback(this);
             }
         };
 
@@ -58,6 +57,11 @@ class Renderer {
         FIXED_RESOLUTION: 2
     };
 
+    /**
+     * Define the function to get called when the browser window get resized.
+     * The callback parameter is the renderer itself.
+     * @param {(renderer: Renderer) => void} callback
+     */
     setOnResizeCallback(callback) {
         this._onResizeCallback = callback;
     }

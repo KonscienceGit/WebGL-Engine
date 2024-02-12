@@ -1,3 +1,5 @@
+const FULLSCREEN_BUTTON = true;
+
 class MainGameState extends AbstractState {
     /**
      * @param {Orrery2DObjectsManager} objectManager
@@ -5,11 +7,15 @@ class MainGameState extends AbstractState {
      */
     constructor(objectManager, gameBindings) {
         super();
-        this._om = objectManager; // TODO remove?
-        this._gameOverState = null;
-        this._escapeState = null;
-        this._fullScreenButton = objectManager.fullscreenButton;
+        this._om = objectManager;
+        this._fullScreenButton = null;
         this._renderer = objectManager.renderer;
+        this._scene = this._renderer.getScene();
+        if (FULLSCREEN_BUTTON) {
+            this._fullScreenButton = new FullScreenButton();
+            this._scene.getRoot().add(this._fullScreenButton);
+        }
+
         this._cursorProperties = null;
 
         /**
@@ -29,24 +35,13 @@ class MainGameState extends AbstractState {
 
     start() {
         // Create GUI
-        this._gameOver = false;
-        if (document.fullscreenEnabled && this._fullScreenButton != null) {
-            this.updateFullScreenPos();
-            this._fullScreenButton.setVisible(true);
-            this._fullScreenButton.isRound = false;
-        }
-        this._renderer.setOnResizeCallback(this.updateFullScreenPos.bind(this));
     }
 
     finish() {
     }
 
     getNextState() {
-        if (this._gameOver) {
-            return this._gameOverState;
-        } else {
-            return this._escapeState;
-        }
+        return null;
     }
 
     mainLoop(delta) {
@@ -71,12 +66,9 @@ class MainGameState extends AbstractState {
     click(value, leftClick) {
         if (this._cursorProperties == null || value < 1) return;
         if (document.fullscreenEnabled && leftClick) {
-            if (this._cursorProperties.pick(this._fullScreenButton) === this._fullScreenButton) {
-                if (document.fullscreenElement == null) {
-                    document.documentElement.requestFullscreen().catch();
-                } else {
-                    document.exitFullscreen().catch();
-                }
+            const pickResult = this._cursorProperties.pick(this._fullScreenButton);
+            if (pickResult != null && pickResult === this._fullScreenButton) {
+                this._fullScreenButton.toggleFullScreen();
             }
         }
     }
@@ -86,15 +78,5 @@ class MainGameState extends AbstractState {
      */
     cursorMoveCallback(cursorProperties) {
         this._cursorProperties = cursorProperties;
-    }
-
-    updateFullScreenPos() {
-        const worldSize = this._renderer.getScene().getCamera().getScreenWorldSize();
-        const fsbSize = 0.1 * worldSize.y;
-        const offset = fsbSize * 0.75;
-        const posX = -0.5 * worldSize.x + offset;
-        const posY = -0.5 * worldSize.y + offset;
-        this._fullScreenButton.position.setValues(posX, posY);
-        this._fullScreenButton.scale.setValues(fsbSize, fsbSize);
     }
 }

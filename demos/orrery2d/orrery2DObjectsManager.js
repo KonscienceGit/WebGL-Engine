@@ -14,10 +14,8 @@ class Orrery2DObjectsManager {
         const gravityCenter = new Entity();
         this.createSystemParse(systemMap, gravityCenter, systemData);
 
-        this.fullscreenButton = new Sprite({imagespaths: '../../resources/minesweeper/Fullscreen.png'});
-        this.fullscreenButton.name = "FSButton";
-
         const sun = new PlanetShape(0.01, new Vec4(1, 1, 0, 1), 'sun');
+        this._root.add(sun);
         const earth = new PlanetShape(0.1, new Vec4(0, 0, 1, 1), 'earth');
 
         const testData = SolarSystem.getTest();
@@ -31,8 +29,6 @@ class Orrery2DObjectsManager {
         moon.position.x = 0.25;
         earth.add(moon);
 
-        this._root.add(sun);
-        this._root.add(this.fullscreenButton);
 
         this.sun = sun;
         this.earth = earth;
