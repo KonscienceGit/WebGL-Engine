@@ -4,12 +4,12 @@ const MAP = {
         'MERCURY': {},
         'VENUS': {},
         'TERRA': {
-            'LUNA': null
+            'LUNA': {}
         },
         'MARS': {},
         'JUPITER': {},
         'SATURN': {
-            'SATURNRINGS': null
+            'SATURNRINGS': {}
         },
             'URANUS': {},
         'NEPTUNE': {}
@@ -192,7 +192,9 @@ const DATA = {
     SATURNRINGS: {
         indexName: 'SATURNRINGS',
         formattedName: 'Saturn Rings',
-        bodyRadius: 62117,
+        // TODO need visual representation
+        // bodyRadius: 62117,
+        bodyRadius: 621,
         ringInnerRadius: 74658,
         semiMajorAxis: 0,
         ascendingNode: 0,
@@ -240,23 +242,6 @@ const DATA = {
 
 };
 
-const TEST = {
-    indexName: 'TEST',
-    formattedName: 'Test',
-    bodyRadius: 0.1,
-    ringInnerRadius: 0,
-    semiMajorAxis: 1,
-    ascendingNode: 131.784,
-    orbitalIncli: 0.72,
-    argumPeriapsis: 276.336,
-    orbitalPeriod: 12,
-    eccentricity: 0.8,
-    axialTilt: 28.32,
-    rotationPeriod: 0.6713,
-    color: [0.28, 0.4, 1],
-    bodyType: 'planet'
-};
-
 class SolarSystem {
     static getMap() {
         return MAP;
@@ -264,9 +249,5 @@ class SolarSystem {
 
     static getData() {
         return DATA;
-    }
-
-    static getTest() {
-        return TEST;
     }
 }

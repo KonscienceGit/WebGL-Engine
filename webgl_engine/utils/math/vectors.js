@@ -233,6 +233,14 @@ class Vec4 {
         return a;
     }
 
+    fromArray(a) {
+        this.x = a[0];
+        this.y = a[1];
+        this.z = a[2];
+        this.w = a[3];
+        return this;
+    }
+
     lerp(v1, v2, p) {
         this.x = v1.x * (1 - p) + v2.x * p;
         this.y = v1.y * (1 - p) + v2.y * p;

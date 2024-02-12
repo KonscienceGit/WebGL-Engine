@@ -1,4 +1,5 @@
 const FULLSCREEN_BUTTON = true;
+const SECONDS_IN_DAY = 24 * 60 * 60;
 
 class MainGameState extends AbstractState {
     /**
@@ -15,9 +16,11 @@ class MainGameState extends AbstractState {
         }
         this._mapNode = new Entity();
         this._scene.getRoot().add(this._mapNode);
+        this.setZoomScale(1 / (149.6 * 1e6)); // earth orbit radius
         this._cursorProperties = null;
         this._mouseLeftDown = false;
         this._mouseRightDown = false;
+        this._time = 3600;
 
         this._lastCursorPos = null;
 
@@ -49,7 +52,14 @@ class MainGameState extends AbstractState {
     }
 
     mainLoop(delta) {
-        // TODO
+        // this._time += delta / SECONDS_IN_DAY;
+        this._time += 1 * delta;
+        const allNodes = this._mapNode.getAllNodes();
+        allNodes.forEach((node) => {
+            if (node instanceof StellarBody) {
+                node.updateOrbit(this._time);
+            }
+        })
         // this._om.sun.rotation += delta / 4;
         // this._om.earth.rotation += delta;
     }
@@ -73,6 +83,7 @@ class MainGameState extends AbstractState {
     click(value, leftClick) {
         if (this._cursorProperties == null || value < 1) return;
         if (document.fullscreenEnabled && leftClick) {
+            // TODO fix picking, need to take into account the scenegraph matrices.
             const pickResult = this._cursorProperties.pick(this._fullScreenButton);
             if (pickResult != null && pickResult === this._fullScreenButton) {
                 this._fullScreenButton.toggleFullScreen();
@@ -97,17 +108,22 @@ class MainGameState extends AbstractState {
         this._lastCursorPos.copy(this._cursorProperties.screenWorldPos);
     }
 
+    setZoomScale(scale) {
+        this._mapNode.scale.mulScalar(scale);
+        this._mapNode.position.mulScalar(scale);
+    }
+
     mouseWheelUpCallback(wheelPos) {
         if (wheelPos > 0) {
-            this._mapNode.scale.mulScalar(0.9);
-            this._mapNode.position.mulScalar(0.9);
+            this._mapNode.scale.mulScalar(1.1);
+            this._mapNode.position.mulScalar(1.1);
         }
     }
 
     mouseWheelDownCallback(wheelPos) {
         if (wheelPos > 0) {
-            this._mapNode.scale.mulScalar(1.1);
-            this._mapNode.position.mulScalar(1.1);
+            this._mapNode.scale.mulScalar(0.9);
+            this._mapNode.position.mulScalar(0.9);
         }
     }
 }
