@@ -21,9 +21,9 @@ class GraphManager {
         graphInputManager.addCallbackToAction(GraphActions.MOUSEWHEEL_MOVE_UP, this.mouseWheelUpCallback.bind(this));
         graphInputManager.addCallbackToAction(GraphActions.MOUSEWHEEL_MOVE_DOWN, this.mouseWheelDownCallback.bind(this));
 
-        this.graphPoints = new MultiSprite(renderer, {color: darkRedColor, sizeindevice: true});
+        this.graphPoints = new MultiSprite({color: darkRedColor, sizeindevice: true});
         this.axis = new AnnotatedAxisOverlay(renderer, blackColor);
-        this.fullscreenButton = new Sprite(renderer, {
+        this.fullscreenButton = new Sprite({
             imagespaths: '../../resources/minesweeper/Fullscreen.png',
             sizeindevice: true
         });

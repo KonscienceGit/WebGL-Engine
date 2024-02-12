@@ -15,7 +15,13 @@ class Orrery2DInputManager extends GeneralInputManager {
         this.addInputToAction(Orrery2DActions.RIGHT_CLICK, US_Keyboard.Space);
         this.addInputToAction(Orrery2DActions.RIGHT_CLICK, MouseInputIdentifiers.BUTTON_RIGHT);
 
-        this.createPositionAction(Orrery2DActions.CURSOR_AT);
-        this.addInputToAction(Orrery2DActions.CURSOR_AT, MouseInputIdentifiers.CURSOR_POSITION);
+        this.createPositionAction(Orrery2DActions.CURSOR_MOVE);
+        this.addInputToAction(Orrery2DActions.CURSOR_MOVE, MouseInputIdentifiers.CURSOR_POSITION);
+
+
+        this.createAxisAction(Orrery2DActions.MOUSEWHEEL_MOVE_UP);
+        this.addInputToAction(Orrery2DActions.MOUSEWHEEL_MOVE_UP, MouseInputIdentifiers.WHEEL_1_UP);
+        this.createAxisAction(Orrery2DActions.MOUSEWHEEL_MOVE_DOWN);
+        this.addInputToAction(Orrery2DActions.MOUSEWHEEL_MOVE_DOWN, MouseInputIdentifiers.WHEEL_1_DOWN);
     }
 }

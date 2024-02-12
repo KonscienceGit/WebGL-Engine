@@ -16,7 +16,7 @@ class Vec2 {
         return this;
     }
 
-    setValues(x, y){
+    setValues(x, y) {
         this.x = x;
         this.y = y;
         return this;
@@ -37,6 +37,12 @@ class Vec2 {
     mul(v) {
         this.x *= v.x;
         this.y *= v.y;
+        return this;
+    }
+
+    mulScalar(s) {
+        this.x *= s;
+        this.y *= s;
         return this;
     }
 
@@ -120,7 +126,7 @@ class Vec3 {
         return this;
     }
 
-    setValues(x, y, z){
+    setValues(x, y, z) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -191,7 +197,7 @@ class Vec4 {
         return this;
     }
 
-    setValues(x, y, z, w){
+    setValues(x, y, z, w) {
         this.x = x;
         this.y = y;
         this.z = z;

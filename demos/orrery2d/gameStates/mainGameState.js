@@ -2,35 +2,39 @@ const FULLSCREEN_BUTTON = true;
 
 class MainGameState extends AbstractState {
     /**
-     * @param {Orrery2DObjectsManager} objectManager
      * @param {Orrery2DInputManager} gameBindings
+     * @param {Scene2D} scene
      */
-    constructor(objectManager, gameBindings) {
+    constructor(gameBindings, scene) {
         super();
-        this._om = objectManager;
         this._fullScreenButton = null;
-        this._renderer = objectManager.renderer;
-        this._scene = this._renderer.getScene();
+        this._scene = scene;
         if (FULLSCREEN_BUTTON) {
             this._fullScreenButton = new FullScreenButton();
             this._scene.getRoot().add(this._fullScreenButton);
         }
-
+        this._mapNode = new Entity();
+        this._scene.getRoot().add(this._mapNode);
         this._cursorProperties = null;
+        this._mouseLeftDown = false;
+        this._mouseRightDown = false;
 
-        /**
-         * @type {UIBlock}
-         */
-        this._mainUiBlock = null;
+        this._lastCursorPos = null;
+
+        // Load the solar system
+        Orrery2DObjectsManager.loadSolarSystem(this._mapNode);
 
         // Set animations duration
         this.setAnimateInLength(0.0);
         this.setAnimateOutLength(0.0);
 
         // Bind the 'this' context for theses functions (otherwise it's lost when used as callback)
-        gameBindings.addCallbackToAction(Orrery2DActions.CURSOR_AT, this.cursorMoveCallback.bind(this));
+        gameBindings.addCallbackToAction(Orrery2DActions.CURSOR_MOVE, this.cursorMoveCallback.bind(this));
         gameBindings.addCallbackToAction(Orrery2DActions.LEFT_CLICK, this.leftClickCallback.bind(this));
         gameBindings.addCallbackToAction(Orrery2DActions.RIGHT_CLICK, this.rightClickCallback.bind(this));
+
+        gameBindings.addCallbackToAction(Orrery2DActions.MOUSEWHEEL_MOVE_UP, this.mouseWheelUpCallback.bind(this));
+        gameBindings.addCallbackToAction(Orrery2DActions.MOUSEWHEEL_MOVE_DOWN, this.mouseWheelDownCallback.bind(this));
     }
 
     start() {
@@ -45,8 +49,9 @@ class MainGameState extends AbstractState {
     }
 
     mainLoop(delta) {
-        this._om.sun.rotation += delta / 4;
-        this._om.earth.rotation += delta;
+        // TODO
+        // this._om.sun.rotation += delta / 4;
+        // this._om.earth.rotation += delta;
     }
 
     animateIn(delta, animationState) {
@@ -56,10 +61,12 @@ class MainGameState extends AbstractState {
     }
 
     leftClickCallback(value) {
+        this._mouseLeftDown = !!value;
         this.click(value, true);
     }
 
     rightClickCallback(value) {
+        this._mouseRightDown = !!value;
         this.click(value, false);
     }
 
@@ -78,5 +85,29 @@ class MainGameState extends AbstractState {
      */
     cursorMoveCallback(cursorProperties) {
         this._cursorProperties = cursorProperties;
+        if (this._lastCursorPos == null) {
+            this._lastCursorPos = this._cursorProperties.screenWorldPos.clone();
+        }
+        if (this._mouseLeftDown || this._mouseRightDown) {
+            const x = this._cursorProperties.screenWorldPos.x - this._lastCursorPos.x;
+            const y = this._cursorProperties.screenWorldPos.y - this._lastCursorPos.y;
+            this._mapNode.position.x += x;
+            this._mapNode.position.y += y;
+        }
+        this._lastCursorPos.copy(this._cursorProperties.screenWorldPos);
+    }
+
+    mouseWheelUpCallback(wheelPos) {
+        if (wheelPos > 0) {
+            this._mapNode.scale.mulScalar(0.9);
+            this._mapNode.position.mulScalar(0.9);
+        }
+    }
+
+    mouseWheelDownCallback(wheelPos) {
+        if (wheelPos > 0) {
+            this._mapNode.scale.mulScalar(1.1);
+            this._mapNode.position.mulScalar(1.1);
+        }
     }
 }

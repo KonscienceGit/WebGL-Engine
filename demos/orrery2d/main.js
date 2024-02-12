@@ -12,11 +12,9 @@ function main() {
 
     // Inputs
     const inputManager = new Orrery2DInputManager(renderer);
-    const gameObjectManager = new Orrery2DObjectsManager(renderer);
-    const root = gameObjectManager.getRoot();
-    const scene = new Scene2D(root, camera);
+    const scene = new Scene2D(new Entity(), camera);
     renderer.setScene(scene);
-    const gameStateManager = new Orrery2DStateManager(gameObjectManager, inputManager);
+    const gameStateManager = new Orrery2DStateManager(inputManager, scene);
 
     function init() {
         renderGameFrame(0);

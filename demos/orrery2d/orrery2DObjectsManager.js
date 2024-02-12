@@ -1,26 +1,21 @@
 class Orrery2DObjectsManager {
     /**
-     * @param {Renderer} renderer
+     * Load the solar system and add it to the given Entity node.
+     * @param {Entity} root
      */
-    constructor(renderer) {
+    static loadSolarSystem(root) {
         const systemMap = SolarSystem.getMap();
         const systemData = SolarSystem.getData();
-
-        this._root = new Entity();
-        this._scale = 1;
-        this._scaleArray = [];
-        this.renderer = renderer;
-
         const gravityCenter = new Entity();
         this.createSystemParse(systemMap, gravityCenter, systemData);
 
         const sun = new PlanetShape(0.01, new Vec4(1, 1, 0, 1), 'sun');
-        this._root.add(sun);
+        root.add(sun);
         const earth = new PlanetShape(0.1, new Vec4(0, 0, 1, 1), 'earth');
 
         const testData = SolarSystem.getTest();
         const testBody = new StellarBody(testData);
-        this._root.add(testBody);
+        root.add(testBody);
 
         earth.position.setValues(1.5, 0);
         sun.add(earth);
@@ -29,17 +24,17 @@ class Orrery2DObjectsManager {
         moon.position.x = 0.25;
         earth.add(moon);
 
-
         this.sun = sun;
         this.earth = earth;
     }
 
     /**
+     * @private
      * @param {object} parentMapNode
      * @param {Entity} parentEntity
      * @param {object} data
      */
-    createSystemParse(parentMapNode, parentEntity, data) {
+    static createSystemParse(parentMapNode, parentEntity, data) {
         for (const subName in parentMapNode) {
             const subData = data[subName];
             if (subData == null) {
@@ -55,20 +50,12 @@ class Orrery2DObjectsManager {
         }
     }
 
-    makeBodyFromData(data) {
+    /**
+     * @private
+     * @param data
+     * @returns {Entity}
+     */
+    static makeBodyFromData(data) {
         return new Entity();
-    }
-
-    getRoot() {
-        return this._root;
-    }
-
-    getScale() {
-        return this._scale;
-    }
-
-    setScale(scale) {
-        this._scale = scale;
-        this._scaleArray.forEach((node) => node.scale.setValues(scale, scale));
     }
 }
