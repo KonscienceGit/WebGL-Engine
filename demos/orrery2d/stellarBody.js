@@ -43,7 +43,7 @@ class StellarBody extends Entity {
         this._body = new PlanetShape(this._bodyRadius, color, this._formattedName);
         this._orbitalPositionNode.add(this._body);
         this.updateOrbit(0);
-        if (debugRing) {
+        if (debugRing && this._semiMajorAxis > Number.EPSILON) {
             // this.add(this.makeEccentricAnomalyCircle(50));
             this.add(this.makeOrbitEllipse(360, color));
             this._orbitHandLine = this.makeOrbitHandLine();
@@ -134,10 +134,8 @@ class StellarBody extends Entity {
         // Simplest/fastest way if the true anomaly is not needed.
         this.keplerOrbitPositionEA(eccentricAnomaly, this._orbitalPositionNode);
         if (this._orbitHandLine != null) {
-            const trueAnomaly = this.getTrueAnomalyA(eccentricAnomaly);
-            this._orbitHandLine.rotation = trueAnomaly;
-            const scale = 1 - Math.cos(eccentricAnomaly) * this._eccentricity;
-            this._orbitHandLine.scale.x = scale;
+            this._orbitHandLine.rotation = this.getTrueAnomalyA(eccentricAnomaly);
+            this._orbitHandLine.scale.x = 1 - Math.cos(eccentricAnomaly) * this._eccentricity;
         }
         // this.keplerOrbitPositionTA(trueAnomaly, this._testBLUE);
     }

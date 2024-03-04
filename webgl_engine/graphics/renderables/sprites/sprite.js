@@ -55,6 +55,8 @@ class Sprite extends Entity {
      */
     constructor(options) {
         super();
+        this.alphaOutline = 0; // Sprite outline/shadow strength, 0 is off.
+        this.textureLayer = 0;
         this._shaderName = 'Sprite';
         this._imageCount = 0;
         this._initialized = false;
@@ -93,6 +95,16 @@ class Sprite extends Entity {
     }
 
     /**
+     * Sprite copy is not supported yet.
+     * @override
+     */
+    copy(toCopy) {
+        super.copy(toCopy);
+        console.warn('Sprite.copy is not supported yet.');
+        return this;
+    }
+
+    /**
      * Define the auto resizing behavior of the Sprite once the image has been loaded.
      * In all case, the sprite center remain at the sprite center,
      * so sprite position might need an update after the image has been loaded, depending on needs.
@@ -121,10 +133,6 @@ class Sprite extends Entity {
          */
         OFF: 3
     };
-
-    updateEntity(delta) {
-        super.updateEntity(delta);
-    }
 
     initGraphics(renderer) {
         if (this._initialized) return;
@@ -312,23 +320,23 @@ class Sprite extends Entity {
     }
 
     /**
-     * Setup the uniforms for the given entity. Usually a sprite will setup its own uniforms,
+     * Setup the uniforms for the given Sprite. Usually a sprite will setup its own uniforms,
      * but for multi-sprites which render a lot of similar sprites (sharing the same shader and texture)
      * this can be used to set the uniforms of other entity on this entity render.
      * @protected
      * @param {WebGL2RenderingContext} gl
-     * @param {Entity} entity
+     * @param {Sprite} sprite
      */
-    setupUniforms(gl, entity) {
-        gl.uniform1i(this._textureLayerUniform, entity.textureLayer);
-        gl.uniform1f(this._rotationUniform, entity.rotation);
-        gl.uniform1f(this._alphaOutlineUniform, entity.alphaOutline);
-        gl.uniformMatrix3fv(this._modelWorldMatUniform, false, entity.modelWorldMat.m);
+    setupUniforms(gl, sprite) {
+        gl.uniform1i(this._textureLayerUniform, sprite.textureLayer);
+        gl.uniform1f(this._rotationUniform, sprite.rotation);
+        gl.uniform1f(this._alphaOutlineUniform, sprite.alphaOutline);
+        gl.uniformMatrix3fv(this._modelWorldMatUniform, false, sprite.modelWorldMat.m);
         const u2 = this._uniFp2;
-        gl.uniform2fv(this._spriteDimensionsUniform, entity.size.toArray(u2));
-        gl.uniform2fv(this._scaleUniform, entity.scale.toArray(u2));
-        gl.uniform2fv(this._positionUniform, entity.position.toArray(u2));
-        gl.uniform4fv(this._colorUniform, entity.color.toArray(this._uniFp4));
+        gl.uniform2fv(this._spriteDimensionsUniform, sprite.size.toArray(u2));
+        gl.uniform2fv(this._scaleUniform, sprite.scale.toArray(u2));
+        gl.uniform2fv(this._positionUniform, sprite.position.toArray(u2));
+        gl.uniform4fv(this._colorUniform, sprite.color.toArray(this._uniFp4));
     }
 
     /**

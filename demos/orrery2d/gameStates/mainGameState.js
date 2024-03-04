@@ -60,8 +60,6 @@ class MainGameState extends AbstractState {
                 node.updateOrbit(this._time);
             }
         })
-        // this._om.sun.rotation += delta / 4;
-        // this._om.earth.rotation += delta;
     }
 
     animateIn(delta, animationState) {

@@ -3,15 +3,14 @@ const __tmpPosA = new Vec2(0, 0);
 const __tmpPosB = new Vec2(0, 0);
 
 /**
- * Define an object that can be rendered by the Renderer, and loaded by the LoadingManager.
+ * Basic Node of the 2D Scenegraph.
+ * Can be updated in the render loop, manipulated in 2D space (SRT transformations), and loaded by the LoadingManager.
  */
 class Entity {
     constructor() {
         this.name = null;
         this.visible = true;
         this.loaded = true;
-        this.hasPhysics = false;
-        this.updatable = true;
         this.creationTime = performance.now();
         /**
          * @type {Entity[]}
@@ -26,22 +25,14 @@ class Entity {
         this.localMat = new Matrix3();
 
         // Render properties
+        // TODO move color and size to class that can use them
         this.size = new Vec2(1, 1);
-        this.textureLayer = 0;
         this.color = new Vec4(1, 1, 1, 1);
-        this.alphaOutline = 0.; // Sprite outline/shadow strength, 0 is off.
 
         // Physics properties
+        // TODO move to physics class once it is done
         this.radius = 0;
         this.isRound = true;
-        this.translationSpeed = new Vec2(0, 0);
-        this.rotationSpeed = 0;
-        this.density = 1; // 1 is water density
-        this.relativeSurface = 1.; // 1 is a perfectly smooth round shape, >1 is more surface = more drag
-
-        // Misc
-        this.animationState = 0;
-        this.value = null;
         /**
          * @type {Record<string, any>}
          */
@@ -57,35 +48,7 @@ class Entity {
         this.scale.copy(toCopy.scale);
         this.rotation = toCopy.rotation;
         this.position.copy(toCopy.position);
-
-        this.size.copy(toCopy.size);
-        this.textureLayer = toCopy.textureLayer;
-        // Define the color values/multipliers of the entity.
-        // When used as base color,range is 0-1,
-        // When used as multiplier it can be above 1 (resulting color is fragment color (texture or vertex) * color
-        this.color.copy(toCopy.color);
-
-        this.isRound = toCopy.isRound;
-        this.radius = toCopy.radius;
-        this.translationSpeed.copy(toCopy.translationSpeed);
-        this.rotationSpeed = toCopy.rotationSpeed;
-        this.density = toCopy.density;
-        this.relativeSurface = toCopy.relativeSurface;
-        this.alphaOutline = toCopy.alphaOutline;
-
-        this.animationState = toCopy.animationState;
-        this.value = toCopy.value; // Value might be an object reference!
         return this;
-    }
-
-    /**
-     * Update this entity matrices.
-     * @param patrix the parent entity matrix ot update this entity world matrix.
-     */
-    updateMatrix(patrix) {
-        this.localMat.makeSRT(this.scale, this.rotation, this.position);
-        this.modelWorldMat.copy(this.localMat);
-        this.modelWorldMat.preMultiply(patrix);
     }
 
     /**
@@ -94,21 +57,14 @@ class Entity {
      * @param {Matrix3} patrix the parent entity matrix ot update this entity world matrix.
      */
     update(delta, patrix) {
-        if (!this.isUpdatable()) return;
-        this.updateEntity(delta);
-        this.updateMatrix(patrix);
+        this.localMat.makeSRT(this.scale, this.rotation, this.position);
+        this.modelWorldMat.copy(this.localMat);
+        this.modelWorldMat.preMultiply(patrix);
         if (this.childrenNodes) {
             for (let i = 0; i < this.childrenNodes.length; i++) {
                 this.childrenNodes[i].update(delta, this.modelWorldMat);
             }
         }
-    }
-
-    /**
-     * Update this entity, to implement by user.
-     * @param {number} delta the time delta (in seconds) since the last frame.
-     */
-    updateEntity(delta) {
     }
 
     /**
@@ -166,6 +122,11 @@ class Entity {
         this.childrenNodes = nodes.splice(pos, 1);
     }
 
+    // TODO move all intersection code to dedicated class, such as Physics (isPickable, isCollidable, isPhysics ...)
+    // this.translationSpeed = new Vec2(0, 0);
+    // this.rotationSpeed = 0;
+    // this.density = 1; // 1 is water density
+    // this.relativeSurface = 1.; // 1 is a perfectly smooth round shape, >1 is more surface = more drag
     /**
      * @param {Entity} entity
      * @returns {boolean}
@@ -251,14 +212,6 @@ class Entity {
     }
 
     /**
-     * Render this entity (if applicable) for picking purposes.
-     * @param {Renderer} renderer the offscreen renderer which will render this entity for picking.
-     * @param {number} id the id to assign to this entity in picking process.
-     */
-    drawForPicking(renderer, id) {
-    }
-
-    /**
      * Return if this entity is visible or not.
      * Not-visible objects are not rendered, .
      * @returns {boolean}
@@ -273,38 +226,5 @@ class Entity {
      */
     setVisible(isVisible) {
         this.visible = isVisible;
-    }
-
-    /**
-     * Return if this entity have physics properties or not.
-     * @returns {boolean}
-     */
-    isPhysics() {
-        return this.hasPhysics;
-    }
-
-    /**
-     * Set if this entity have physics properties or not.
-     * @param {boolean} canCollide
-     */
-    setPhysics(canCollide) {
-        this.hasPhysics = canCollide;
-    }
-
-    /**
-     * Return if this entity can be updated each frame.
-     * Updatable entities are updated via the overrideable updateEntity() method.
-     * @returns {boolean}
-     */
-    isUpdatable() {
-        return this.updatable;
-    }
-
-    /**
-     * Set if this entity can collide with others or not.
-     * @param {boolean} canUpdate
-     */
-    setUpdatable(canUpdate) {
-        this.updatable = canUpdate;
     }
 }
