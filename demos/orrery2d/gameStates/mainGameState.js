@@ -21,6 +21,11 @@ class MainGameState extends AbstractState {
         this._mouseLeftDown = false;
         this._mouseRightDown = false;
         this._time = 3600;
+        /**
+         * @type {Entity}
+         * @private
+         */
+        this._focusedEntity = null;
 
         this._lastCursorPos = null;
 
@@ -59,7 +64,8 @@ class MainGameState extends AbstractState {
             if (node instanceof StellarBody) {
                 node.updateOrbit(this._time);
             }
-        })
+        });
+        this.updateFocus();
     }
 
     animateIn(delta, animationState) {
@@ -106,6 +112,16 @@ class MainGameState extends AbstractState {
         this._lastCursorPos.copy(this._cursorProperties.screenWorldPos);
     }
 
+    focusTo(entity) {
+        // TODO
+        this._focusedEntity = entity;
+    }
+
+    updateFocus() {
+        if (this._focusedEntity == null) return;
+        this._focusedEntity.modelWorldMat
+    }
+
     setZoomScale(scale) {
         this._mapNode.scale.mulScalar(scale);
         this._mapNode.position.mulScalar(scale);
@@ -113,15 +129,13 @@ class MainGameState extends AbstractState {
 
     mouseWheelUpCallback(wheelPos) {
         if (wheelPos > 0) {
-            this._mapNode.scale.mulScalar(1.1);
-            this._mapNode.position.mulScalar(1.1);
+            this.setZoomScale(1.1);
         }
     }
 
     mouseWheelDownCallback(wheelPos) {
         if (wheelPos > 0) {
-            this._mapNode.scale.mulScalar(0.9);
-            this._mapNode.position.mulScalar(0.9);
+            this.setZoomScale(0.9);
         }
     }
 }
