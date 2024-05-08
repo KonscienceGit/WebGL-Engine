@@ -1,4 +1,7 @@
-class MouseInputIdentifiers extends AbstractInputIdentifier{
+import {AbstractInputIdentifier} from "../abstractInputIdentifier.js";
+import {MouseButton, MouseInputType, MouseWheel} from "./mouseInputs.js";
+
+export class MouseInputIdentifiers extends AbstractInputIdentifier{
     static {
         this.BUTTON_LEFT = new MouseInputIdentifiers(MouseInputType.BUTTON, MouseButton.LEFT, 'Mouse button left');
         this.BUTTON_MIDDLE = new MouseInputIdentifiers(MouseInputType.BUTTON, MouseButton.MIDDLE, 'Mouse button middle');

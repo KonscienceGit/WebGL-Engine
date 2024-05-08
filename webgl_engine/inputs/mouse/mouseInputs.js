@@ -1,33 +1,41 @@
-/**
- * @enum {number}
- */
-const MouseInputType = Object.freeze({
-    BUTTON: 0,
-    WHEEL: 1,
-    CURSOR_POSITION: 2
-});
+import {AbstractInput} from "../abstractInput.js";
 
 /**
  * @enum {number}
  */
-const MouseButton = Object.freeze({
-    LEFT: 0,
-    MIDDLE: 1,
-    RIGHT: 2,
-    THUMB_1: 3,
-    THUMB_2: 4
-});
+export class MouseInputType {
+    static {
+        this.BUTTON = 0;
+        this.WHEEL = 1;
+        this.CURSOR_POSITION = 2;
+    }
+}
 
 /**
  * @enum {number}
  */
-const MouseWheel = Object.freeze({
-    WHEEL_1_UP: 1,
-    WHEEL_1_DOWN: -1
-    // IDK about usefulness of multiple wheel (or multiple axes? need a mouse that supports this to test)
-});
+export class MouseButton {
+    static {
+        this.LEFT = 0;
+        this.MIDDLE = 1;
+        this.RIGHT = 2;
+        this.THUMB_1 = 3;
+        this.THUMB_2 = 4;
+    }
+}
 
-class MouseMovedInput extends AbstractInput{
+/**
+ * @enum {number}
+ */
+export class  MouseWheel {
+    static {
+        this.WHEEL_1_UP = 1;
+        this.WHEEL_1_DOWN = -1;
+        // IDK about usefulness of multiple wheel (or multiple axes? need a mouse that supports this to test)
+    }
+}
+
+export class MouseMovedInput extends AbstractInput{
     /**
      * @param {MouseInputManager} mouseInputManager
      */
@@ -44,7 +52,7 @@ class MouseMovedInput extends AbstractInput{
     }
 }
 
-class MouseButtonInput extends AbstractInput{
+export class MouseButtonInput extends AbstractInput{
     /**
      * @param {MouseInputManager} mouseInputManager
      * @param {MouseButton} buttonID
@@ -60,7 +68,7 @@ class MouseButtonInput extends AbstractInput{
     }
 }
 
-class MouseWheelInput extends AbstractInput{
+export class MouseWheelInput extends AbstractInput{
     /**
      * @param {MouseInputManager} mouseInputManager
      * @param {MouseWheel} wheelID absolute value is the wheel number, sign is the wheel direction (wheel up and down are two separate inputs).

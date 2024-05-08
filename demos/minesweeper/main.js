@@ -1,5 +1,14 @@
 "use strict";
 
+import {Camera2D} from "../../webgl_engine/graphics/camera2D.js";
+import {Renderer} from "../../webgl_engine/graphics/renderer.js";
+import {Vec4} from "../../webgl_engine/utils/math/vectors.js";
+import {MinesweeperInputManager} from "./minesweeperInputManager.js";
+import {MineSweeperObjectsManager} from "./mineSweeperObjectsManager.js";
+import {Scene2D} from "../../webgl_engine/utils/scene2d.js";
+import {MineSweeperStateManager} from "./gameStates/mineSweeperStateManager.js";
+import {LoadingManager} from "../../webgl_engine/utils/loadingManager.js";
+
 function main() {
     const canvas = document.getElementById("game_canvas");
     let previousTime = 0.0;

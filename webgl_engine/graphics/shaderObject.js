@@ -1,4 +1,6 @@
-class ShaderObject{
+import {StringUtils} from "../utils/stringUtils.js";
+
+export class ShaderObject{
     /**
      * @param {String} name this Shader name
      * @param {String} vertexCode the vertex shader source code

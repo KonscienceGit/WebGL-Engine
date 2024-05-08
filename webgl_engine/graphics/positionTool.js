@@ -1,4 +1,4 @@
-class PositionTool {
+export class PositionTool {
     constructor(renderer) {
         this.camera = renderer.getCamera();
         this.renderer = renderer;

@@ -1,4 +1,4 @@
-class BindingGroup {
+export class BindingGroup {
     constructor() {
         /**
          * @type {AbstractInputAction[]}

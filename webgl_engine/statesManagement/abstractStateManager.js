@@ -1,4 +1,4 @@
-class AbstractStateManager {
+export class AbstractStateManager {
     /**
      * Basic abstract State manager handling AbstractStates.
      */

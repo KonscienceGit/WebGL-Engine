@@ -1,4 +1,8 @@
-class MainGameState extends AbstractState {
+import {AbstractState} from "../../../webgl_engine/statesManagement/abstractState.js";
+import {Vec2} from "../../../webgl_engine/utils/math/vectors.js";
+import {UIBlock} from "../../../webgl_engine/ui/uiBlock.js";
+
+export class MainGameState extends AbstractState {
     /**
      * @param {MineSweeperObjectsManager} objectManager
      * @param {MinesweeperInputManager} gameBindings

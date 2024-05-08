@@ -1,8 +1,10 @@
+import {Sprite} from "../../webgl_engine/graphics/renderables/sprites/sprite.js";
+
 /**
  * Simple sprite with built-in functionality to enable/disable fullscreen.
  * Pair it with the picking mechanism to enable it.
  */
-class FullScreenButton extends Sprite {
+export class FullScreenButton extends Sprite {
     // TODO make button size/pos configurable.
     /**
      * @param {options} [options] the button options.

@@ -1,4 +1,7 @@
-class MineSweeperStateManager extends AbstractStateManager{
+import {AbstractStateManager} from "../../../webgl_engine/statesManagement/abstractStateManager.js";
+import {MainGameState} from "./mainGameState.js";
+
+export class MineSweeperStateManager extends AbstractStateManager{
     /**
      * The state manager of the demo.
      * This is an exemple implementation of the game state logic.

@@ -242,7 +242,7 @@ const DATA = {
 
 };
 
-class SolarSystem {
+export class SolarSystem {
     static getMap() {
         return MAP;
     }

@@ -1,4 +1,7 @@
-class MultiSprite extends Sprite {
+import {Sprite} from "./sprite.js";
+import {Entity} from "../../../utils/entity.js";
+
+export class MultiSprite extends Sprite {
     /**
      * Can render multiple similar sprites (of same image size) with reduced overhead. Useful for particles.
      * Currently achieved by updating the basic uniforms between each render but only setting/binding a texture2D_array once for all sprites.

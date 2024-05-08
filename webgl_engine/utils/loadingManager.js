@@ -1,6 +1,9 @@
-class LoadingManager {
+import {Entity} from "./entity.js";
+import {Scene2D} from "./scene2d.js";
+
+export class LoadingManager {
     /**
-     * Call the given callback function when all of the nodes in the given array are finished loading.
+     * Call the given callback function when all the nodes in the given array are finished loading.
      * @param {Array.<Entity>|Entity} scene entity, array of entities, or a scene of objects that need to be loaded before some action.
      * @param {function} callback the callback function when all given entities finished loading.
      * @param {(loaded: number, total: number) => void} [onProgress] the callback function when some additional entity have been loaded. function signature is<br> (loaded: number, total: number) => void

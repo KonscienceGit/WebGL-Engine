@@ -1,6 +1,15 @@
-class GeneralInputManager extends BindingGroup{
+import {BindingGroup} from "./bindingGroup.js";
+import {AxisInputAction, ButtonInputAction, PositionInputAction} from "./inputActions.js";
+import {GamepadInputIdentifier} from "./gamepads/gamepadInputIdentifiers.js";
+import {KeyboardInputIdentifiers} from "./keyboard/keyboardInputIdentifiers.js";
+import {MouseInputIdentifiers} from "./mouse/mouseInputIdentifiers.js";
+import {GamepadInputManager} from "./gamepads/gamepadInputManager.js";
+import {MouseInputManager} from "./mouse/mouseInputManager.js";
+import {KeyboardInputManager} from "./keyboard/keyboardInputManager.js";
+
+export class GeneralInputManager extends BindingGroup{
     /**
-     * @param {Renderer} renderer, necessary to create the MouseInputs if required.
+     * @param renderer {Renderer} renderer, necessary to create the MouseInputs if required.
      */
     constructor(renderer) {
         super();
@@ -71,7 +80,7 @@ class GeneralInputManager extends BindingGroup{
     }
 
     /**
-     * Parse the bindings of each actions, and trigger the associated callbacks.
+     * Parse the bindings of each action, and trigger the associated callbacks.
      * @param {number} delta the time in seconds since the last update.
      */
     parseBindings(delta){

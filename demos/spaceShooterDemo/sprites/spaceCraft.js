@@ -1,4 +1,6 @@
-class SpaceCraft extends Sprite {
+import {Sprite} from "../../../webgl_engine/graphics/renderables/sprites/sprite.js";
+
+export class SpaceCraft extends Sprite {
     constructor(renderer, resourcePath, pixelPerfectTool) {
         const imgPathes = [];
         for (let i = 0; i < 5; i++) {

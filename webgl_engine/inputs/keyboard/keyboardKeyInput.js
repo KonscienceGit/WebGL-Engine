@@ -1,4 +1,6 @@
-class KeyboardKeyInput extends AbstractInput{
+import {AbstractInput} from "../abstractInput.js";
+
+export class KeyboardKeyInput extends AbstractInput{
     /**
      * @param {KeyboardInputManager} keyboardInputManager
      * @param {String} code

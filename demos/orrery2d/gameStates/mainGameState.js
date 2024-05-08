@@ -1,7 +1,14 @@
+import {AbstractState} from "../../../webgl_engine/statesManagement/abstractState.js";
+import {FullScreenButton} from "../../common/fullScreenButton.js";
+import {Entity} from "../../../webgl_engine/utils/entity.js";
+import {Orrery2DObjectsManager} from "../orrery2DObjectsManager.js";
+import {StellarBody} from "../stellarBody.js";
+import {Orrery2DActions} from "../orrery2DActions.js";
+
 const FULLSCREEN_BUTTON = true;
 const SECONDS_IN_DAY = 24 * 60 * 60;
 
-class MainGameState extends AbstractState {
+export class MainGameState extends AbstractState {
     /**
      * @param {Orrery2DInputManager} gameBindings
      * @param {Scene2D} scene
@@ -36,7 +43,7 @@ class MainGameState extends AbstractState {
         this.setAnimateInLength(0.0);
         this.setAnimateOutLength(0.0);
 
-        // Bind the 'this' context for theses functions (otherwise it's lost when used as callback)
+        // Bind the 'this' context for these functions (otherwise it's lost when used as callback)
         gameBindings.addCallbackToAction(Orrery2DActions.CURSOR_MOVE, this.cursorMoveCallback.bind(this));
         gameBindings.addCallbackToAction(Orrery2DActions.LEFT_CLICK, this.leftClickCallback.bind(this));
         gameBindings.addCallbackToAction(Orrery2DActions.RIGHT_CLICK, this.rightClickCallback.bind(this));
@@ -119,7 +126,8 @@ class MainGameState extends AbstractState {
 
     updateFocus() {
         if (this._focusedEntity == null) return;
-        this._focusedEntity.modelWorldMat
+        // TODO ??
+        // this._focusedEntity.modelWorldMat
     }
 
     setZoomScale(scale) {

@@ -1,5 +1,13 @@
 "use strict";
 
+import {Camera2D} from "../../webgl_engine/graphics/camera2D.js";
+import {Renderer} from "../../webgl_engine/graphics/renderer.js";
+import {Vec4} from "../../webgl_engine/utils/math/vectors.js";
+import {CursorProperties} from "../../webgl_engine/utils/cursorProperties.js";
+import {GraphInputsManager} from "./graphInputManager.js";
+import {GraphManager} from "./graphManager.js";
+import {LoadingManager} from "../../webgl_engine/utils/loadingManager.js";
+
 function main() {
     // DEBUG constants
     const bench = {};

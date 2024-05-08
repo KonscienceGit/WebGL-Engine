@@ -1,12 +1,15 @@
+import {Vec2, Vec4} from "./math/vectors.js";
+import {Matrix3} from "./math/matrix.js";
+
 const __tmpV2 = new Vec2(0, 0);
 const __tmpPosA = new Vec2(0, 0);
 const __tmpPosB = new Vec2(0, 0);
 
 /**
- * Basic Node of the 2D Scenegraph.
+ * Basic Node of the 2D Scene graph.
  * Can be updated in the render loop, manipulated in 2D space (SRT transformations), and loaded by the LoadingManager.
  */
-class Entity {
+export class Entity {
     constructor() {
         this.name = null;
         this.visible = true;
@@ -145,7 +148,7 @@ class Entity {
     }
 
     intersectRounds(r1, r2) {
-        // Apply transformations, they'll be up to date compared to the previous render (for the parent transformations atleast)
+        // Apply transformations, they'll be up-to-date compared to the previous render (for the parent transformations at least)
         __tmpPosA.copy(r1.position);
         r1.modelWorldMat.applyToPosition(__tmpPosA);
         __tmpPosB.copy(r2.position);
@@ -213,7 +216,7 @@ class Entity {
 
     /**
      * Return if this entity is visible or not.
-     * Not-visible objects are not rendered, .
+     * Not-visible objects are not rendered.
      * @returns {boolean}
      */
     isVisible() {

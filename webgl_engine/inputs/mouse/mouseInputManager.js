@@ -1,4 +1,10 @@
-class MouseInputManager extends AbstractInputDeviceManager {
+import {AbstractInputDeviceManager} from "../abstractInputDeviceManager.js";
+import {CursorProperties} from "../../utils/cursorProperties.js";
+import {Vec2} from "../../utils/math/vectors.js";
+import {MouseButtonInput, MouseInputType, MouseMovedInput, MouseWheelInput} from "./mouseInputs.js";
+import {ActionType} from "../inputActions.js";
+
+export class MouseInputManager extends AbstractInputDeviceManager {
     /**
      * @param {Renderer} renderer
      */

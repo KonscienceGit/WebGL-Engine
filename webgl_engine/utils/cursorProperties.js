@@ -1,8 +1,11 @@
-class CursorProperties extends Entity {
+import {Entity} from "./entity.js";
+import {Vec2} from "./math/vectors.js";
+
+export class CursorProperties extends Entity {
     constructor() {
         super();
         this.visible = true;
-        // positions/movmeents in pixel coordinates
+        // positions/movements in pixel coordinates
         this.screenPos = new Vec2(0, 0);
         this.canvasPos = new Vec2(0, 0);
         this.lastPixelMovement = new Vec2(0, 0);

@@ -1,6 +1,11 @@
 // see http://luser.github.io/gamepadtest/
 // noinspection JSUnusedGlobalSymbols // broken inspection
-class GamepadInputManager extends AbstractInputDeviceManager {
+import {AbstractInputDeviceManager} from "../abstractInputDeviceManager.js";
+import {GamepadAxisInput, GamepadButtonInput} from "./gamepadInputs.js";
+import {ActionType} from "../inputActions.js";
+import {GamepadInputType} from "./gamepadInputIdentifiers.js";
+
+export class GamepadInputManager extends AbstractInputDeviceManager {
     constructor() {
         super();
         this._isSecureContext = window.isSecureContext;
@@ -32,16 +37,16 @@ class GamepadInputManager extends AbstractInputDeviceManager {
      */
     createInput(controllerIdentifier, actionType){
         // Unruly combinations
-        if(controllerIdentifier.getInputType() === GAMEPAD_BUTTON && (
+        if(controllerIdentifier.getInputType() === GamepadInputType.GAMEPAD_BUTTON && (
             actionType === ActionType.POSITION ||
             actionType === ActionType.THROTTLE
         )){
             throw new Error('Error: cannot bind a Button to a ' + actionType + ' action!');
         }
 
-        if(controllerIdentifier.getInputType() === GAMEPAD_BUTTON){
+        if(controllerIdentifier.getInputType() === GamepadInputType.GAMEPAD_BUTTON){
             return new GamepadButtonInput(this, controllerIdentifier.getType(), controllerIdentifier.getInputNumber());
-        } else if (controllerIdentifier.getInputType() === GAMEPAD_AXIS) {
+        } else if (controllerIdentifier.getInputType() === GamepadInputType.GAMEPAD_AXIS) {
             return new GamepadAxisInput(this, controllerIdentifier.getType(), controllerIdentifier.getInputNumber(), controllerIdentifier.getAxisDirection());
         }
         throw new Error('Unknown controller identifier!');

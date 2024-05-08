@@ -1,5 +1,14 @@
 "use strict";
 
+import {Camera2D} from "../../webgl_engine/graphics/camera2D.js";
+import {Renderer} from "../../webgl_engine/graphics/renderer.js";
+import {Vec2} from "../../webgl_engine/utils/math/vectors.js";
+import {SpaceShooterObjectsManager} from "./spaceShooterObjectsManager.js";
+import {Scene2D} from "../../webgl_engine/utils/scene2d.js";
+import {SpaceShooterInputManager} from "./spaceShooterInputManager.js";
+import {StateManager} from "./gameStates/stateManager.js";
+import {LoadingManager} from "../../webgl_engine/utils/loadingManager.js";
+
 function main() {
     const canvas = document.getElementById("game_canvas");
     let previousTime = 0.0;

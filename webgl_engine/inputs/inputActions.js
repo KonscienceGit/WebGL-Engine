@@ -1,26 +1,31 @@
-const ActionType = Object.freeze({
-    // Button is either pressed or not, can eventually be "clicked".
-    BUTTON: "Button",
+import {ConsoleUtils} from "../utils/consoleUtils.js";
+import {Vec2} from "../utils/math/vectors.js";
 
-    // Axis action goes from 0 to 1
-    // Have an inactive/default position (stick)
-    AXIS: "Axis",
+export class ActionType {
+    static {
+        /** Button is either pressed or not, can eventually be "clicked". */
+        this.BUTTON = "Button";
 
-    // Throttle action goes from 0 to 1
-    // Have no inactive/default position
-    THROTTLE: "Throttle",
+        /** Axis action goes from 0 to 1.<br>
+         * Have an inactive/default position (stick) */
+        this.AXIS = "Axis";
 
-    // Position is a screen relative [x,y] coordinates
-    // Can have several status (dragged, click, release etc...)
-    POSITION: "Position"
-});
+        /** Throttle action goes from 0 to 1.<br>
+         * Have no inactive/default position */
+        this.THROTTLE = "Throttle";
+
+        /** Position is a screen relative [x,y] coordinates. <br>
+         * Can have several status (dragged, click, release etc...) */
+        this.POSITION = "Position";
+    }
+}
 
 /**
  * @abstract
  * Defines an in-game action
  * (like jumping, moving forward, selecting and validating a selected menu options etc)
  */
-class AbstractInputAction{
+export class AbstractInputAction{
     /** @param {string} name the input action name. */
     constructor(name) {
         this._name = name;
@@ -66,16 +71,16 @@ class AbstractInputAction{
     }
 }
 
-class ButtonInputAction extends AbstractInputAction{
+export class ButtonInputAction extends AbstractInputAction{
     /**
      * Fire the given callbacks when the input is clicked, hold or released.
      * The callback will receive the argument: value, the value of the input, 1 is pressed/clicked, 0 is released.
      * If the button is released, a single callback is fired upon release.
-     * If the button is pressed, it depend on the constructor argument given:
+     * If the button is pressed, it depends on the constructor argument given:
      *     If actionOnClick is true, only a fresh press will fire a callback.
      *     If actionOnClick is false, callbacks will be fired as long as the button is hold pressed.
      * @param {string} name the input action name.
-     * @param {boolean} [actionOnClick=false] Optional, if this input action is only activable on click (letting the input pressed don't trigger it on repetition, only fresh press take effect.
+     * @param {boolean} [actionOnClick=false] Optional, if this input action is only activable on click (letting the input pressed don't trigger it on repetition, only fresh press take effect).
      */
     constructor(name, actionOnClick) {
         super(name);
@@ -102,7 +107,7 @@ class ButtonInputAction extends AbstractInputAction{
     }
 }
 
-class AxisInputAction extends AbstractInputAction{
+export class AxisInputAction extends AbstractInputAction{
     /**
      * @param {string} name the input action name.
      */
@@ -131,7 +136,7 @@ class AxisInputAction extends AbstractInputAction{
     }
 }
 
-class PositionInputAction extends AbstractInputAction{
+export class PositionInputAction extends AbstractInputAction{
     constructor(name) {
         super(name);
         this._type = ActionType.POSITION;

@@ -1,4 +1,4 @@
-class ConsoleUtils{
+export class ConsoleUtils{
     static nonImplementedError(){
         throw new Error('This method is not implemented!');
     }

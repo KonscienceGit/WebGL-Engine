@@ -1,7 +1,9 @@
+import {Vec2} from "../utils/math/vectors.js";
+
 /**
  * UI block used to design UI spaces
  */
-class UIBlock {
+export class UIBlock {
     /**
      * @param {Vec2} size the relative size of this block represented by scalar (1 for 100% of parent size, 0.5 for 50% and so on).
      */

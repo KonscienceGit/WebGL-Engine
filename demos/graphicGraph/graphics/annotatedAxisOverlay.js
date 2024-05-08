@@ -1,4 +1,7 @@
-class AnnotatedAxisOverlay extends Entity {
+import {ShadersUtil} from "../../../webgl_engine/graphics/shadersUtil.js";
+import {Entity} from "../../../webgl_engine/utils/entity.js";
+
+export class AnnotatedAxisOverlay extends Entity {
     /**
      * @param {Renderer} renderer
      * @param {Vec4} colorVec4

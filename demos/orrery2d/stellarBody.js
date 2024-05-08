@@ -1,4 +1,9 @@
-class StellarBody extends Entity {
+import {Entity} from "../../webgl_engine/utils/entity.js";
+import {Vec4} from "../../webgl_engine/utils/math/vectors.js";
+import {PlanetShape} from "./graphics/planetShape.js";
+import {Line} from "../../webgl_engine/graphics/renderables/line.js";
+
+export class StellarBody extends Entity {
     /**
      * @param {object} data
      * @param {boolean} [debugRing]

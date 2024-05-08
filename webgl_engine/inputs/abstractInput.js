@@ -1,4 +1,6 @@
-class AbstractInput {
+import {ConsoleUtils} from "../utils/consoleUtils.js";
+
+export class AbstractInput {
     constructor() {}
     /**
      * @abstract

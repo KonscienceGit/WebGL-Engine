@@ -1,4 +1,7 @@
-class TranslucentOverlay extends Entity {
+import {Entity} from "../../../utils/entity.js";
+import {ShadersUtil} from "../../shadersUtil.js";
+
+export class TranslucentOverlay extends Entity {
     /**
      * @param {Renderer} renderer
      * @param {Vec4} colorVec4

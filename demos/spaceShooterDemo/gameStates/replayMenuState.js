@@ -1,4 +1,6 @@
-class ReplayMenuState extends AbstractState {
+import {AbstractState} from "../../../webgl_engine/statesManagement/abstractState.js";
+
+export class ReplayMenuState extends AbstractState {
     /**
      * @param {SpaceShooterObjectsManager} objectManager
      * @param {SpaceShooterInputManager} gameBindings

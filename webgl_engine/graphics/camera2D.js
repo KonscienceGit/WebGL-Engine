@@ -1,7 +1,11 @@
+import {AbstractCamera} from "./abstractCamera.js";
+import {Matrix3} from "../utils/math/matrix.js";
+import {Vec2, Vec3} from "../utils/math/vectors.js";
+
 /**
  * 2D Camera
  */
-class Camera2D extends AbstractCamera {
+export class Camera2D extends AbstractCamera {
     constructor() {
         super();
         this._ratio = 1;

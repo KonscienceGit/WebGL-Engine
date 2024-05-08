@@ -4,7 +4,7 @@
  * X/Y scaling
  * rotation on the XY plane ("Z" axis)
  */
-class Matrix3 {
+export class Matrix3 {
     constructor() {
         this.m = new Float32Array(9);
         this.m[0] = 1;

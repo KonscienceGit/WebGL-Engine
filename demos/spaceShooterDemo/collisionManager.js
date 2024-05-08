@@ -1,4 +1,4 @@
-class CollisionManager {
+export class CollisionManager {
     /**
      * @param {SpaceShooterObjectsManager} objectManager
      * @param {MainGameState} gameState

@@ -1,3 +1,6 @@
+import {ShadersUtil} from "../shadersUtil.js";
+import {Entity} from "../../utils/entity.js";
+
 const LINE_VERTEX_SHADER = ShadersUtil.SHADER_HEADER +
     'uniform mat3 modelWorld;' +
     'uniform mat3 viewProj;' +
@@ -21,7 +24,7 @@ const LINE_FRAGMENT_SHADER = ShadersUtil.SHADER_HEADER +
 /**
  * Can be animated by storing multiple images.
  */
-class Line extends Entity {
+export class Line extends Entity {
     /**
      * @param {number[]} x positions
      * @param {number[]} y positions

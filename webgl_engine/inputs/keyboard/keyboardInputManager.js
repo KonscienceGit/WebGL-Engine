@@ -1,4 +1,8 @@
-class KeyboardInputManager extends AbstractInputDeviceManager {
+import {AbstractInputDeviceManager} from "../abstractInputDeviceManager.js";
+import {KeyboardKeyInput} from "./keyboardKeyInput.js";
+import {ActionType} from "../inputActions.js";
+
+export class KeyboardInputManager extends AbstractInputDeviceManager {
     constructor() {
         super();
         this._keyStates = {};
@@ -29,8 +33,8 @@ class KeyboardInputManager extends AbstractInputDeviceManager {
     }
 
     /**
-     * @param {KeyboardInputIdentifiers} keyboardInputIdentifier
-     * @param {ActionType} actionType
+     * @param keyboardInputIdentifier {KeyboardInputIdentifiers}
+     * @param actionType {ActionType}
      * @return {AbstractInput}
      */
     createInput(keyboardInputIdentifier, actionType){

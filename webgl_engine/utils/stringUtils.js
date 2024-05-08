@@ -1,4 +1,4 @@
-class StringUtils{
+export class StringUtils{
     constructor() {
     }
 

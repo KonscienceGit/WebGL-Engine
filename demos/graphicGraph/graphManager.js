@@ -1,4 +1,10 @@
-class GraphManager {
+import {Vec2, Vec4} from "../../webgl_engine/utils/math/vectors.js";
+import {MultiSprite} from "../../webgl_engine/graphics/renderables/sprites/multiSprite.js";
+import {AnnotatedAxisOverlay} from "./graphics/annotatedAxisOverlay.js";
+import {Sprite} from "../../webgl_engine/graphics/renderables/sprites/sprite.js";
+import {Interpolator} from "../../webgl_engine/utils/math/interpolator.js";
+
+export class GraphManager {
     /**
      * @param {Renderer} renderer
      * @param {CursorProperties} cursorProperties used for cursor operations
@@ -15,7 +21,7 @@ class GraphManager {
         this._lastCursorPos = new Vec2(0, 0);
         this._tmpVec2 = new Vec2(0, 0);
 
-        // Bind the 'this' context for theses functions (otherwise it's lost when used as callback)
+        // Bind the 'this' context for these functions (otherwise it's lost when used as callback)
         graphInputManager.addCallbackToAction(GraphActions.LEFT_CLICK, this.leftClickCallback.bind(this));
         graphInputManager.addCallbackToAction(GraphActions.CURSOR_MOVE, this.cursorMoveCallback.bind(this));
         graphInputManager.addCallbackToAction(GraphActions.MOUSEWHEEL_MOVE_UP, this.mouseWheelUpCallback.bind(this));

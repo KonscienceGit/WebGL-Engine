@@ -1,4 +1,7 @@
-class MainGameState extends AbstractState {
+import {AbstractState} from "../../../webgl_engine/statesManagement/abstractState.js";
+import {CollisionManager} from "../collisionManager.js";
+
+export class MainGameState extends AbstractState {
     /**
      * @param {SpaceShooterObjectsManager} objectManager
      * @param {SpaceShooterInputManager} gameBindings

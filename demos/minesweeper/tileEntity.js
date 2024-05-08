@@ -1,7 +1,9 @@
+import {Entity} from "../../webgl_engine/utils/entity.js";
+
 /**
  * Tile data for the Mine Sweeper
  */
-class TileEntity extends Entity {
+export class TileEntity extends Entity {
     constructor(col, row, size) {
         super();
         this.name = col + '_' + row;

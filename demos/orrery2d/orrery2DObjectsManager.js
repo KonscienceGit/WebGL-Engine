@@ -1,4 +1,8 @@
-class Orrery2DObjectsManager {
+import {SolarSystem} from "./data/solarSystem.js";
+import {Entity} from "../../webgl_engine/utils/entity.js";
+import {StellarBody} from "./stellarBody.js";
+
+export class Orrery2DObjectsManager {
     /**
      * Load the solar system and add it to the given Entity node.
      * @param {Entity} root
@@ -9,21 +13,6 @@ class Orrery2DObjectsManager {
         const gravityCenter = new Entity();
         this.createSystemParse(systemMap, gravityCenter, systemData);
         root.add(gravityCenter);
-
-        // const sun = new PlanetShape(0.01, new Vec4(1, 1, 0, 1), 'sun');
-        // root.add(sun);
-        // const earth = new PlanetShape(0.1, new Vec4(0, 0, 1, 1), 'earth');
-
-        // const testData = SolarSystem.getTest();
-        // const testBody = new StellarBody(testData, true);
-        // root.add(testBody);
-
-        // earth.position.setValues(1.5, 0);
-        // sun.add(earth);
-
-        // const moon = new PlanetShape(0.04, new Vec4(0.5, 0.5, 0.5, 1), 'moon');
-        // moon.position.x = 0.25;
-        // earth.add(moon);
     }
 
     /**

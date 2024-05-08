@@ -1,3 +1,7 @@
+import {Matrix3} from "../utils/math/matrix.js";
+import {Vec2, Vec4} from "../utils/math/vectors.js";
+import {ShadersUtil} from "./shadersUtil.js";
+
 const UNIT_MATRIX = new Matrix3();
 
 // TODO split this into:
@@ -5,7 +9,7 @@ const UNIT_MATRIX = new Matrix3();
 //  One or multiple Scenes (a scene is just a combination of a scenegraph and a camera, but each scenegraph/cmera can be reused accross multiple scenes.)
 //  Potentially, a Scene can depend on sub-scenes (ex: render a camera monitor in-game, or simply a virtual computer screen in-game)
 //  of which the result is an offscreen image used as a texture in the parent scene.
-class Renderer {
+export class Renderer {
     /**
      * @param {HTMLCanvasElement} canvas
      * @param {Camera2D} camera

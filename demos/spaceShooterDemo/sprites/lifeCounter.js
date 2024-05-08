@@ -1,11 +1,17 @@
-class LifeCounter extends Sprite {
+import {Sprite} from "../../../webgl_engine/graphics/renderables/sprites/sprite.js";
+import {Vec2} from "../../../webgl_engine/utils/math/vectors.js";
+
+export class LifeCounter extends Sprite {
     constructor(renderer, resourcePath, pixelPerfectTool) {
-        super(renderer, {imagespaths: resourcePath + "life.png"});
+        super({imagespaths: resourcePath + "life.png"});
         this._lifeCount = 3;
         this._pixelPerfectTool = pixelPerfectTool;
         this._tmpPos = new Vec2();
     }
 
+    /**
+     * @param lifes {number}
+     */
     setLifeCount(lifes) {
         this._lifeCount = lifes;
     }
@@ -23,6 +29,9 @@ class LifeCounter extends Sprite {
         );
     }
 
+    /**
+     * @param renderer {Renderer}
+     */
     draw(renderer) {
         const increment = this.size.x;
         this._tmpPos.copy(this.position);

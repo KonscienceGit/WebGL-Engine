@@ -1,4 +1,14 @@
-class SpaceShooterObjectsManager {
+import {PositionTool} from "../../webgl_engine/graphics/positionTool.js";
+import {Entity} from "../../webgl_engine/utils/entity.js";
+import {Sprite} from "../../webgl_engine/graphics/renderables/sprites/sprite.js";
+import {MultiSprite} from "../../webgl_engine/graphics/renderables/sprites/multiSprite.js";
+import {SpaceCraft} from "./sprites/spaceCraft.js";
+import {ScoreCounter} from "./sprites/scoreCounter.js";
+import {LifeCounter} from "./sprites/lifeCounter.js";
+import {TranslucentOverlay} from "../../webgl_engine/graphics/renderables/sprites/translucentOverlay.js";
+import {Vec4} from "../../webgl_engine/utils/math/vectors.js";
+
+export class SpaceShooterObjectsManager {
     /**
      * @param {Renderer} renderer
      */

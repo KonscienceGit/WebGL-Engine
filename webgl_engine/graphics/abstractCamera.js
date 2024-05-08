@@ -1,4 +1,7 @@
-class AbstractCamera {
+import {ConsoleUtils} from "../utils/consoleUtils.js";
+import {Vec2, Vec3} from "../utils/math/vectors.js";
+
+export class AbstractCamera {
     constructor() {
     }
 

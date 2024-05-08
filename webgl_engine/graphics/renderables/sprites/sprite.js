@@ -1,3 +1,7 @@
+import {ShadersUtil} from "../../shadersUtil.js";
+import {Entity} from "../../../utils/entity.js";
+import {Vec2} from "../../../utils/math/vectors.js";
+
 const DEFAULT_VERTICES = new Float32Array([
     // 0---1
     // | / |
@@ -45,7 +49,7 @@ const FRAGMENT_SHADER = ShadersUtil.SHADER_HEADER +
 /**
  * Can be animated by storing multiple images.
  */
-class Sprite extends Entity {
+export class Sprite extends Entity {
     /**
      * @param {options} [options] the sprite options.
      * @param {string[]|string} [options.imagespaths] the path (or array of pathes) to the images to loaf in the sprites.

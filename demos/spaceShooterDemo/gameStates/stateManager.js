@@ -1,4 +1,9 @@
-class StateManager extends AbstractStateManager{
+import {AbstractStateManager} from "../../../webgl_engine/statesManagement/abstractStateManager.js";
+import {StartMenuState} from "./startMenuState.js";
+import {MainGameState} from "./mainGameState.js";
+import {ReplayMenuState} from "./replayMenuState.js";
+
+export class StateManager extends AbstractStateManager{
     /**
      * The state manager of the space shooter demo.
      * This is an exemple implementation of the game state logic.

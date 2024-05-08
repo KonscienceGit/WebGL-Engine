@@ -1,4 +1,10 @@
-class Orrery2DInputManager extends GeneralInputManager {
+import {GeneralInputManager} from "../../webgl_engine/inputs/generalInputManager.js";
+import {MouseInputIdentifiers} from "../../webgl_engine/inputs/mouse/mouseInputIdentifiers.js";
+import {XboxGamePadInputs} from "../../webgl_engine/inputs/gamepads/gamepadInputIdentifiers.js";
+import {US_Keyboard} from "../../webgl_engine/inputs/keyboard/keyboardInputIdentifiers.js";
+import {Orrery2DActions} from "./orrery2DActions.js";
+
+export class Orrery2DInputManager extends GeneralInputManager {
     constructor(renderer) {
         super(renderer);
         this.initActions();

@@ -1,4 +1,8 @@
-class Tiles extends MultiSprite {
+import {MultiSprite} from "../../../webgl_engine/graphics/renderables/sprites/multiSprite.js";
+import {Vec4} from "../../../webgl_engine/utils/math/vectors.js";
+import {TileEntity} from "../tileEntity.js";
+
+export class Tiles extends MultiSprite {
     /**
      * Minesweeper Tiles constructor
      * @param {MultiSprite} numbersSprites

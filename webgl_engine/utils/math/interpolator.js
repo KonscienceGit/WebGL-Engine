@@ -20,7 +20,7 @@
  *   reverseRamp: reverse the increase rate, when false, increase ratre is fast then slow. If revesed, it become slow then fast.
  *   inverseInput: reverse the input, input 0 becomes 1 and vice versa, effectively  mirror the curve on vertical axis.
  */
-class Interpolator {
+export class Interpolator {
     static SIN_ARCCOS = new Float64Array(401);
     static {
         let i = 0;

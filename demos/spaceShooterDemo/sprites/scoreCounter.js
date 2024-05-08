@@ -1,4 +1,7 @@
-class ScoreCounter extends MultiSprite {
+import {MultiSprite} from "../../../webgl_engine/graphics/renderables/sprites/multiSprite.js";
+import {Vec2} from "../../../webgl_engine/utils/math/vectors.js";
+
+export class ScoreCounter extends MultiSprite {
     constructor(renderer, resourcePath, pixelPerfectTool) {
         const numPathes = [];
         for (let i = 0; i < 11; i++) {

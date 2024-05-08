@@ -1,6 +1,4 @@
-// noinspection DuplicatedCode
-
-class Vec2 {
+export class Vec2 {
     constructor(x, y) {
         this.x = x == null ? 0 : x;
         this.y = y == null ? 0 : y;
@@ -108,7 +106,7 @@ class Vec2 {
     }
 }
 
-class Vec3 {
+export class Vec3 {
     constructor(x, y, z) {
         this.x = x == null ? 0 : x;
         this.y = y == null ? 0 : y;
@@ -177,7 +175,7 @@ class Vec3 {
     }
 }
 
-class Vec4 {
+export class Vec4 {
     constructor(x, y, z, w) {
         this.x = x == null ? 0 : x;
         this.y = y == null ? 0 : y;

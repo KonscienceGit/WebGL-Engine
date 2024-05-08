@@ -1,10 +1,10 @@
 /**
  * A scene is a combination of a scenegraph and a camera.
- * It serve mainly as a convenience tool to manage multiple scenes/camera angles more easily.
+ * It serves mainly as a convenience tool to manage multiple scenes/camera angles more easily.
  * A scene can be rendered in a renderer.
  * renderer.setScene(scene) will set the scene active, and
  */
-class Scene2D {
+export class Scene2D {
     /**
      * Scene constructor.
      * Root entity and Camera

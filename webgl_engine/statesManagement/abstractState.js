@@ -1,12 +1,14 @@
+import {ConsoleUtils} from "../utils/consoleUtils.js";
+
 /**
- * This define a basic implementation of a simple state (still bastract though).
+ * This defines a basic implementation of a simple state (still abstract though).
  * It features animations, a main loop, a start and finish stage.
- * (So this state effectively have sub-states.)
+ * (So this state effectively have sub states.)
  * Use states to define which part of the software/game the user/player is in (in the main menu, in the actual game, in the in-game menu, in the player inventory menu etc...)
  * Note: a state can be reused, as long as start and finish are properly called between uses.
  * @abstract
  */
-class AbstractState {
+export class AbstractState {
     constructor() {
         this.ANIMATE_IN = 0;
         this.ANIMATE_OUT = 1;
@@ -123,7 +125,7 @@ class AbstractState {
     }
 
     /**
-     * Animate this state when it become active, just after calling start().
+     * Animate this state when it becomes active, just after calling start().
      * AnimateIn is then called until the animationState reach 1.0, the time it takes is defined by setAnimateInLength(seconds).
      * @param {number} delta in seconds.
      * @param {number} animationState the state of animation, from 0.0 (start) to 1.0 (end).

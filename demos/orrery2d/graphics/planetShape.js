@@ -1,3 +1,5 @@
+import {Sprite} from "../../../webgl_engine/graphics/renderables/sprites/sprite.js";
+
 const PRECISION = 32;
 
 function makeIndices() {
@@ -22,7 +24,7 @@ function makeIndices() {
 
 const PLANET_INDICES = makeIndices();
 
-class PlanetShape extends Sprite {
+export class PlanetShape extends Sprite {
     /**
      * @param {number} radius
      * @param {Vec4} color

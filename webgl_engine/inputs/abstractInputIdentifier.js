@@ -1,4 +1,4 @@
-class AbstractInputIdentifier{
+export class AbstractInputIdentifier{
     constructor() {
     }
 }

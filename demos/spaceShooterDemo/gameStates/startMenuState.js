@@ -1,4 +1,7 @@
-class StartMenuState extends AbstractState {
+import {Vec2} from "../../../webgl_engine/utils/math/vectors.js";
+import {AbstractState} from "../../../webgl_engine/statesManagement/abstractState.js";
+
+export class StartMenuState extends AbstractState {
     /**
      * @param {SpaceShooterObjectsManager} objectManager
      * @param {SpaceShooterInputManager} gameBindings

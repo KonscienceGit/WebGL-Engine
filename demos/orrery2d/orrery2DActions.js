@@ -1,12 +1,14 @@
-const Orrery2DActions = Object.freeze({
-    // General / commons
-    CURSOR_MOVE: "Cursor move",
-    MOUSEWHEEL_MOVE_UP: "Mouse wheel move up",
-    MOUSEWHEEL_MOVE_DOWN: "Mouse wheel move down",
-    // Gameplay
-    LEFT_CLICK: "Left click",
-    RIGHT_CLICK: "Right click",
-    //Menus
-    MENU_RETURN_TO_MAIN: "Return to the main menu",
-    MENU_VALID_SELECTION: "Valid the selected menu",
-});
+export class Orrery2DActions {
+    static {
+        // General / commons
+        this.CURSOR_MOVE = "Cursor move";
+        this.MOUSEWHEEL_MOVE_UP = "Mouse wheel move up";
+        this.MOUSEWHEEL_MOVE_DOWN = "Mouse wheel move down";
+        // Gameplay
+        this.LEFT_CLICK = "Left click";
+        this.RIGHT_CLICK = "Right click";
+        //Menus
+        this.MENU_RETURN_TO_MAIN = "Return to the main menu";
+        this.MENU_VALID_SELECTION = "Valid the selected menu";
+    }
+}

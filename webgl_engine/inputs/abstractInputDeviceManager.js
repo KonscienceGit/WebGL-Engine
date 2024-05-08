@@ -1,4 +1,6 @@
-class AbstractInputDeviceManager {
+import {ConsoleUtils} from "../utils/consoleUtils.js";
+
+export class AbstractInputDeviceManager {
     constructor() {
     }
 

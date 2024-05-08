@@ -1,4 +1,6 @@
-class ShadersUtil {
+import {ShaderObject} from "./shaderObject.js";
+
+export class ShadersUtil {
     static GLSL_300_ES = '#version 300 es \n';
     static LOWP = 'precision lowp ';
     static MEDIUMP = 'precision mediump ';

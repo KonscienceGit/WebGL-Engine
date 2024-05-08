@@ -1,4 +1,10 @@
-class MineSweeperObjectsManager {
+import {Entity} from "../../webgl_engine/utils/entity.js";
+import {MultiSprite} from "../../webgl_engine/graphics/renderables/sprites/multiSprite.js";
+import {Sprite} from "../../webgl_engine/graphics/renderables/sprites/sprite.js";
+import {Tiles} from "./graphics/tiles.js";
+import {Vec4} from "../../webgl_engine/utils/math/vectors.js";
+
+export class MineSweeperObjectsManager {
     /**
      * MineSweeperObjectsManager's constructor
      * @param {Renderer} renderer

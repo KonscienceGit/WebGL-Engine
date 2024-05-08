@@ -1,7 +1,9 @@
+import {AbstractInput} from "../abstractInput.js";
+
 /**
  * @abstract
  */
-class AbstractGamepadInput extends AbstractInput{
+export class AbstractGamepadInput extends AbstractInput{
     constructor(gamepadManager, gamepadType) {
         super();
         this._gamepadType = gamepadType;
@@ -23,7 +25,7 @@ class AbstractGamepadInput extends AbstractInput{
     }
 }
 
-class GamepadButtonInput extends AbstractGamepadInput{
+export class GamepadButtonInput extends AbstractGamepadInput{
     /**
      * @param {GamepadInputManager} gamepadManager
      * @param {String} gamepadType
@@ -53,7 +55,7 @@ class GamepadButtonInput extends AbstractGamepadInput{
     }
 }
 
-class GamepadAxisInput extends AbstractGamepadInput{
+export class GamepadAxisInput extends AbstractGamepadInput{
     /**
      * @param {GamepadInputManager} gamepadManager
      * @param {String} gamepadType
