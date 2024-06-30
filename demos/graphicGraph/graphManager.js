@@ -13,7 +13,7 @@ export class GraphManager {
     constructor(renderer, cursorProperties, graphInputManager) {
         const blackColor = new Vec4(0, 0, 0, 1);
         const darkRedColor = new Vec4(0.8, 0, 0, 1);
-        this._camera = renderer.getCamera();
+        this._camera = renderer.getScene().getCamera();
         this._cursorProperties = null;
         this._needsUpdate = true;
         this._isMouseDown = false;

@@ -24,12 +24,12 @@ export class FullScreenButton extends Sprite {
     draw(renderer) {
         super.draw(renderer);
         if (this._init && document.fullscreenEnabled) {
-            this.updateFullScreenPos(renderer.getCamera());
+            this.updateFullScreenPos(renderer.getScene().getCamera());
             this.setVisible(true);
             this.isRound = false;
             this._init = false;
             renderer.setOnResizeCallback(() => {
-                this.updateFullScreenPos(renderer.getCamera());
+                this.updateFullScreenPos(renderer.getScene().getCamera());
             });
         }
     }
@@ -37,7 +37,7 @@ export class FullScreenButton extends Sprite {
     /**
      * Automatically update the button configuration.
      * Override to customize the button size/position after the view change size.
-     * @param {AbstractCamera} camera
+     * @param {Camera2D} camera
      */
     updateFullScreenPos(camera) {
         const worldSize = camera.getScreenWorldSize();

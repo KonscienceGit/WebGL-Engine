@@ -7,7 +7,7 @@
 export class Matrix3 {
     constructor() {
         this.m = new Float32Array(9);
-        this.m[0] = 1;
+        this.m[0] = 1; // Float array is initialized to 0
         this.m[4] = 1;
         this.m[8] = 1;
     }
@@ -26,13 +26,26 @@ export class Matrix3 {
     }
 
     /**
-     * Compute the SRT (Scale Rotation Translation) matrix (previous matrix transformations will not be taken into account).
-     * Make sure the matrix last row is 0, 0, 1 if using this manually, they are ignored to save on operations.
+     * Reset this matrix and set its SRT (Scale Rotation Translation) components.<br>
+     * This method is faster than multiplying separately scale, rotation and translation matrices.
      * @param {Vec2} s scale
      * @param {number} r rotation
      * @param {Vec2} t translation
      */
     makeSRT(s, r, t) {
+        this.makeIdentity();
+        this.setSRT(s, r, t);
+    }
+
+    /**
+     * Set the SRT (Scale Rotation Translation) matrix components.<br>
+     * The matrix last row will be left unchanged, please make sure it was 0, 0, 1, or use makeSRT() instead.<br>
+     * This method is much faster than multiplying separately scale, rotation and translation matrices.
+     * @param {Vec2} s scale
+     * @param {number} r rotation
+     * @param {Vec2} t translation
+     */
+    setSRT(s, r, t) {
         const m = this.m;
         const cos = Math.cos(r);
         const sin = Math.sin(r);
@@ -43,18 +56,27 @@ export class Matrix3 {
         m[3] = s.x * sin;
         m[4] = s.y * cos;
         m[5] = t.y; // translation
-        // Save on (generally) unsed calculations
         // m[6] = 0;
         // m[7] = 0;
         // m[8] = 1;
     }
 
     /**
-     * Transform an empty matrix (or identity matrix) into a rotation matrix.
-     * Translation terms of the matrix will not be updated, do keep in mind.
+     * Transform this matrix into a rotation matrix.<br>
      * @param {number} r rotation angle in radian, rotate counter-clockwise.
      */
     makeRotation(r) {
+        this.makeIdentity();
+        this.setRotation(r);
+    }
+
+    /**
+     * Set the rotation components of this matrix.<br>
+     * Scale and previous rotation are overwritten, but not translations.<br>
+     * Please use makeRotation() to reset the entire matrix before applying the rotation.
+     * @param {number} r rotation angle in radian, rotate counter-clockwise.
+     */
+    setRotation(r) {
         // cos  | -sin  |   0
         // sin  |  cos  |   0
         //  0   |   0   |   1
@@ -73,10 +95,20 @@ export class Matrix3 {
     }
 
     /**
+     * Reset this matrix as an identity matrix, then apply the given x/y translation.
      * @param {number} x
      * @param {number} y
      */
     makeTranslation(x, y) {
+        this.makeIdentity();
+        this.setTranslation(x, y);
+    }
+
+    /**
+     * @param {number} x
+     * @param {number} y
+     */
+    setTranslation(x, y) {
         // 1 | 0 | x
         // 0 | 1 | y
         // 0 | 0 | 1
@@ -85,10 +117,22 @@ export class Matrix3 {
     }
 
     /**
+     * Reset this matrix as an identity matrix, then apply the given x/y scale.
      * @param {number} x
      * @param {number} y
      */
     makeScale(x, y) {
+       this.makeIdentity();
+       this.setScale(x, y);
+    }
+
+    /**
+     * Modify the scale component of this matrix.<br>
+     * Does NOT reset the matrix, only modify the scale component. For this, use makeScale() instead.
+     * @param {number} x
+     * @param {number} y
+     */
+    setScale(x, y) {
         // x | 0 | 0
         // 0 | y | 0
         // 0 | 0 | 1

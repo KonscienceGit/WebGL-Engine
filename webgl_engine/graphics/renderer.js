@@ -6,7 +6,7 @@ const UNIT_MATRIX = new Matrix3();
 
 // TODO split this into:
 //  A renderer which only have a unique GL context
-//  One or multiple Scenes (a scene is just a combination of a scenegraph and a camera, but each scenegraph/cmera can be reused accross multiple scenes.)
+//  One or multiple Scenes (a scene is just a combination of a scenegraph and a camera, but each scenegraph/camera can be reused across multiple scenes.)
 //  Potentially, a Scene can depend on sub-scenes (ex: render a camera monitor in-game, or simply a virtual computer screen in-game)
 //  of which the result is an offscreen image used as a texture in the parent scene.
 export class Renderer {
@@ -108,16 +108,14 @@ export class Renderer {
         this._canvas.width = this._renderResolution.x;
         this._canvas.height = this._renderResolution.y;
         this._gl.viewport(0, 0, this._renderResolution.x, this._renderResolution.y);
-        this.clear();
-        this._camera.setRatio(this._ratio);
         this._needRepaint = true;
     }
 
     /**
      * Render the attached scene
-     * @param {number} detlaTime in seconds
+     * @param {number} deltaTime in seconds
      */
-    render(detlaTime) {
+    render(deltaTime) {
         const scene = this.getScene();
         if (scene == null) {
             console.warn('Cannot render, Scene has not been defined');
@@ -128,7 +126,8 @@ export class Renderer {
             console.warn('Cannot render, root or camera is not defined');
         }
         // 1. update entities status and matrices
-        root.update(detlaTime, UNIT_MATRIX);
+        camera.setRatio(this._ratio); // need to update each time as we can have multiple cameras.
+        root.update(deltaTime, UNIT_MATRIX);
 
         // 2. render scenegraph
         root.draw(this);
@@ -182,8 +181,9 @@ export class Renderer {
         return this._renderResolution;
     }
 
-    /** @returns {AbstractCamera} */
+    /** @returns {Camera2D} */
     getCamera() {
+        console.warn('Renderer.getCamera() is deprecated, camera is not tied to the renderer.');
         return this._camera;
     }
 
@@ -198,7 +198,7 @@ export class Renderer {
 
     /**
      * Turn the browser right click contextual menu on or off. Default is false.
-     * Should be left to false to allow theengine Right click mouse events to work properly.
+     * Should be left to false to allow the engine Right click mouse events to work properly.
      * @param {boolean} enabled
      */
     setBrowserRightClickEnabled(enabled) {

@@ -117,6 +117,7 @@ export class MouseInputManager extends AbstractInputDeviceManager {
 
 
     updateCursor(event) {
+        // Note: Canvas and Screen coordinates are in pixels, X increase toward the right, and Y increase DOWNWARD (0 is at the top)
         const rect = this._canvas.getBoundingClientRect();
         // Get difference between previous position and current position
         this._cursorProperties.lastPixelMovement.setValues(event.screenX - this._cursorProperties.screenPos.x, event.screenY - this._cursorProperties.screenPos.y);
@@ -124,20 +125,16 @@ export class MouseInputManager extends AbstractInputDeviceManager {
         // Adjust based on the real position of the current DOM element thingy
         this._cursorProperties.canvasPos.setValues(event.clientX - rect.left, event.clientY - rect.top);
 
+        // Convert to device coordinate space [-1, 1], x increasing to the right, y increasing upward
+        this._cursorProperties.devicePos.x = 2 * this._cursorProperties.canvasPos.x / rect.width - 1;
+        this._cursorProperties.devicePos.y =  -2 * this._cursorProperties.canvasPos.y / rect.height + 1;
 
-        // Compute cursor position in pixels, with 0 being center of the viewport.
-        this._cursorProperties.devicePos.setValues(this._cursorProperties.canvasPos.x - rect.width / 2, rect.height / 2 - this._cursorProperties.canvasPos.y);
-        this._cursorProperties.screenWorldPos.copy(this._cursorProperties.devicePos);
-
-        // Convert pixel pos in device pos [-0.5, 0.5]
-        // noinspection JSSuspiciousNameCombination
-        this._cursorProperties.devicePos.x /= rect.height; // on purpose as we use screen height to define the device size unit. width differ based on screen ratio
-        this._cursorProperties.devicePos.y /= rect.height;
-
-        this._renderer.getCamera().getScreenWorldSize(this._tmpVec2);
-        this._cursorProperties.screenWorldPos.x *= this._tmpVec2.x / rect.width;
-        this._cursorProperties.screenWorldPos.y *= this._tmpVec2.y / rect.height;
-        this._renderer.getCamera().getPosition(this._cursorProperties.worldPosOffset);
+        // TODO for ref only, to remove
+        // this._cursorProperties.screenWorldPos.setValues(this._cursorProperties.canvasPos.x - rect.width / 2, rect.height / 2 - this._cursorProperties.canvasPos.y);
+        // this._renderer.getCamera().getScreenWorldSize(this._tmpVec2);
+        // this._cursorProperties.screenWorldPos.x *= this._tmpVec2.x / rect.width;
+        // this._cursorProperties.screenWorldPos.y *= this._tmpVec2.y / rect.height;
+        // this._renderer.getCamera().getPosition(this._cursorProperties.worldPosOffset);
     }
 
     /**
@@ -169,7 +166,7 @@ export class MouseInputManager extends AbstractInputDeviceManager {
                 input = new MouseWheelInput(this, inputId.getNumber());
                 break;
             default:
-                console.error('Error: ' + inputId.getInputType() + ' is not a valid mouse input type.')
+                console.error('Error: ' + inputId.getInputType() + ' is not a valid mouse input type.');
         }
         return input;
     }

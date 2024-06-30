@@ -28,8 +28,8 @@ const VERTEX_SHADER = ShadersUtil.SHADER_HEADER +
     'void main(void) {' +
     '    textCoord = textCoordinates;' +
     '    vec3 pos = vec3(vertCoords, 1.);' +
-    // x2 to convert from [-0.5, 0.5] to [-1, 1] space
-    '    pos = pos * modelWorld * viewProj * 2.;' +
+    // pos in device/clip space [-1, 1]
+    '    pos = pos * modelWorld * viewProj;' +
     '    gl_Position = vec4(pos.xy, 0., 1.);' +
     '}';
 
@@ -285,7 +285,8 @@ export class Sprite extends Entity {
         gl.useProgram(this._program);
         gl.bindTexture(gl.TEXTURE_2D_ARRAY, this._texture);
         this.setupUniforms(gl, this);
-        renderer.getCamera().setViewProjectionUniform(gl, this._viewProjMatUniform);
+        const camera = renderer.getScene().getCamera();
+        camera.setViewProjectionUniform(gl, this._viewProjMatUniform);
     }
 
     /**

@@ -23,6 +23,9 @@ export class Scene2D {
         this._camera = camera;
     }
 
+    /**
+     * @returns {Camera2D}
+     */
     getCamera() {
         return this._camera;
     }
@@ -34,7 +37,10 @@ export class Scene2D {
         this._root = root;
     }
 
+    /**
+     * @returns {Entity}
+     */
     getRoot() {
-        return this._root
+        return this._root;
     }
 }

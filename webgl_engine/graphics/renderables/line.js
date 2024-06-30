@@ -7,9 +7,8 @@ const LINE_VERTEX_SHADER = ShadersUtil.SHADER_HEADER +
     'in vec2 vertCoords;' +
 
     'void main(void) {' +
-    // Transform Vec2 to Vec3, then
-    // convert from [-0.5, 0.5] to [-1, 1] space
-    '    vec3 pos = vec3(vertCoords, 1.) * modelWorld * viewProj * 2.;' +
+    // pos in device/clip space [-1, 1]
+    '    vec3 pos = vec3(vertCoords, 1.) * modelWorld * viewProj;' +
     '    gl_Position = vec4(pos.xy, 0., 1.);' +
     '}';
 
@@ -21,9 +20,6 @@ const LINE_FRAGMENT_SHADER = ShadersUtil.SHADER_HEADER +
     '    outColor = color;' +
     '}';
 
-/**
- * Can be animated by storing multiple images.
- */
 export class Line extends Entity {
     /**
      * @param {number[]} x positions
@@ -101,7 +97,8 @@ export class Line extends Entity {
         gl.bindVertexArray(this._vao);
         gl.useProgram(this._program);
         this.setupUniforms(gl, this);
-        renderer.getCamera().setViewProjectionUniform(gl, this._viewProjMatUniform);
+        const camera = renderer.getScene().getCamera();
+        camera.setViewProjectionUniform(gl, this._viewProjMatUniform);
     }
 
     /**

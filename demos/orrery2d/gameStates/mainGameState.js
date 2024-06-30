@@ -11,27 +11,27 @@ const SECONDS_IN_DAY = 24 * 60 * 60;
 export class MainGameState extends AbstractState {
     /**
      * @param {Orrery2DInputManager} gameBindings
-     * @param {Scene2D} scene
+     * @param {Scene2D} gameScene
+     * @param {Scene2D} uiScene
      */
-    constructor(gameBindings, scene) {
+    constructor(gameBindings, gameScene, uiScene) {
         super();
         this._fullScreenButton = null;
-        this._scene = scene;
+        this._gameScene = gameScene;
+        this._uiScene = uiScene;
         if (FULLSCREEN_BUTTON) {
             this._fullScreenButton = new FullScreenButton();
-            this._scene.getRoot().add(this._fullScreenButton);
+            this._uiScene.getRoot().add(this._fullScreenButton);
         }
         this._mapNode = new Entity();
-        this._scene.getRoot().add(this._mapNode);
+        this._gameScene.getRoot().add(this._mapNode);
         this.setZoomScale(1 / (149.6 * 1e6)); // earth orbit radius
+        /** @type {CursorProperties} */
         this._cursorProperties = null;
         this._mouseLeftDown = false;
         this._mouseRightDown = false;
         this._time = 3600;
-        /**
-         * @type {Entity}
-         * @private
-         */
+        /** @type {Entity} */
         this._focusedEntity = null;
 
         this._lastCursorPos = null;
@@ -93,6 +93,7 @@ export class MainGameState extends AbstractState {
 
     click(value, leftClick) {
         if (this._cursorProperties == null || value < 1) return;
+        console.log(this._cursorProperties.canvasPos.x, this._cursorProperties.canvasPos.y);
         if (document.fullscreenEnabled && leftClick) {
             // TODO fix picking, need to take into account the scenegraph matrices.
             const pickResult = this._cursorProperties.pick(this._fullScreenButton);
@@ -108,15 +109,29 @@ export class MainGameState extends AbstractState {
     cursorMoveCallback(cursorProperties) {
         this._cursorProperties = cursorProperties;
         if (this._lastCursorPos == null) {
-            this._lastCursorPos = this._cursorProperties.screenWorldPos.clone();
+            this._lastCursorPos = cursorProperties.devicePos.clone();
         }
         if (this._mouseLeftDown || this._mouseRightDown) {
-            const x = this._cursorProperties.screenWorldPos.x - this._lastCursorPos.x;
-            const y = this._cursorProperties.screenWorldPos.y - this._lastCursorPos.y;
-            this._mapNode.position.x += x;
-            this._mapNode.position.y += y;
+            const x = cursorProperties.devicePos.x - this._lastCursorPos.x;
+            const y = cursorProperties.devicePos.y - this._lastCursorPos.y;
+            this.translateCamera(this._gameScene, x, y);
         }
-        this._lastCursorPos.copy(this._cursorProperties.screenWorldPos);
+        this._lastCursorPos.copy(cursorProperties.devicePos);
+    }
+
+    /**
+     * Translate the camera by the given value in device coordinates [-1, 1].
+     * @param {Scene2D} scene
+     * @param {number} x
+     * @param {number} y
+     */
+    translateCamera(scene, x, y) {
+        // TODO reuse vector
+        const camera = scene.getCamera();
+        const pos = camera.getPosition();
+        pos.x += x;
+        pos.y += y;
+        camera.setPosition(pos);
     }
 
     focusTo(entity) {
