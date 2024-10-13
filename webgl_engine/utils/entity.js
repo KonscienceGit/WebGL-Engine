@@ -71,6 +71,15 @@ export class Entity {
     }
 
     /**
+     * Return this object's position in world coordinates.
+     * @param {Vec2} target
+     */
+    getWorldPosition(target) {
+        target.x = this.modelWorldMat.m[2];
+        target.y = this.modelWorldMat.m[5];
+    }
+
+    /**
      * Draw this entity and all its child entities if they are visible.
      * @param {Renderer} renderer
      */

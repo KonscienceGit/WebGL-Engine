@@ -57,6 +57,26 @@ export class StellarBody extends Entity {
     }
 
     /**
+     * Return the graphical representation of this stellar body.
+     * @returns {PlanetShape}
+     */
+    getBody() {
+        return this._body;
+    }
+
+    getIndexName() {
+        return this._indexName;
+    }
+
+    getFormattedName() {
+        return this._formattedName;
+    }
+
+    getBodyRadius() {
+        return this._bodyRadius;
+    }
+
+    /**
      * @param {Entity} entity
      */
     addToOrbit(entity) {

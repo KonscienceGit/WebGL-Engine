@@ -7,6 +7,8 @@ export class Orrery2DActions {
         // Gameplay
         this.LEFT_CLICK = "Left click";
         this.RIGHT_CLICK = "Right click";
+        this.FOLLOW_NEXT_BODY = "Follow next body";
+        this.FOLLOW_PREVIOUS_BODY = "Follow previous body";
         //Menus
         this.MENU_RETURN_TO_MAIN = "Return to the main menu";
         this.MENU_VALID_SELECTION = "Valid the selected menu";

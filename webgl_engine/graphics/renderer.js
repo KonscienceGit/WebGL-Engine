@@ -128,6 +128,7 @@ export class Renderer {
         // 1. update entities status and matrices
         camera.setRatio(this._ratio); // need to update each time as we can have multiple cameras.
         root.update(deltaTime, UNIT_MATRIX);
+        camera.update(deltaTime);
 
         // 2. render scenegraph
         root.draw(this);

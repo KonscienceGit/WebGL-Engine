@@ -4,9 +4,12 @@ import {Entity} from "../../../webgl_engine/utils/entity.js";
 import {Orrery2DObjectsManager} from "../orrery2DObjectsManager.js";
 import {StellarBody} from "../stellarBody.js";
 import {Orrery2DActions} from "../orrery2DActions.js";
+import {Vec2} from "../../../webgl_engine/utils/math/vectors.js";
 
 const FULLSCREEN_BUTTON = true;
 const SECONDS_IN_DAY = 24 * 60 * 60;
+const __tmpVec2 = new Vec2();
+const BODY_LIST = ['SOL', 'MERCURY', 'VENUS', 'TERRA', 'LUNA', 'MARS', 'JUPITER', 'SATURN', 'URANUS', 'NEPTUNE'];
 
 export class MainGameState extends AbstractState {
     /**
@@ -19,13 +22,13 @@ export class MainGameState extends AbstractState {
         this._fullScreenButton = null;
         this._gameScene = gameScene;
         this._uiScene = uiScene;
+        this._bodyFollowIndex = 0;
         if (FULLSCREEN_BUTTON) {
             this._fullScreenButton = new FullScreenButton();
             this._uiScene.getRoot().add(this._fullScreenButton);
         }
-        this._mapNode = new Entity();
-        this._gameScene.getRoot().add(this._mapNode);
-        this.setZoomScale(1 / (149.6 * 1e6)); // earth orbit radius
+        this._gameScene.getCamera().setVerticalScreenWorldSize(149.6 * 1e6);
+        // this.setZoomScale(1 / (149.6 * 1e6), this._gameScene); // earth orbit radius
         /** @type {CursorProperties} */
         this._cursorProperties = null;
         this._mouseLeftDown = false;
@@ -37,7 +40,7 @@ export class MainGameState extends AbstractState {
         this._lastCursorPos = null;
 
         // Load the solar system
-        Orrery2DObjectsManager.loadSolarSystem(this._mapNode);
+        Orrery2DObjectsManager.loadSolarSystem(this._gameScene.getRoot());
 
         // Set animations duration
         this.setAnimateInLength(0.0);
@@ -47,6 +50,9 @@ export class MainGameState extends AbstractState {
         gameBindings.addCallbackToAction(Orrery2DActions.CURSOR_MOVE, this.cursorMoveCallback.bind(this));
         gameBindings.addCallbackToAction(Orrery2DActions.LEFT_CLICK, this.leftClickCallback.bind(this));
         gameBindings.addCallbackToAction(Orrery2DActions.RIGHT_CLICK, this.rightClickCallback.bind(this));
+
+        gameBindings.addCallbackToAction(Orrery2DActions.FOLLOW_NEXT_BODY, this.followNextBody.bind(this));
+        gameBindings.addCallbackToAction(Orrery2DActions.FOLLOW_PREVIOUS_BODY, this.followPreviousBody.bind(this));
 
         gameBindings.addCallbackToAction(Orrery2DActions.MOUSEWHEEL_MOVE_UP, this.mouseWheelUpCallback.bind(this));
         gameBindings.addCallbackToAction(Orrery2DActions.MOUSEWHEEL_MOVE_DOWN, this.mouseWheelDownCallback.bind(this));
@@ -66,13 +72,12 @@ export class MainGameState extends AbstractState {
     mainLoop(delta) {
         // this._time += delta / SECONDS_IN_DAY;
         this._time += 1 * delta;
-        const allNodes = this._mapNode.getAllNodes();
+        const allNodes = this._gameScene.getRoot().getAllNodes();
         allNodes.forEach((node) => {
             if (node instanceof StellarBody) {
                 node.updateOrbit(this._time);
             }
         });
-        this.updateFocus();
     }
 
     animateIn(delta, animationState) {
@@ -119,6 +124,49 @@ export class MainGameState extends AbstractState {
         this._lastCursorPos.copy(cursorProperties.devicePos);
     }
 
+    followNextBody(value) {
+        if (value === 0) return;
+        this._bodyFollowIndex++;
+        if (this._bodyFollowIndex >= BODY_LIST.length) {
+            this._bodyFollowIndex = 0;
+        }
+        this.followBody(this._bodyFollowIndex);
+    }
+
+    followPreviousBody(value) {
+        if (value === 0) return;
+        this._bodyFollowIndex--;
+        if (this._bodyFollowIndex < 0) {
+            this._bodyFollowIndex = BODY_LIST.length - 1;
+        }
+        this.followBody(this._bodyFollowIndex);
+    }
+
+    followBody(index) {
+        const name = BODY_LIST[index];
+        const camera = this._gameScene.getCamera();
+        /**
+         * @type {StellarBody}
+         */
+        let foundNode = null;
+        const nodes = this._gameScene.getRoot().getAllNodes();
+        for (let i = 0; i < nodes.length; i++) {
+            const n = nodes[i];
+            if (n instanceof StellarBody && n.getIndexName() === name) {
+                foundNode = n;
+                break;
+            }
+        }
+        if (foundNode == null) {
+            camera.follow(null);
+            console.log('Body name ' + name + ' not found');
+            return;
+        }
+        const verticalSize = foundNode.getBodyRadius() * 2.8;
+        camera.follow(foundNode.getBody());
+        camera.setVerticalScreenWorldSize(verticalSize);
+    }
+
     /**
      * Translate the camera by the given value in device coordinates [-1, 1].
      * @param {Scene2D} scene
@@ -126,39 +174,24 @@ export class MainGameState extends AbstractState {
      * @param {number} y
      */
     translateCamera(scene, x, y) {
-        // TODO reuse vector
+        scene.getCamera().move(x, y);
+    }
+
+    setZoomScale(scale, scene) {
         const camera = scene.getCamera();
-        const pos = camera.getPosition();
-        pos.x += x;
-        pos.y += y;
-        camera.setPosition(pos);
-    }
-
-    focusTo(entity) {
-        // TODO
-        this._focusedEntity = entity;
-    }
-
-    updateFocus() {
-        if (this._focusedEntity == null) return;
-        // TODO ??
-        // this._focusedEntity.modelWorldMat
-    }
-
-    setZoomScale(scale) {
-        this._mapNode.scale.mulScalar(scale);
-        this._mapNode.position.mulScalar(scale);
+        const zoom = camera.getZoomLevel();
+        camera.setZoomLevel(zoom * scale);
     }
 
     mouseWheelUpCallback(wheelPos) {
         if (wheelPos > 0) {
-            this.setZoomScale(1.1);
+            this.setZoomScale(1.1, this._gameScene);
         }
     }
 
     mouseWheelDownCallback(wheelPos) {
         if (wheelPos > 0) {
-            this.setZoomScale(0.9);
+            this.setZoomScale(0.9, this._gameScene);
         }
     }
 }
